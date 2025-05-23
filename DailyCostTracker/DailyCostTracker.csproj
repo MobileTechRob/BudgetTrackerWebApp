@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <None Include="AppDbContext.cs" />
-    <None Include="DailyTransaction.cs" />
+    <None Include="DataModel\DailyTransaction.cs" />
     <None Include="KeywordToCostCategory.cs" />
     <None Include="KeywordToSavingsCategory.cs" />
   </ItemGroup>

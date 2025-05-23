@@ -15,11 +15,28 @@ namespace DatabaseManager
         public DbSet<KeywordToCostCategory> KeywordToCostCategory { get; set; }
         public DbSet<KeywordToSavingsCategory> KeywordToSavingsCategory { get; set; }
 
-        string ConnectionString = "";
+        string connectionString = "";
+
+        public AppDbContext(string connectionString)
+        {
+            this.connectionString = connectionString;
+        }
 
         public AppDbContext(DbContextOptions<AppDbContext> dbContextOptions)
               : base(dbContextOptions)
-        {            
+        {                     
+        }
+
+        // Override OnConfiguring method to set the connection string dynamically
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            // If the connection string is not passed via constructor, use a default one (or other logic)
+            //if (string.IsNullOrEmpty(this.connectionString))
+            //{
+            //this.connectionString = "Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;";
+            //}
+
+            optionsBuilder.UseSqlServer(this.connectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using DatabaseManager;
 using Microsoft.AspNetCore.Mvc;
 using DatabaseManager.DataModels;
+using SharedDataModels;
+
 
 namespace DatabaseManager
 {
@@ -19,26 +21,29 @@ namespace DatabaseManager
             this.appDbContext = appDbContext;
         }
 
-        public bool AddDailyTransactions(DailyTransaction dailyTransaction, ILogger logger)
+        public InsertTransactionStatus AddDailyTransactions(DailyTransaction dailyTransaction, ILogger logger)
         {
-            bool insertSuccess = true;
+            InsertTransactionStatus insertState = InsertTransactionStatus.INSERTED;
 
-            //using (var context = new AppDbContext())
-            //{
+            if (this.appDbContext.DailyTransactions.Any(d => d.Content == dailyTransaction.Content))
+            { 
+                logger.LogInformation($"Transaction already exists: {dailyTransaction.Posted_Date} {dailyTransaction.Description} {dailyTransaction.Amount}");
+                return InsertTransactionStatus.ALREADY_EXIST_NO_INSERTION;
+            }
+
             this.appDbContext.DailyTransactions.Add(dailyTransaction);
 
-                try
-                {
+            try
+            {
                 this.appDbContext.SaveChanges();
-                }
-                catch (Exception ex)
-                {
-                    insertSuccess = false;
-                    logger.LogError(ex, $"Error inserting transaction: {dailyTransaction.Description}");
-                }
-            //}
+            }
+            catch (Exception ex)
+            {
+                    insertState = insertState = InsertTransactionStatus.INSERT_FAILED;
+                    logger.LogError(ex, $"Error inserting transaction: {ex.Message} {ex.InnerException}");
+            }
 
-            return insertSuccess;
+            return insertState;
         }
 
         public List<DailyTransaction> GetDailyTransactions(DateOnly? fromDate = null, DateOnly? toDate = null)

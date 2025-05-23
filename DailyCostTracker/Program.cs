@@ -31,24 +31,21 @@ var configuration = new ConfigurationBuilder()
            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
            .Build();
 
+
 IConfiguration config = configuration.GetSection("ConnectionString");
 string? sqlServer = config.GetValue<string>("CostTracker");
 
 AppDbContext appDbContext = new AppDbContext(sqlServer);
-insertErrors = ImportData(logger);
-
+//insertErrors = ImportData(logger);
 
 DatabaseManager.TransactionCategoryMapper transactionCategoryMapper = new DatabaseManager.TransactionCategoryMapper(logger, appDbContext);
 transactionCategoryMapper.PlaceCategoryOnTransactions();
 
-
+logger.LogInformation($"Data Import Complete");
 
 //IEnumerable<SharedDataModels.Transactions> unReconciledTransactions = transactionCategoryMapper.GetUnReconciledTransactions();
-
 //foreach (SharedDataModels.Transactions transaction in unReconciledTransactions)
 //    logger.LogInformation($"Unreconciled Transaction {transaction.Description} {transaction.Amount} {transaction.Posted_Date} {transaction.Currency} {transaction.Content}");
-
-
 //logger.LogWarning($"{insertErrors} insert Errors");
 //List<DatabaseManager.DailyTransaction> unReconciledCost = MapCostDescriptionToCostCategory();
 //List<DatabaseManager.DailyTransaction> unReconciledSavings = MapCostDescriptionToSavingCategory();
@@ -57,47 +54,82 @@ transactionCategoryMapper.PlaceCategoryOnTransactions();
 //foreach (DailyTransaction dailyTransaction in unReconciledSavings)
 //    logger.LogInformation($" Unreconciled Savings {dailyTransaction.Description}");
 
-int ImportData(ILogger logger)
-{
-    string[] files = Directory.GetFiles(".", "*.csv");
-    int insertErrors = 0;
 
-    if (files.Length > 0)
-    {
-        foreach (var file in files)
-        {
-            logger.LogInformation($"ImportData reading from {file}");
+DataImporter dataImporter = new DataImporter(loggerDatabase, appDbContext);
 
-            string[] linesOfData = File.ReadAllLines(file);
+string myDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+string currentLoggedInUser = Environment.UserName;
+string workingDirectory = $"{userProfile}\\Downloads";
 
-            System.Collections.IEnumerator enumerator = linesOfData.GetEnumerator();
+logger.LogInformation($"ImportData reading from {workingDirectory}");
 
-            // skip first line
-            enumerator.MoveNext();
+
+string[] files = Directory.GetFiles(workingDirectory, "*.csv");
+//int insertErrors = 0;
+
+string[] linesOfData = dataImporter.ImportTransactionRecordsFromCSVFile(files[0]);
+dataImporter.UpdateDatabaseWithTransactions(linesOfData);
+
+
+
+
+//int ImportData(ILogger logger)
+//{
+//    string myDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+//    string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
+//    string currentLoggedInUser = Environment.UserName;
+    
+//    string workingDirectory = $"{userProfile}\\Downloads";
+
+//    logger.LogInformation($"ImportData reading from {workingDirectory}");
+
+
+//    string[] files = Directory.GetFiles(workingDirectory, "*.csv");
+//    int insertErrors = 0;
+
+//    if (files.Length > 0)
+//    {
+//        foreach (var file in files)
+//        {
+//            logger.LogInformation($"ImportData reading from {file}");
+
+//            string[] linesOfData = File.ReadAllLines(file);
+
+//            System.Collections.IEnumerator enumerator = linesOfData.GetEnumerator();
+
+//            // skip first line
+//            enumerator.MoveNext();
         
-            ICRUD_Operations crud_Operations = new DatabaseManager.CRUD_Operations(appDbContext);    
+//            ICRUD_Operations crud_Operations = new DatabaseManager.CRUD_Operations(appDbContext);    
 
-            TransactionFileParser parser = new TransactionFileParser();
-            DatabaseManager.DatabaseManager databaseManager= new DatabaseManager.DatabaseManager(loggerDatabase, appDbContext, crud_Operations); 
+//            TransactionFileParser parser = new TransactionFileParser();
+//            DatabaseManager.DatabaseManager databaseManager= new DatabaseManager.DatabaseManager(loggerDatabase, appDbContext, crud_Operations); 
 
-            while (enumerator.MoveNext())
-            {               
-                bool result = databaseManager.AddDailyTransaction(parser.Parser(enumerator.Current.ToString()!));
+//            while (enumerator.MoveNext())
+//            {               
+//                bool result = databaseManager.AddDailyTransaction(parser.Parser(enumerator.Current.ToString()!));
 
-                if (!result)
-                {
-                    insertErrors++;                
-                }   
-            }
+//                if (!result)
+//                {
+//                    insertErrors++;                
+//                }   
+//            }
 
-            TransactionCategoryMapper transactionCategoryMapper = new TransactionCategoryMapper(logger, appDbContext);
+//            logger.LogInformation($"databaseManager.DailyTransaction_AlreadyExisted  {file}");
+//            logger.LogInformation($"databaseManager.DailyTransaction_Inserted  {file}");
+//            logger.LogInformation($"databaseManager.DailyTransaction_InsertFailed {file}");
+//            logger.LogInformation($"ImportData reading from {file}");
 
-            transactionCategoryMapper.PlaceCategoryOnTransactions();
-        }
-    }
+//            TransactionCategoryMapper transactionCategoryMapper = new TransactionCategoryMapper(logger, appDbContext);
 
-    return insertErrors;
-}
+//            transactionCategoryMapper.PlaceCategoryOnTransactions();
+//        }
+//    }
+
+//    return insertErrors;
+//}
 
 //List<DailyTransaction> MapCostDescriptionToCostCategory()
 //{

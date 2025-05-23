@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DatabaseManager.DataModels;
 using Microsoft.Extensions.Logging;
+using SharedDataModels;
 
 namespace DatabaseManager
 {
@@ -15,7 +16,10 @@ namespace DatabaseManager
         private ICRUD_Operations crud_Operations;
         private ILogger logger;
 
-
+        public int DailyTransaction_Inserted=0;
+        public int DailyTransaction_AlreadyExisted=0;
+        public int DailyTransaction_InsertFailed = 0;
+    
         public DatabaseManager(ILogger<DatabaseManager> logger, AppDbContext appDbContext, ICRUD_Operations crud_Operations) 
         {            
             this.appDbContext = appDbContext;
@@ -25,7 +29,21 @@ namespace DatabaseManager
 
         public bool AddDailyTransaction(DailyTransaction dailyTransaction)
         {
-            return crud_Operations.AddDailyTransactions(dailyTransaction, this.logger);
+            InsertTransactionStatus result = crud_Operations.AddDailyTransactions(dailyTransaction, this.logger);
+
+            if (result == InsertTransactionStatus.INSERTED)
+                DailyTransaction_Inserted++;
+
+            if (result == InsertTransactionStatus.INSERT_FAILED)
+                DailyTransaction_InsertFailed++;
+
+            if (result == InsertTransactionStatus.ALREADY_EXIST_NO_INSERTION)
+                DailyTransaction_AlreadyExisted++;
+
+            if (result == InsertTransactionStatus.INSERT_FAILED)
+                return false;
+
+            return true;
         }
 
         public List<DailyTransaction> GetDailyTransactions(DateOnly? fromDate = null, DateOnly? toDate=null)
