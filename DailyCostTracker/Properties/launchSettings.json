@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DailyCostTracker": {
+      "commandName": "Project",
+      "commandLineArgs": "c:\\adirectoryforfile\\some.txt"
+    }
+  }
+}

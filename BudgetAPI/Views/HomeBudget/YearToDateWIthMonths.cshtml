@@ -1,0 +1,102 @@
+﻿@{
+    ViewData["Title"] = "List Page";
+}
+
+<h2>ListWithInput of Costs</h2>
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">BudgetAPI List of Daily Transactions building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+
+<form id="myForm">
+@*     <input type="text" id="name" placeholder="Name" required />
+    <input type="number" id="price" placeholder="Price" required />
+ *@
+    <input type="date" id="fromDate" placeholder="From Date" />
+    <input type="date" id="toDate" placeholder="To Date" />
+
+    <button type="submit">Submit</button>
+</form>
+
+<div id="status"></div>
+
+<script>
+    document.getElementById("myForm").addEventListener("submit", function (e) {
+        e.preventDefault(); // Prevent default form submission
+
+        console.log("from date from input control [" + document.getElementById("fromDate").value + "]");
+        console.log("to date from input control [" + document.getElementById("toDate").value + "]");
+
+        const startDate = null;
+        const endDate = null;
+
+        if ((document.getElementById("toDate").value != "") && (document.getElementById("fromDate").value != ""))
+        {
+        const fromDate = new Date(document.getElementById("fromDate").value);
+        const toDate = new Date(document.getElementById("toDate").value);
+
+        console.log("from date is " + fromDate);
+        console.log("to date is " + toDate);
+
+        startDate = encodeURIComponent(fromDate.toISOString()).slice(0, 10);
+        endDate = encodeURIComponent(toDate.toISOString()).slice(0, 10);
+
+        console.log("start date is " + startDate);
+        console.log("end date is " + endDate);
+        }
+      
+        const queryStr = `http://localhost:5065/HomeBudget/CostListByDateRange?fromDate=${startDate}&toDate=${endDate}`;
+
+        console.log("queryStr is " + queryStr);
+
+        fetch(queryStr)
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to retrieve ");
+            return response.json();
+        })
+        .then(tranactionList => {           
+            renderList(tranactionList);
+        })
+        .catch(error => {
+            document.getElementById("status").textContent = "Error: " + error.message;
+        });
+    });
+
+    function renderList(tranactionList) {
+      const tbody = document.getElementById('costTableBody');
+      tbody.innerHTML = ''; // Clear any old rows
+
+      tranactionList.forEach(transaction => {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `<td>${transaction.posted_Date}</td><td>&nbsp;&nbsp;</td>
+          <td>${transaction.costCategory}</td><td>&nbsp;&nbsp;</td>
+          <td>${transaction.savingsCategory}</td><td>&nbsp;&nbsp;</td>
+          <td>${transaction.description}</td><td>&nbsp;&nbsp;</td>
+          <td>${transaction.amount}</td>`
+        tbody.appendChild(row);
+      });
+    }
+</script>
+
+
+<table id="summaryOfTransactionByCategory">
+    <thead>
+        <tr><td>Summary By Cost Category</td></tr>
+        <tr><th>Date</th><th>&nbsp;&nbsp;</th><th>Cost Category</th><th>&nbsp;&nbsp;</th><th>Savings Category</th><th>&nbsp;&nbsp;</th><th>Description</th><th>&nbsp;&nbsp;</th><th>Amount</th></tr>
+    </thead>
+    <tbody id="transactionSummaryByCategory_Jan"></tbody>
+    <tbody id="transactionSummaryByCategory_Feb"></tbody>
+</table>
+
+
+
+
+
+
+
+
+
+

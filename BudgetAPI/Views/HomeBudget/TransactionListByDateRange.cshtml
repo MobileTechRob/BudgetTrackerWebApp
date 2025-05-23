@@ -1,0 +1,159 @@
+﻿@{
+    ViewData["Title"] = "List Page";
+}
+
+<h2>Transaction List</h2>
+
+<div class="text-center">
+</div>
+
+
+<form id="myForm">
+@*     <input type="text" id="name" placeholder="Name" required />
+    <input type="number" id="price" placeholder="Price" required />
+ *@
+    <input type="date" id="fromDate" placeholder="From Date" />
+    <input type="date" id="toDate" placeholder="To Date" />
+
+    <button type="submit">Submit</button>
+</form>
+
+<div id="status"></div>
+
+<script>
+
+    window.
+
+
+    window.onload = function () {
+        console.log("window.onload called");
+        console.log("document.getElementById(fromDate) " + document.getElementById("fromDate"));
+        console.log("document.getElementById(toDate) " + document.getElementById("toDate"));
+
+        const now = new Date();
+        const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10); // "YYYY-MM-DD" format;
+        //const firstDayOfMonthAsString = firstDayOfMonth.toISOString().slice(0, 10); // "YYYY-MM-DD" format
+        const todayDate = new Date().toISOString().slice(0, 10);
+
+        console.log("First Day Of Month " +  firstDayOfMonth);
+        console.log("Todays Date " +  todayDate);
+
+        document.getElementById("fromDate").value = firstDayOfMonth;
+        document.getElementById("toDate").value = todayDate;
+    };  
+
+    document.getElementById("myForm").addEventListener("submit", function (e) {
+        e.preventDefault(); // Prevent default form submission
+
+        console.log("from date from input control [" + document.getElementById("fromDate").value + "]");
+        console.log("to date from input control [" + document.getElementById("toDate").value + "]");
+
+        var startDate = null;
+        var endDate = null;
+
+        if ((document.getElementById("toDate").value != "") && (document.getElementById("fromDate").value != ""))
+        {
+        const fromDate = new Date(document.getElementById("fromDate").value);
+        const toDate = new Date(document.getElementById("toDate").value);
+
+        console.log("from date is " + fromDate);
+        console.log("to date is " + toDate);
+
+        startDate = encodeURIComponent(fromDate.toISOString()).slice(0, 10);
+        endDate = encodeURIComponent(toDate.toISOString()).slice(0, 10);
+
+        console.log("start date is " + startDate);
+        console.log("end date is " + endDate);
+        }
+      
+        const queryStr = `http://localhost:5065/HomeBudget/CostListByDateRange?fromDate=${startDate}&toDate=${endDate}`;
+
+        console.log("queryStr is " + queryStr);
+
+        fetch(queryStr)
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to retrieve ");
+            return response.json();
+        })
+        .then(tranactionList => {           
+            renderList(tranactionList);
+        })
+        .catch(error => {
+            document.getElementById("status").textContent = "Error: " + error.message;
+        });
+
+        const summaryQueryStr = `http://localhost:5065/HomeBudget/TransactionDollarsByCategory?fromDate=${startDate}&toDate=${endDate}`;
+
+        console.log("summaryQueryStr is " + summaryQueryStr);
+
+        fetch(summaryQueryStr)
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to retrieve ");
+            return response.json();
+        })
+        .then(transactionList => {
+            console.log("TransactionDollarsByCategory " + transactionList);
+            renderSummaryByCategory(transactionList);
+        })
+        .catch(error => {
+            document.getElementById("status").textContent = "Error: " + error.message;
+        });
+    });
+
+    function renderList(tranactionList) {
+      const tbody = document.getElementById('costTableBody');
+      tbody.innerHTML = ''; // Clear any old rows
+
+      tranactionList.forEach(transaction => {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `<td>${transaction.posted_Date}</td><td>&nbsp;&nbsp;</td>
+          <td>${transaction.costCategory}</td><td>&nbsp;&nbsp;</td>
+          <td>${transaction.savingsCategory}</td><td>&nbsp;&nbsp;</td>
+          <td>${transaction.description}</td><td>&nbsp;&nbsp;</td>
+          <td>${transaction.amount}</td>`
+        tbody.appendChild(row);
+      });
+    }
+
+
+    function renderSummaryByCategory(transactionList) {
+
+      console.log('renderSummary Start Date:', transactionList.startDate);
+      console.log('renderSummary End Date:', transactionList.endDate);
+      console.log('renderSummary Cost Transactions:', transactionList.listOfCostTransactionDollarsByCategory);
+      console.log('renderSummary Savings Transactions:', transactionList.listOfSavingsTransactionDollarsByCategory);
+
+      const tbody = document.getElementById('transactionSummaryByCategory');
+      tbody.innerHTML = ''; // Clear any old rows
+
+      tranactionList.forEach(transaction => {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `<td>${transaction.posted_Date}</td><td>&nbsp;&nbsp;</td>
+          <td>${transaction.costCategory}</td><td>&nbsp;&nbsp;</td>
+          <td>${transaction.savingsCategory}</td><td>&nbsp;&nbsp;</td>
+          <td>${transaction.description}</td><td>&nbsp;&nbsp;</td>
+          <td>${transaction.amount}</td>`
+        tbody.appendChild(row);
+      });
+    }
+
+</script>
+
+<table id="summaryOfTransactionByCategory">
+    <thead>
+        <tr><td>Summary By Cost Category</td></tr>
+        <tr><th>Date</th><th>&nbsp;&nbsp;</th><th>Cost Category</th><th>&nbsp;&nbsp;</th><th>Savings Category</th><th>&nbsp;&nbsp;</th><th>Description</th><th>&nbsp;&nbsp;</th><th>Amount</th></tr>
+    </thead>
+    <tbody id="transactionSummaryByCategory"></tbody>
+</table>
+
+<table id="costTable">
+    <thead>
+        <tr><td>Tranaction List</td></tr>
+        <tr><th>Date</th><th>&nbsp;&nbsp;</th><th>Cost Category</th><th>&nbsp;&nbsp;</th><th>Savings Category</th><th>&nbsp;&nbsp;</th><th>Description</th><th>&nbsp;&nbsp;</th><th>Amount</th></tr>
+    </thead>
+    <tbody id="costTableBody"></tbody>
+</table>
+
