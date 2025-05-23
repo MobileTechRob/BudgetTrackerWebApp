@@ -1,0 +1,16 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/ProjectEvaluation
+/BudgetAPI/bin/Debug/net9.0
+/BudgetAPI/obj
+/DailyCostTracker/bin/Debug/net9.0
+/DailyCostTracker/obj
+/DatabaseManager/obj
+/DatabaseManager/bin/Debug/net9.0
+/MyPersonalBudgetAPI/.vs
+/MyPersonalBudgetAPI/MyPersonalBudgetAPI/bin/Debug/net9.0
+/MyPersonalBudgetAPI/MyPersonalBudgetAPI/obj
+/SharedDataModels/bin/Debug/net9.0
+/SharedDataModels/obj
