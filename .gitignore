@@ -15,3 +15,5 @@
 /SharedDataModels/bin/Debug/net9.0
 /SharedDataModels/obj
 /.vs/DailyCostTracker
+/TestProject/bin/Debug/net9.0
+/TestProject/obj
