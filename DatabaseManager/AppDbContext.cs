@@ -41,7 +41,7 @@ namespace DatabaseManager
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<DailyTransaction>().HasKey(d => d.Content);
+            modelBuilder.Entity<DailyTransaction>().HasKey(d => d.Fi_Transaction_Reference);
             modelBuilder.Entity<DailyTransaction>(entity => { entity.Property(p => p.Amount).HasColumnType("decimal(15, 2)"); });
             modelBuilder.Entity<DailyTransaction>(entity => { entity.Property(p => p.Original_Amount).HasColumnType("decimal(15, 2)"); });
             modelBuilder.Entity<KeywordToCostCategory>().HasNoKey();

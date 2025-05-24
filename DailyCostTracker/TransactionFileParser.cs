@@ -33,7 +33,7 @@ namespace DailyCostTracker
             //if (long.TryParse(fields[5], out fitrn))
                 dailyAccountTransaction.Fi_Transaction_Reference = fields[5];
 
-            dailyAccountTransaction.Type = fields[6];
+            dailyAccountTransaction.Transaction_Type = fields[6];
             dailyAccountTransaction.Credit_Debit = fields[7];
             dailyAccountTransaction.Original_Amount = 0m;           
 
