@@ -36,7 +36,6 @@ namespace DailyCostTracker
             dailyAccountTransaction.Type = fields[6];
             dailyAccountTransaction.Credit_Debit = fields[7];
             dailyAccountTransaction.Original_Amount = 0m;           
-            dailyAccountTransaction.Content = string.Join("", fields);
 
             return dailyAccountTransaction;
         }       

@@ -21,6 +21,13 @@ namespace DatabaseManager
             this.appDbContext = appDbContext;
         }
 
+        public void DeleteDailyTransaction()
+        {
+            var entities = appDbContext.DailyTransactions.ToList();
+            appDbContext.DailyTransactions.RemoveRange(entities);
+            appDbContext.SaveChanges();
+        }
+
         public InsertTransactionStatus AddDailyTransactions(DailyTransaction dailyTransaction, ILogger logger)
         {
             InsertTransactionStatus insertState = InsertTransactionStatus.INSERTED;
