@@ -38,8 +38,7 @@ namespace DatabaseManager
                     Posted_Date = dailyTransaction.Posted_Date,
                     Description = dailyTransaction.Description,
                     Amount = dailyTransaction.Amount,
-                    Currency = dailyTransaction.Currency,
-                    Content = dailyTransaction.Content
+                    Currency = dailyTransaction.Currency                
                 };
 
                 yield return unReconciledTransaction;

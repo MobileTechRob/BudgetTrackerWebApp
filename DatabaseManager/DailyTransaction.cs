@@ -15,13 +15,12 @@ namespace DatabaseManager.DataModels
         public Decimal Amount { get; set; }
         public string Currency { get; set; }
         public string Transaction_Reference_Number { get; set; }
-        public string Fi_Transaction_Reference { get; set; }
-        public string Type { get; set; }
-        public string Credit_Debit { get; set; }
-        public Decimal Original_Amount { get; set; }
         [Key]
-        public string Content { get; set; }
-        public string CostCategory {  get; set; }
+        public string Fi_Transaction_Reference { get; set; }
+        public string Transaction_Type { get; set; }
+        public string Credit_Debit { get; set; }
+        public Decimal Original_Amount { get; set; }      
+        public string CostCategory { get; set; }
         public string SavingsCategory { get; set; }
 
         public DailyTransaction()
@@ -32,10 +31,9 @@ namespace DatabaseManager.DataModels
             Currency = string.Empty;
             Transaction_Reference_Number = "";
             Fi_Transaction_Reference = "";
-            Type = string.Empty;
+            Transaction_Type = string.Empty;
             Credit_Debit = string.Empty;
-            Original_Amount = 0;    
-            Content = Guid.NewGuid().ToString();
+            Original_Amount = 0;                
             CostCategory = string.Empty;
             SavingsCategory = string.Empty;
         }

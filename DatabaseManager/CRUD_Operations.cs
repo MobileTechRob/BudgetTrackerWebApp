@@ -21,11 +21,18 @@ namespace DatabaseManager
             this.appDbContext = appDbContext;
         }
 
+        public void DeleteDailyTransaction()
+        {
+            var entities = appDbContext.DailyTransactions.ToList();
+            appDbContext.DailyTransactions.RemoveRange(entities);
+            appDbContext.SaveChanges();
+        }
+
         public InsertTransactionStatus AddDailyTransactions(DailyTransaction dailyTransaction, ILogger logger)
         {
             InsertTransactionStatus insertState = InsertTransactionStatus.INSERTED;
 
-            if (this.appDbContext.DailyTransactions.Any(d => d.Content == dailyTransaction.Content))
+            if (this.appDbContext.DailyTransactions.Any(d => d.Fi_Transaction_Reference == dailyTransaction.Fi_Transaction_Reference))
             { 
                 logger.LogInformation($"Transaction already exists: {dailyTransaction.Posted_Date} {dailyTransaction.Description} {dailyTransaction.Amount}");
                 return InsertTransactionStatus.ALREADY_EXIST_NO_INSERTION;
@@ -39,7 +46,7 @@ namespace DatabaseManager
             }
             catch (Exception ex)
             {
-                    insertState = insertState = InsertTransactionStatus.INSERT_FAILED;
+                    insertState = InsertTransactionStatus.INSERT_FAILED;
                     logger.LogError(ex, $"Error inserting transaction: {ex.Message} {ex.InnerException}");
             }
 

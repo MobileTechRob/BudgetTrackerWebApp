@@ -38,10 +38,7 @@ string? sqlServer = config.GetValue<string>("CostTracker");
 AppDbContext appDbContext = new AppDbContext(sqlServer);
 //insertErrors = ImportData(logger);
 
-DatabaseManager.TransactionCategoryMapper transactionCategoryMapper = new DatabaseManager.TransactionCategoryMapper(logger, appDbContext);
-transactionCategoryMapper.PlaceCategoryOnTransactions();
-
-logger.LogInformation($"Data Import Complete");
+//logger.LogInformation($"Data Import Complete");
 
 //IEnumerable<SharedDataModels.Transactions> unReconciledTransactions = transactionCategoryMapper.GetUnReconciledTransactions();
 //foreach (SharedDataModels.Transactions transaction in unReconciledTransactions)
@@ -64,15 +61,21 @@ string workingDirectory = $"{userProfile}\\Downloads";
 
 logger.LogInformation($"ImportData reading from {workingDirectory}");
 
-
 string[] files = Directory.GetFiles(workingDirectory, "*.csv");
-//int insertErrors = 0;
 
-string[] linesOfData = dataImporter.ImportTransactionRecordsFromCSVFile(files[0]);
-dataImporter.UpdateDatabaseWithTransactions(linesOfData);
+if (files.Length == 1)
+{
+    logger.LogInformation($"ImportData reading from " + files[0] + " press any key to continue");
+
+    Console.ReadKey();
+
+    string[] linesOfData = dataImporter.ImportTransactionRecordsFromCSVFile(files[0]);
+    dataImporter.UpdateDatabaseWithTransactions(linesOfData);
 
 
-
+    DatabaseManager.TransactionCategoryMapper transactionCategoryMapper = new DatabaseManager.TransactionCategoryMapper(logger, appDbContext);
+    transactionCategoryMapper.PlaceCategoryOnTransactions();
+}
 
 //int ImportData(ILogger logger)
 //{
@@ -80,7 +83,7 @@ dataImporter.UpdateDatabaseWithTransactions(linesOfData);
 //    string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
 //    string currentLoggedInUser = Environment.UserName;
-    
+
 //    string workingDirectory = $"{userProfile}\\Downloads";
 
 //    logger.LogInformation($"ImportData reading from {workingDirectory}");
@@ -101,7 +104,7 @@ dataImporter.UpdateDatabaseWithTransactions(linesOfData);
 
 //            // skip first line
 //            enumerator.MoveNext();
-        
+
 //            ICRUD_Operations crud_Operations = new DatabaseManager.CRUD_Operations(appDbContext);    
 
 //            TransactionFileParser parser = new TransactionFileParser();
@@ -155,7 +158,7 @@ dataImporter.UpdateDatabaseWithTransactions(linesOfData);
 //                mappedToSavingsCategory = false;
 
 //                cleanedDescription = Regex.Replace(d.Description, @"\s+", " ");
-                
+
 //                foreach (KeywordToCostCategory keywordToCostCategory in keywordToCostCategoryList)
 //                {
 //                    if (cleanedDescription.Contains(keywordToCostCategory.keyword, StringComparison.CurrentCultureIgnoreCase))
@@ -166,7 +169,7 @@ dataImporter.UpdateDatabaseWithTransactions(linesOfData);
 //                        break;
 //                    }
 //                }
-                            
+
 //                if (!mappedToCostCategory)
 //                {                    
 //                    foreach (KeywordToSavingsCategory keywordToSavingsCategory in keywordToSavingsCategoryList)
