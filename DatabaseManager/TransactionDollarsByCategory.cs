@@ -27,6 +27,8 @@ namespace DatabaseManager.DataModels
     {
         public DateTime startDate { get; set; } 
         public DateTime endDate { get; set; }
+        public int CostTotal { get; set; }
+        public int SavingsTotal { get; set; }
 
         [JsonInclude]
         private List<TransactionDollarsByCategory> listOfCostTransactionDollarsByCategory { get; set; } = new List<TransactionDollarsByCategory>();
@@ -38,11 +40,13 @@ namespace DatabaseManager.DataModels
         public void AddCost(TransactionDollarsByCategory transactionDollarsByCategory)
         {
             listOfCostTransactionDollarsByCategory.Add(transactionDollarsByCategory);
+            CostTotal += (int)transactionDollarsByCategory.TotalAmount;
         }
 
         public void AddSavings(TransactionDollarsByCategory transactionDollarsByCategory)
         {
             listOfSavingsTransactionDollarsByCategory.Add(transactionDollarsByCategory);
+            SavingsTotal += (int)transactionDollarsByCategory.TotalAmount;
         }
     }
 }
