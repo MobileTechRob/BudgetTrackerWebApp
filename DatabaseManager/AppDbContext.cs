@@ -30,11 +30,10 @@ namespace DatabaseManager
         // Override OnConfiguring method to set the connection string dynamically
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // If the connection string is not passed via constructor, use a default one (or other logic)
-            //if (string.IsNullOrEmpty(this.connectionString))
-            //{
-            //this.connectionString = "Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;";
-            //}
+            if (optionsBuilder.IsConfigured)
+            {
+                return;
+            }
 
             optionsBuilder.UseSqlServer(this.connectionString);
         }

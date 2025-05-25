@@ -8,14 +8,12 @@ var builder = WebApplication.CreateBuilder(args);
 string? connectionString= builder.Configuration.SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json").Build().GetConnectionString("CostTracker");
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString)); // Or your DB setup
-
 builder.Services.AddTransient<ICRUD_Operations, CRUD_Operations>();
 builder.Services.AddTransient<IDatabaseManager, DatabaseManager.DatabaseManager>();
-builder.Services.AddTransient<DatabaseManager.IDatabaseManager, DatabaseManager.DatabaseManager>();
+
+// Add services to the container.
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
