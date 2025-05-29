@@ -8,16 +8,23 @@ var builder = WebApplication.CreateBuilder(args);
 string? connectionString= builder.Configuration.SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json").Build().GetConnectionString("CostTracker");
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        builder => builder.WithOrigins("http://localhost:3000")
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
+});
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString)); // Or your DB setup
+builder.Services.AddTransient<ICRUD_Operations, CRUD_Operations>();
+builder.Services.AddTransient<IDatabaseManager, DatabaseManager.DatabaseManager>();
+
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString)); // Or your DB setup
-
-builder.Services.AddTransient<ICRUD_Operations, CRUD_Operations>();
-builder.Services.AddTransient<IDatabaseManager, DatabaseManager.DatabaseManager>();
-builder.Services.AddTransient<DatabaseManager.IDatabaseManager, DatabaseManager.DatabaseManager>();
-
 var app = builder.Build();
+app.UseCors("AllowReactApp");
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\DatabaseManager\DatabaseManager.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="SharedDataModels">
       <HintPath>..\..\SharedDataModels\bin\Debug\net9.0\SharedDataModels.dll</HintPath>
     </Reference>

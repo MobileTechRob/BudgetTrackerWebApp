@@ -100,11 +100,11 @@
         });
     });
 
-    function renderList(tranactionList) {
+    function renderList(transactionList) {
       const tbody = document.getElementById('costTableBody');
       tbody.innerHTML = ''; // Clear any old rows
 
-      tranactionList.forEach(transaction => {
+      transactionList.forEach(transaction => {
         const row = document.createElement('tr');
 
         row.innerHTML = `<td>${transaction.posted_Date}</td><td>&nbsp;&nbsp;</td>
@@ -119,39 +119,57 @@
 
     function renderSummaryByCategory(transactionList) {
 
-      console.log('renderSummary Start Date:', transactionList.startDate);
-      console.log('renderSummary End Date:', transactionList.endDate);
-      console.log('renderSummary Cost Transactions:', transactionList.listOfCostTransactionDollarsByCategory);
-      console.log('renderSummary Savings Transactions:', transactionList.listOfSavingsTransactionDollarsByCategory);
+      console.log('renderSummaryByCategory Start Date:', transactionList.startDate);
+      console.log('renderSummaryByCategory End Date:', transactionList.endDate);
+      console.log('renderSummaryByCategory Cost Transactions:', transactionList.listOfCostTransactionDollarsByCategory);
+      console.log('renderSummaryByCategory Savings Transactions:', transactionList.listOfSavingsTransactionDollarsByCategory);
 
-      const tbody = document.getElementById('transactionSummaryByCategory');
+      var costList = transactionList.listOfCostTransactionDollarsByCategory;
+      var savingsList = transactionList.listOfSavingsTransactionDollarsByCategory;
+
+      const tbody = document.getElementById('costSummaryByCategory');
       tbody.innerHTML = ''; // Clear any old rows
 
-      tranactionList.forEach(transaction => {
+      costList.forEach(cost => {
         const row = document.createElement('tr');
 
-        row.innerHTML = `<td>${transaction.posted_Date}</td><td>&nbsp;&nbsp;</td>
-          <td>${transaction.costCategory}</td><td>&nbsp;&nbsp;</td>
-          <td>${transaction.savingsCategory}</td><td>&nbsp;&nbsp;</td>
-          <td>${transaction.description}</td><td>&nbsp;&nbsp;</td>
-          <td>${transaction.amount}</td>`
+        row.innerHTML = `<td>${cost.categoryName}</td><td>&nbsp;&nbsp;</td><td>${cost.totalAmount}</td><td>&nbsp;&nbsp;</td>`
+
         tbody.appendChild(row);
       });
+
+      const tbodySavings = document.getElementById('savingsSummaryByCategory');
+      tbodySavings.innerHTML = ''; // Clear any old rows
+      
+      savingsList.forEach(savings => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${savings.categoryName}</td><td>&nbsp;&nbsp;</td><td>${savings.totalAmount}</td><td>&nbsp;&nbsp;</td>`
+        tbodySavings.appendChild(row);
+      });
+
     }
 
 </script>
 
-<table id="summaryOfTransactionByCategory">
+<table id="summaryOfCostsByCategory">
     <thead>
-        <tr><td>Summary By Cost Category</td></tr>
-        <tr><th>Date</th><th>&nbsp;&nbsp;</th><th>Cost Category</th><th>&nbsp;&nbsp;</th><th>Savings Category</th><th>&nbsp;&nbsp;</th><th>Description</th><th>&nbsp;&nbsp;</th><th>Amount</th></tr>
+        <tr><td style="font-weight: bold">Cost Summary By Category</td></tr>
+        <tr><th>Category</th><th>&nbsp;&nbsp;</th><th>Amount</th></tr>
     </thead>
-    <tbody id="transactionSummaryByCategory"></tbody>
+    <tbody id="costSummaryByCategory"></tbody>
+</table>
+
+<table id="summaryOfSavingsByCategory">
+    <thead>
+        <tr><td style="font-weight: bold">Savings Summary By Category</td></tr>
+        <tr><th>Category</th><th>&nbsp;&nbsp;</th><th>Amount</th></tr>
+    </thead>
+    <tbody id="savingsSummaryByCategory"></tbody>
 </table>
 
 <table id="costTable">
     <thead>
-        <tr><td>Tranaction List</td></tr>
+        <tr><td style="font-weight: bold">Tranaction List</td></tr>
         <tr><th>Date</th><th>&nbsp;&nbsp;</th><th>Cost Category</th><th>&nbsp;&nbsp;</th><th>Savings Category</th><th>&nbsp;&nbsp;</th><th>Description</th><th>&nbsp;&nbsp;</th><th>Amount</th></tr>
     </thead>
     <tbody id="costTableBody"></tbody>
