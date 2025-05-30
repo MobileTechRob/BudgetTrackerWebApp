@@ -166,6 +166,22 @@ namespace MyPersonalBudgetAPI.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("HomeBudget/Keyword/{keyword}/CostCategory/{costcategory}")]
+        public IActionResult CreateKeywordToCostCategoryMapping(string keyword, string costcategory)
+        {
+            if (databaseManager.CreateKeywordToCostCategoryMapping(keyword, costcategory))
+            {
+                return Ok("User created successfully");
+            }
+            else
+            {
+                return BadRequest("User creation failed");
+            }
+        }
+
+
+
         // GET: BudgetCostsController/Edit/5
         public ActionResult Edit(int id)
         {
