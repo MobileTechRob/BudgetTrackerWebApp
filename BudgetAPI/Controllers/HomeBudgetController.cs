@@ -153,6 +153,19 @@ namespace MyPersonalBudgetAPI.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult VerifyUser([FromQuery] string username, [FromQuery] string password)
+        {
+            if (databaseManager.VerifyUser(username, password))
+            {
+                return Ok("User verified successfully");
+            }
+            else
+            {
+                return Unauthorized("User verification failed");
+            }
+        }
+
         // GET: BudgetCostsController/Edit/5
         public ActionResult Edit(int id)
         {
