@@ -12,5 +12,6 @@ namespace DatabaseManager
         public List<DailyTransaction> GetDailyTransactions(DateOnly? fromDate = null, DateOnly? toDate = null);
         public List<DailyTransaction> GetSummaryByCategory(DateOnly? fromDate = null, DateOnly? toDate = null);
         public List<string> GetCostCategories();
+        bool VerifyUser(string userName, string password);
     }
 }

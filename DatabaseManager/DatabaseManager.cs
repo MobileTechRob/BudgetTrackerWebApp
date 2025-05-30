@@ -60,5 +60,17 @@ namespace DatabaseManager
         {
             return crud_Operations.GetCostCategories();
         }
+
+        public bool VerifyUser(string userName, string password)
+        {
+            if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
+            {
+                logger.LogWarning("Username or password is null or empty.");
+                return false;
+            }
+            // Implement user verification logic here
+            // For now, we will return true to indicate that the user is verified
+            return true;
+        }
     }
 }
