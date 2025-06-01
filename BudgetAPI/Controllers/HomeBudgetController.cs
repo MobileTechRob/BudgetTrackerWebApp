@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using DatabaseManager;
-using DatabaseManager.DataModels;   
+using DatabaseManager.DataModels;
+using DatabaseManager.Exceptions;
 
 namespace MyPersonalBudgetAPI.Controllers
 {
@@ -170,17 +171,19 @@ namespace MyPersonalBudgetAPI.Controllers
         [Route("HomeBudget/Keyword/{keyword}/CostCategory/{costcategory}")]
         public IActionResult CreateKeywordToCostCategoryMapping(string keyword, string costcategory)
         {
-            if (databaseManager.CreateKeywordToCostCategoryMapping(keyword, costcategory))
+
+            try
             {
-                return Ok("User created successfully");
+                if (databaseManager.MapKeywordToCostCategoryMapping(keyword, costcategory))
+                    return Ok("Keyword to CostCategory mapped successfully");
+                else
+                    return BadRequest("Failed to map keyword to cost category. Please check the input values.");
             }
-            else
+            catch (InvalidFieldLengthException ex)
             {
-                return BadRequest("User creation failed");
-            }
+                return BadRequest(ex.Message);
+            }   
         }
-
-
 
         // GET: BudgetCostsController/Edit/5
         public ActionResult Edit(int id)

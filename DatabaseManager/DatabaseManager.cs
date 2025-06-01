@@ -74,7 +74,7 @@ namespace DatabaseManager
             return true;
         }
 
-        public bool CreateKeywordToCostCategoryMapping(string keyword, string costcategory)
+        public bool MapKeywordToCostCategoryMapping(string keyword, string costcategory)
         {
             const int MaxKeywordLength = 50;
             const int CostCategoryMaxLength = 50;
@@ -89,7 +89,7 @@ namespace DatabaseManager
                 throw new InvalidFieldLengthException($"Keyword or cost category exceeds maximum length of {CostCategoryMaxLength} characters.");
             }
 
-            return true;
+            return crud_Operations.MapKeywordToCostCategoryMapping(keyword, costcategory);
         }
     }
 }
