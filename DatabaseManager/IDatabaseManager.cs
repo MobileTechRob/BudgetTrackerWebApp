@@ -13,5 +13,6 @@ namespace DatabaseManager
         public List<DailyTransaction> GetSummaryByCategory(DateOnly? fromDate = null, DateOnly? toDate = null);
         public List<string> GetCostCategories();
         bool VerifyUser(string userName, string password);
+        bool MapKeywordToCostCategoryMapping(string keyword, string costcategory);
     }
 }

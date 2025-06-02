@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DatabaseManager.DataModels;
+using DatabaseManager.Exceptions;
 using Microsoft.Extensions.Logging;
 using SharedDataModels;
 
@@ -71,6 +72,24 @@ namespace DatabaseManager
             // Implement user verification logic here
             // For now, we will return true to indicate that the user is verified
             return true;
+        }
+
+        public bool MapKeywordToCostCategoryMapping(string keyword, string costcategory)
+        {
+            const int MaxKeywordLength = 50;
+            const int CostCategoryMaxLength = 50;
+
+            if (keyword.Length > MaxKeywordLength)
+            {
+                throw new InvalidFieldLengthException($"Keyword or cost category exceeds maximum length of {MaxKeywordLength} characters.");                           
+            }
+
+            if (costcategory.Length > CostCategoryMaxLength)
+            {
+                throw new InvalidFieldLengthException($"Keyword or cost category exceeds maximum length of {CostCategoryMaxLength} characters.");
+            }
+
+            return crud_Operations.MapKeywordToCostCategoryMapping(keyword, costcategory);
         }
     }
 }

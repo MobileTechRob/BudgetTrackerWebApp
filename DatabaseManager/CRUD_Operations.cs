@@ -8,6 +8,7 @@ using DatabaseManager;
 using Microsoft.AspNetCore.Mvc;
 using DatabaseManager.DataModels;
 using SharedDataModels;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace DatabaseManager
@@ -33,7 +34,7 @@ namespace DatabaseManager
             InsertTransactionStatus insertState = InsertTransactionStatus.INSERTED;
 
             if (this.appDbContext.DailyTransactions.Any(d => d.Fi_Transaction_Reference == dailyTransaction.Fi_Transaction_Reference))
-            { 
+            {
                 logger.LogInformation($"Transaction already exists: {dailyTransaction.Posted_Date} {dailyTransaction.Description} {dailyTransaction.Amount}");
                 return InsertTransactionStatus.ALREADY_EXIST_NO_INSERTION;
             }
@@ -46,8 +47,8 @@ namespace DatabaseManager
             }
             catch (Exception ex)
             {
-                    insertState = InsertTransactionStatus.INSERT_FAILED;
-                    logger.LogError(ex, $"Error inserting transaction: {ex.Message} {ex.InnerException}");
+                insertState = InsertTransactionStatus.INSERT_FAILED;
+                logger.LogError(ex, $"Error inserting transaction: {ex.Message} {ex.InnerException}");
             }
 
             return insertState;
@@ -85,6 +86,43 @@ namespace DatabaseManager
             }
 
             return uniqueCosts;
+        }
+
+        public bool MapKeywordToCostCategoryMapping(string keyword, string costcategory)
+        {
+            var existingMapping = appDbContext.KeywordToCostCategory.FirstOrDefault(k => k.keyword == keyword);
+
+            if (existingMapping != null)
+                existingMapping.costcategory = costcategory;
+            else
+            {
+                KeywordToCostCategory newMapping = new KeywordToCostCategory
+                {
+                    keyword = keyword,
+                    costcategory = costcategory
+                };
+                appDbContext.KeywordToCostCategory.Add(newMapping);
+            }
+
+            try
+            {
+                return (appDbContext.SaveChanges() == 1);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                // Log the concurrency error if necessary
+                return false;
+            }
+            catch (DbUpdateException ex)
+            {
+                // Log the update error if necessary
+                return false;
+            }
+            catch (Exception ex)
+            {
+                // Log the error if necessary
+                return false;
+            }            
         }
     }
 }
