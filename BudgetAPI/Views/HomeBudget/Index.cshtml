@@ -2,9 +2,105 @@
     ViewData["Title"] = "Home Page";
 }
 
-<h3>Home Budget Index Page</h3>
-
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Welcome to Home Budget Year To Date</h1>
 </div>
+
+<script>
+
+    window.onload = function () {
+        console.log("window.onload called");
+        //console.log("document.getElementById(fromDate) " + document.getElementById("fromDate"));
+        //console.log("document.getElementById(toDate) " + document.getElementById("toDate"));
+
+        const now = new Date();
+        const firstDayOfYear = new Date(now.getFullYear(), 0, 1).toISOString().slice(0, 10); // "YYYY-MM-DD" format;
+        //const firstDayOfMonthAsString = firstDayOfMonth.toISOString().slice(0, 10); // "YYYY-MM-DD" format
+        const todayDate = new Date().toISOString().slice(0, 10);
+
+        console.log("First Day Of Year " +  firstDayOfYear);
+        console.log("Todays Date " +  todayDate);
+
+        //document.getElementById("fromDate").value = firstDayOfMonth;
+        //document.getElementById("toDate").value = todayDate;
+
+        const queryStr = `http://localhost:5065/HomeBudget/TransactionDollarsByCategory?fromDate=${firstDayOfYear}&toDate=${todayDate}`;
+
+        console.log("queryStr is " + queryStr);
+
+        fetch(queryStr)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("data is " + JSON.stringify(data));
+                // Process the data as needed
+                // For example, you can call a function to update the UI with the fetched data                
+                //renderSummaryByCategory(data);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+
+
+        const tBodycostRevenueSummary = document.getElementById("costRevenueSummaryForYear");
+
+        tBodycostRevenueSummary.innerHTML = ""; // Clear existing rows
+
+        //const row = document.createElement('tr');
+        //row.innerHTML = `<td>${savings.categoryName}</td><td>&nbsp;&nbsp;</td><td>${savings.totalAmount}</td><td>&nbsp;&nbsp;</td>`
+        //row.innerHTML = `<td>  test line of date </td>`;        
+        //tBodycostRevenueSummary.appendChild(row);
+
+        const row = document.createElement('tr');
+        row.innerHTML = `<td> test line of data </td>`;
+        tBodycostRevenueSummary.appendChild(row);
+    };
+
+    function renderSummaryByCategory(transactionList) {
+      console.log('renderSummaryByCategory Start Date:', transactionList.startDate);
+      console.log('renderSummaryByCategory End Date:', transactionList.endDate);
+      console.log('renderSummaryByCategory Cost Transactions:', transactionList.listOfCostTransactionDollarsByCategory);
+      console.log('renderSummaryByCategory Savings Transactions:', transactionList.listOfSavingsTransactionDollarsByCategory);
+
+      var costList = transactionList.listOfCostTransactionDollarsByCategory;
+      var savingsList = transactionList.listOfSavingsTransactionDollarsByCategory;
+
+      const tbody = document.getElementById('costSummaryByCategory');
+      tbody.innerHTML = ''; // Clear any old rows
+
+      costList.forEach(cost => {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `<td>${cost.categoryName}</td><td>&nbsp;&nbsp;</td><td>${cost.totalAmount}</td><td>&nbsp;&nbsp;</td>`
+
+        tbody.appendChild(row);
+      });
+
+      const tbodySavings = document.getElementById('savingsSummaryByCategory');
+      tbodySavings.innerHTML = ''; // Clear any old rows
+
+      savingsList.forEach(savings => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${savings.categoryName}</td><td>&nbsp;&nbsp;</td><td>${savings.totalAmount}</td><td>&nbsp;&nbsp;</td>`
+        tbodySavings.appendChild(row);
+      });
+
+    }
+</script>
+
+<table>
+    <thead>
+        <tr>
+            <th>Costs </th>
+            <th>&nbsp;&nbsp;</th>
+            <th>Revenue</th>
+        </tr>
+    </thead>
+    <tbody id="costRevenueSummaryForYear">        
+    </tbody>    
+</table>
+
