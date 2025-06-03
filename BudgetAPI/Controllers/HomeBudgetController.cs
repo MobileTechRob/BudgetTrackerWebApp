@@ -107,8 +107,8 @@ namespace MyPersonalBudgetAPI.Controllers
 
             if (dateQuery.Any())
             {
-                transactionDollarsByCategoryDateRange.startDate  = dateQuery.First().Posted_Date;
-                transactionDollarsByCategoryDateRange.endDate = dateQuery.Last().Posted_Date;
+                transactionDollarsByCategoryDateRange.StartDate  = dateQuery.First().Posted_Date;
+                transactionDollarsByCategoryDateRange.EndDate = dateQuery.Last().Posted_Date;
             }   
 
             return Ok(transactionDollarsByCategoryDateRange);

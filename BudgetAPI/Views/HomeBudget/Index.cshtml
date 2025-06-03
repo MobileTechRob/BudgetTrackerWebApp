@@ -3,7 +3,7 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome to Home Budget Year To Date</h1>
+    <h1 class="display-4">Home Budget - Year To Date Cost and Revenue</h1>
 </div>
 
 <script>
@@ -39,7 +39,7 @@
                 console.log("data is " + JSON.stringify(data));
                 // Process the data as needed
                 // For example, you can call a function to update the UI with the fetched data                
-                //renderSummaryByCategory(data);
+                renderSummaryByCategory(data);
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
@@ -48,59 +48,101 @@
 
         const tBodycostRevenueSummary = document.getElementById("costRevenueSummaryForYear");
 
-        tBodycostRevenueSummary.innerHTML = ""; // Clear existing rows
+        if (tBodycostRevenueSummary) 
+        {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td> test line of data </td>`;
+            tBodycostRevenueSummary.appendChild(row);
+        }
+
+        //tBodycostRevenueSummary.innerHTML = ''; // Clear existing rows
 
         //const row = document.createElement('tr');
         //row.innerHTML = `<td>${savings.categoryName}</td><td>&nbsp;&nbsp;</td><td>${savings.totalAmount}</td><td>&nbsp;&nbsp;</td>`
         //row.innerHTML = `<td>  test line of date </td>`;        
         //tBodycostRevenueSummary.appendChild(row);
-
-        const row = document.createElement('tr');
-        row.innerHTML = `<td> test line of data </td>`;
-        tBodycostRevenueSummary.appendChild(row);
     };
 
     function renderSummaryByCategory(transactionList) {
-      console.log('renderSummaryByCategory Start Date:', transactionList.startDate);
-      console.log('renderSummaryByCategory End Date:', transactionList.endDate);
+      console.log('renderSummaryByCategory Start Date:', transactionList.StartDate);
+      console.log('renderSummaryByCategory End Date:', transactionList.EndDate);
       console.log('renderSummaryByCategory Cost Transactions:', transactionList.listOfCostTransactionDollarsByCategory);
       console.log('renderSummaryByCategory Savings Transactions:', transactionList.listOfSavingsTransactionDollarsByCategory);
+
+
+      const yearHeader = document.getElementById('yearHeader');
+
+      console.log("yearHeader is " + yearHeader);
+
+      var costTotal = transactionList.CostTotal;
+      var savingsTotal = transactionList.SavingsTotal;
 
       var costList = transactionList.listOfCostTransactionDollarsByCategory;
       var savingsList = transactionList.listOfSavingsTransactionDollarsByCategory;
 
       const tbody = document.getElementById('costSummaryByCategory');
-      tbody.innerHTML = ''; // Clear any old rows
 
-      costList.forEach(cost => {
-        const row = document.createElement('tr');
+      if (tbody)
+      {
+          tbody.innerHTML = ''; // Clear any old rows
 
-        row.innerHTML = `<td>${cost.categoryName}</td><td>&nbsp;&nbsp;</td><td>${cost.totalAmount}</td><td>&nbsp;&nbsp;</td>`
+           costList.forEach(cost => {
+           const row = document.createElement('tr');
 
-        tbody.appendChild(row);
-      });
+           row.innerHTML = `<td>${cost.categoryName}</td><td>&nbsp;&nbsp;</td><td>${cost.totalAmount}</td><td>&nbsp;&nbsp;</td>`
+
+           tbody.appendChild(row);
+        });
+      }
 
       const tbodySavings = document.getElementById('savingsSummaryByCategory');
-      tbodySavings.innerHTML = ''; // Clear any old rows
 
-      savingsList.forEach(savings => {
-        const row = document.createElement('tr');
-        row.innerHTML = `<td>${savings.categoryName}</td><td>&nbsp;&nbsp;</td><td>${savings.totalAmount}</td><td>&nbsp;&nbsp;</td>`
-        tbodySavings.appendChild(row);
-      });
+      if (tbodySavings)
+      {
+        tbodySavings.innerHTML = ''; // Clear any old rows
+
+        savingsList.forEach(savings => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${savings.categoryName}</td><td>&nbsp;&nbsp;</td><td>${savings.totalAmount}</td><td>&nbsp;&nbsp;</td>`
+            tbodySavings.appendChild(row);
+        });
+      }
 
     }
 </script>
 
 <table>
+    <tbody id="yearHeader">
+    </tbody>
+</table>
+
+<table>
     <thead>
         <tr>
-            <th>Costs </th>
+            <th>Category</th>
+            <th>&nbsp;&nbsp;</th>
+            <th>Cost</th>
+        </tr>
+    </thead>
+    <tbody id="costSummaryByCategory">
+    </tbody>    
+    <tbody id="costTotal">
+    </tbody>
+</table>
+
+<table>
+    <thead>
+        <tr>
+            <th>Category</th>
             <th>&nbsp;&nbsp;</th>
             <th>Revenue</th>
         </tr>
     </thead>
-    <tbody id="costRevenueSummaryForYear">        
-    </tbody>    
+    <tbody id="savingsSummaryByCategory">
+    </tbody>
+    <tbody id="savingsTotal">
+    </tbody>
 </table>
+
+
 
