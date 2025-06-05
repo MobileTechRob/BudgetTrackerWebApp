@@ -23,6 +23,15 @@
 
         //document.getElementById("fromDate").value = firstDayOfMonth;
         //document.getElementById("toDate").value = todayDate;
+        const yearHeader = document.getElementById('yearHeader');
+        console.log("yearHeader is " + yearHeader);
+
+        if (yearHeader) 
+        {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>Year To Date Summary for ${firstDayOfYear} to ${todayDate}</td>`;
+            yearHeader.appendChild(row);
+        }
 
         const queryStr = `http://localhost:5065/HomeBudget/TransactionDollarsByCategory?fromDate=${firstDayOfYear}&toDate=${todayDate}`;
 
@@ -70,12 +79,15 @@
       console.log('renderSummaryByCategory Savings Transactions:', transactionList.listOfSavingsTransactionDollarsByCategory);
 
 
-      const yearHeader = document.getElementById('yearHeader');
+      var costTotal = transactionList.costTotal;
+      var savingsTotal = transactionList.savingsTotal;
 
-      console.log("yearHeader is " + yearHeader);
+      console.log("costTotal is " + costTotal);
+      console.log("savingsTotal is " + savingsTotal);
 
-      var costTotal = transactionList.CostTotal;
-      var savingsTotal = transactionList.SavingsTotal;
+      var cashBurn = costTotal - savingsTotal;
+
+      console.log("cashBurn is " + cashBurn);
 
       var costList = transactionList.listOfCostTransactionDollarsByCategory;
       var savingsList = transactionList.listOfSavingsTransactionDollarsByCategory;
@@ -113,6 +125,12 @@
 
 <table>
     <tbody id="yearHeader">
+    </tbody>
+
+    <tbody id="yearRevenue">
+    </tbody>
+
+    <tbody id="yearCost">
     </tbody>
 </table>
 
