@@ -12,8 +12,7 @@ using SharedDataModels;
 namespace DatabaseManager
 {
     public class DatabaseManager : IDatabaseManager
-    {
-        private AppDbContext appDbContext;
+    {        
         private ICRUD_Operations crud_Operations;
         private ILogger logger;
 
@@ -21,9 +20,8 @@ namespace DatabaseManager
         public int DailyTransaction_AlreadyExisted=0;
         public int DailyTransaction_InsertFailed = 0;
     
-        public DatabaseManager(ILogger<DatabaseManager> logger, AppDbContext appDbContext, ICRUD_Operations crud_Operations) 
-        {            
-            this.appDbContext = appDbContext;
+        public DatabaseManager(ILogger<DatabaseManager> logger,  ICRUD_Operations crud_Operations) 
+        {                        
             this.crud_Operations = crud_Operations;         
             this.logger = logger;
         }
