@@ -13,6 +13,7 @@ namespace DailyCostTracker
     {
         DatabaseManager.AppDbContext appDbContext;
         ILogger<DatabaseManager.DatabaseManager> loggerDatabase;
+        DatabaseManager.DatabaseManager databaseManager = null;
 
         public DataImporter(ILogger<DatabaseManager.DatabaseManager> logger, DatabaseManager.AppDbContext appDbContext)
         { 
@@ -20,11 +21,28 @@ namespace DailyCostTracker
             this.appDbContext = appDbContext;
         }
 
-        public string[] ImportTransactionRecordsFromCSVFile(string filePath)
+        public bool TryImportTransactionRecordsFromCSVFile(string filePath, out string[] lines)
         {
             // Read all lines from the file
-            string[] lines = System.IO.File.ReadAllLines(filePath);
-            return lines;
+            lines = System.IO.File.ReadAllLines(filePath);
+
+            return (VerifyHeaders(lines[0]));
+        }
+
+        bool VerifyHeaders(string header)
+        {
+            return header == "POSTED DATE,DESCRIPTION,AMOUNT,CURRENCY,TRANSACTION REFERENCE NUMBER,FI TRANSACTION REFERENCE,TYPE,CREDIT/DEBIT,ORIGINAL AMOUNT";
+        }
+
+        public bool CanDeleteDailyTransactionsFile()
+        {
+            if (databaseManager == null)
+            {
+                return false;
+            }   
+
+            // Check if the database is empty
+            return (databaseManager.DailyTransaction_InsertFailed == 0);
         }
 
         public void UpdateDatabaseWithTransactions(string[] linesOfData)
@@ -38,7 +56,7 @@ namespace DailyCostTracker
             ICRUD_Operations crud_Operations = new DatabaseManager.CRUD_Operations(this.appDbContext);
 
             TransactionFileParser parser = new TransactionFileParser();
-            DatabaseManager.DatabaseManager databaseManager = new DatabaseManager.DatabaseManager(this.loggerDatabase, appDbContext, crud_Operations);
+            databaseManager = new DatabaseManager.DatabaseManager(this.loggerDatabase, crud_Operations);
 
             while (enumerator.MoveNext())
             {

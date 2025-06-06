@@ -17,3 +17,7 @@
 /.vs/DailyCostTracker
 /TestProject/bin/Debug/net9.0
 /TestProject/obj
+/DatabaseManager/bin/Release/net9.0
+/DailyCostTracker/bin
+/SharedDataModels/bin/Release/net9.0
+/TestProject/bin/Release/net9.0
