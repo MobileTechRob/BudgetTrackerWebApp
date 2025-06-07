@@ -60,7 +60,7 @@ if (files.Length == 1)
 {
     string[] linesOfData;
 
-    logger.LogInformation($"ImportData processing {pathToDailyTransactionFile}", files[0]);
+    logger.LogInformation($"ImportData processing {files[0]}");
 
     if (dataImporter.TryImportTransactionRecordsFromCSVFile(files[0], out linesOfData))
         dataImporter.UpdateDatabaseWithTransactions(linesOfData);

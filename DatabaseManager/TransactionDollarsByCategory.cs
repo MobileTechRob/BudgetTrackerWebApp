@@ -25,8 +25,8 @@ namespace DatabaseManager.DataModels
 
     public class TransactionDollarsByCategoryDateRange
     {
-        public DateTime startDate { get; set; } 
-        public DateTime endDate { get; set; }
+        public DateTime StartDate { get; set; } 
+        public DateTime EndDate { get; set; }
         public int CostTotal { get; set; }
         public int SavingsTotal { get; set; }
 
