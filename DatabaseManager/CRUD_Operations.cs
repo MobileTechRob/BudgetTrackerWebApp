@@ -124,5 +124,10 @@ namespace DatabaseManager
                 return false;
             }            
         }
+
+        public InsertTransactionStatus AddReceiptFromCashTransaction(ReceiptsFromCashTransactions manuallyAddedReceipt, ILogger logger)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -2,9 +2,179 @@
     ViewData["Title"] = "Home Page";
 }
 
-<h3>Home Budget Index Page</h3>
-
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Home Budget - Year To Date Cost and Revenue</h1>
 </div>
+
+<script>
+
+    window.onload = function () {
+        console.log("window.onload called");
+        //console.log("document.getElementById(fromDate) " + document.getElementById("fromDate"));
+        //console.log("document.getElementById(toDate) " + document.getElementById("toDate"));
+
+        const now = new Date();
+        const firstDayOfYear = new Date(now.getFullYear(), 0, 1).toISOString().slice(0, 10); // "YYYY-MM-DD" format;
+        //const firstDayOfMonthAsString = firstDayOfMonth.toISOString().slice(0, 10); // "YYYY-MM-DD" format
+        const todayDate = new Date().toISOString().slice(0, 10);
+
+        console.log("First Day Of Year " +  firstDayOfYear);
+        console.log("Todays Date " +  todayDate);
+
+        //document.getElementById("fromDate").value = firstDayOfMonth;
+        //document.getElementById("toDate").value = todayDate;
+        const yearHeader = document.getElementById('yearHeader');
+        console.log("yearHeader is " + yearHeader);
+
+        if (yearHeader) 
+        {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>Year To Date Summary for ${firstDayOfYear} to ${todayDate}</td>`;
+            yearHeader.appendChild(row);
+        }
+
+        const queryStr = `http://localhost:5065/HomeBudget/TransactionDollarsByCategory?fromDate=${firstDayOfYear}&toDate=${todayDate}`;
+
+        console.log("queryStr is " + queryStr);
+
+        fetch(queryStr)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("data is " + JSON.stringify(data));
+                // Process the data as needed
+                // For example, you can call a function to update the UI with the fetched data                
+                renderSummaryByCategory(data);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+
+
+        const tBodycostRevenueSummary = document.getElementById("costRevenueSummaryForYear");
+
+        if (tBodycostRevenueSummary) 
+        {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td> test line of data </td>`;
+            tBodycostRevenueSummary.appendChild(row);
+        }
+
+        //tBodycostRevenueSummary.innerHTML = ''; // Clear existing rows
+
+        //const row = document.createElement('tr');
+        //row.innerHTML = `<td>${savings.categoryName}</td><td>&nbsp;&nbsp;</td><td>${savings.totalAmount}</td><td>&nbsp;&nbsp;</td>`
+        //row.innerHTML = `<td>  test line of date </td>`;        
+        //tBodycostRevenueSummary.appendChild(row);
+    };
+
+    function renderSummaryByCategory(transactionList) {
+      console.log('renderSummaryByCategory Start Date:', transactionList.StartDate);
+      console.log('renderSummaryByCategory End Date:', transactionList.EndDate);
+      console.log('renderSummaryByCategory Cost Transactions:', transactionList.listOfCostTransactionDollarsByCategory);
+      console.log('renderSummaryByCategory Savings Transactions:', transactionList.listOfSavingsTransactionDollarsByCategory);
+
+
+      var costTotal = transactionList.costTotal;
+      var savingsTotal = transactionList.savingsTotal;
+
+      console.log("costTotal is " + costTotal);
+      console.log("savingsTotal is " + savingsTotal);
+
+      var cashBurn = costTotal - savingsTotal;
+
+      console.log("cashBurn is " + cashBurn);
+
+      var costList = transactionList.listOfCostTransactionDollarsByCategory;
+      var savingsList = transactionList.listOfSavingsTransactionDollarsByCategory;
+
+      const tbody = document.getElementById('costSummaryByCategory');
+
+      if (tbody)
+      {
+          tbody.innerHTML = ''; // Clear any old rows
+
+           costList.forEach(cost => {
+           const row = document.createElement('tr');
+
+           row.innerHTML = `<td>${cost.categoryName}</td><td>&nbsp;&nbsp;</td><td>${cost.totalAmount}</td><td>&nbsp;&nbsp;</td>`
+
+           tbody.appendChild(row);
+        });
+      }
+
+      const tbodySavings = document.getElementById('savingsSummaryByCategory');
+
+      if (tbodySavings)
+      {
+        tbodySavings.innerHTML = ''; // Clear any old rows
+
+        savingsList.forEach(savings => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${savings.categoryName}</td><td>&nbsp;&nbsp;</td><td>${savings.totalAmount}</td><td>&nbsp;&nbsp;</td>`
+            tbodySavings.appendChild(row);
+        });
+      }
+
+      const tbodyYearRevenue = document.getElementById('yearRevenue');
+      const tbodyYearCost = document.getElementById('yearCost');
+
+      if (tbodyYearRevenue)
+      {
+          tbodyYearRevenue.innerHTML = ''; // Clear any old rows
+          const row = document.createElement('tr');
+          row.innerHTML = `<td>Year To Date Revenue</td><td>&nbsp;&nbsp;</td><td>${savingsTotal}</td>`;
+          tbodyYearRevenue.appendChild(row);    
+      }
+
+      if (tbodyYearCost)
+      {   
+          tbodyYearCost.innerHTML = ''; // Clear any old rows
+          const row = document.createElement('tr');
+          row.innerHTML = `<td>Year To Date Cost</td><td>&nbsp;&nbsp;</td><td>${costTotal}</td>`;
+          tbodyYearCost.appendChild(row);
+      }
+ }
+</script>
+
+<table>
+    <tbody id="yearHeader">
+    </tbody>
+
+    <tbody id="yearRevenue">
+    </tbody>
+
+    <tbody id="yearCost">
+    </tbody>
+</table>
+
+<table>
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>&nbsp;&nbsp;</th>
+            <th>Cost</th>
+        </tr>
+    </thead>
+    <tbody id="costSummaryByCategory">
+    </tbody>    
+</table>
+
+<table>
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>&nbsp;&nbsp;</th>
+            <th>Revenue</th>
+        </tr>
+    </thead>
+    <tbody id="savingsSummaryByCategory">
+    </tbody>
+</table>
+
+
+

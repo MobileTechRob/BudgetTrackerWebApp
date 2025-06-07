@@ -10,5 +10,6 @@ namespace DatabaseManager
         List<string> GetCostCategories();
         List<DailyTransaction> GetDailyTransactions(DateOnly? fromDate = null, DateOnly? toDate = null);
         bool MapKeywordToCostCategoryMapping(string keyword, string costcategory);
+        InsertTransactionStatus AddReceiptFromCashTransaction(ReceiptsFromCashTransactions manuallyAddedReceipt, ILogger logger);    
     }
 }
