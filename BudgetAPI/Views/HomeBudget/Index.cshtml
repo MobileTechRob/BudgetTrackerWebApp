@@ -120,7 +120,25 @@
         });
       }
 
-    }
+      const tbodyYearRevenue = document.getElementById('yearRevenue');
+      const tbodyYearCost = document.getElementById('yearCost');
+
+      if (tbodyYearRevenue)
+      {
+          tbodyYearRevenue.innerHTML = ''; // Clear any old rows
+          const row = document.createElement('tr');
+          row.innerHTML = `<td>Year To Date Revenue</td><td>&nbsp;&nbsp;</td><td>${savingsTotal}</td>`;
+          tbodyYearRevenue.appendChild(row);    
+      }
+
+      if (tbodyYearCost)
+      {   
+          tbodyYearCost.innerHTML = ''; // Clear any old rows
+          const row = document.createElement('tr');
+          row.innerHTML = `<td>Year To Date Cost</td><td>&nbsp;&nbsp;</td><td>${costTotal}</td>`;
+          tbodyYearCost.appendChild(row);
+      }
+ }
 </script>
 
 <table>
@@ -144,8 +162,6 @@
     </thead>
     <tbody id="costSummaryByCategory">
     </tbody>    
-    <tbody id="costTotal">
-    </tbody>
 </table>
 
 <table>
@@ -157,8 +173,6 @@
         </tr>
     </thead>
     <tbody id="savingsSummaryByCategory">
-    </tbody>
-    <tbody id="savingsTotal">
     </tbody>
 </table>
 
