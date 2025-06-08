@@ -125,6 +125,43 @@ namespace DatabaseManager
             }            
         }
 
+        public bool MapKeywordToSavingsCategoryMapping(string keyword, string savingscategory)
+        {
+            var existingMapping = appDbContext.KeywordToSavingsCategory.FirstOrDefault(k => k.keyword == keyword);
+
+            if (existingMapping != null)
+                existingMapping.savingscategory = savingscategory;
+            else
+            {
+                KeywordToSavingsCategory newMapping = new KeywordToSavingsCategory
+                {
+                    keyword = keyword,
+                    savingscategory = savingscategory
+                };
+                appDbContext.KeywordToSavingsCategory.Add(newMapping);
+            }
+
+            try
+            {
+                return (appDbContext.SaveChanges() == 1);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                // Log the concurrency error if necessary
+                return false;
+            }
+            catch (DbUpdateException ex)
+            {
+                // Log the update error if necessary
+                return false;
+            }
+            catch (Exception ex)
+            {
+                // Log the error if necessary
+                return false;
+            }
+        }
+
         public InsertTransactionStatus AddReceiptFromCashTransaction(ReceiptsFromCashTransactions manuallyAddedReceipt, ILogger logger)
         {
             throw new NotImplementedException();

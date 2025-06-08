@@ -33,7 +33,7 @@
             yearHeader.appendChild(row);
         }
 
-        const queryStr = `http://localhost:5065/HomeBudget/TransactionDollarsByCategory?fromDate=${firstDayOfYear}&toDate=${todayDate}`;
+        const queryStr = `/HomeBudget/TransactionDollarsByCategory?fromDate=${firstDayOfYear}&toDate=${todayDate}`;
 
         console.log("queryStr is " + queryStr);
 

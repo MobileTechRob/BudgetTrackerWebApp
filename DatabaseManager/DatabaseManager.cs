@@ -89,5 +89,23 @@ namespace DatabaseManager
 
             return crud_Operations.MapKeywordToCostCategoryMapping(keyword, costcategory);
         }
+
+        public bool MapKeywordToSavingsCategoryMapping(string keyword, string savingscategory)
+        {
+            const int MaxKeywordLength = 50;
+            const int SavingsCategoryMaxLength = 50;
+
+            if (keyword.Length > MaxKeywordLength)
+            {
+                throw new InvalidFieldLengthException($"Keyword or savings category exceeds maximum length of {MaxKeywordLength} characters.");
+            }
+
+            if (savingscategory.Length > SavingsCategoryMaxLength)
+            {
+                throw new InvalidFieldLengthException($"Keyword or savings category exceeds maximum length of {SavingsCategoryMaxLength} characters.");
+            }
+
+            return crud_Operations.MapKeywordToSavingsCategoryMapping(keyword, savingscategory);
+        }
     }
 }
