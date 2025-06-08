@@ -45,7 +45,7 @@ namespace DatabaseManager
             modelBuilder.Entity<DailyTransaction>(entity => { entity.Property(p => p.Amount).HasColumnType("decimal(15, 2)"); });
             modelBuilder.Entity<DailyTransaction>(entity => { entity.Property(p => p.Original_Amount).HasColumnType("decimal(15, 2)"); });
             modelBuilder.Entity<KeywordToCostCategory>().HasKey(d => d.keyword);
-            modelBuilder.Entity<KeywordToSavingsCategory>().HasNoKey();
+            modelBuilder.Entity<KeywordToSavingsCategory>().HasKey(d => d.keyword);
             modelBuilder.Entity<ReceiptsFromCashTransactions>().HasKey(d => d.posted_date);
         }
     }

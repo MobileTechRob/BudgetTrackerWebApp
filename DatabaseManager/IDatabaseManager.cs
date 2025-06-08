@@ -14,5 +14,6 @@ namespace DatabaseManager
         public List<string> GetCostCategories();
         bool VerifyUser(string userName, string password);
         bool MapKeywordToCostCategoryMapping(string keyword, string costcategory);
+        bool MapKeywordToSavingsCategoryMapping(string keyword, string costcategory);
     }
 }

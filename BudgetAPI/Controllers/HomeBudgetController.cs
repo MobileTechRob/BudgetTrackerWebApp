@@ -127,6 +127,12 @@ namespace MyPersonalBudgetAPI.Controllers
         }
 
 
+        [Route("HomeBudget/MaintainSettings")]
+        public ActionResult MaintainSystemSettings()
+        {
+            return View("MaintainSystemSettings");
+        }
+
         // GET: BudgetCostsController/Details/5
         public ActionResult Details(int id)
         {
@@ -153,6 +159,7 @@ namespace MyPersonalBudgetAPI.Controllers
                 return View();
             }
         }
+
 
         [HttpPost]
         public IActionResult VerifyUser([FromQuery] string username, [FromQuery] string password)
@@ -183,6 +190,23 @@ namespace MyPersonalBudgetAPI.Controllers
             {
                 return BadRequest(ex.Message);
             }   
+        }
+
+        [HttpPost]
+        [Route("HomeBudget/Keyword/{keyword}/SavingsCategory/{savingscategory}")]
+        public IActionResult CreateKeywordToSavingsCategoryMapping(string keyword, string savingscategory)
+        {
+            try
+            {
+                if (databaseManager.MapKeywordToSavingsCategoryMapping(keyword, savingscategory))
+                    return Ok("Keyword to SavingsCategory mapped successfully");
+                else
+                    return BadRequest("Failed to map keyword to savings category. Please check the input values.");
+            }
+            catch (InvalidFieldLengthException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // GET: BudgetCostsController/Edit/5
