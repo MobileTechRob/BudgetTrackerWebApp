@@ -2,6 +2,18 @@
     ViewData["Title"] = "Home Page";
 }
 
+<style>
+    .container {
+        display: flex;
+        gap: 20px; /* Space between divs */
+    }
+
+    .item {
+        flex: 1; /* Equal width */
+        /* Add your styling here */
+    }
+</style>
+
 <div class="text-center">
     <h1 class="display-4">Home Budget - Year To Date Cost and Revenue</h1>
 </div>
@@ -141,40 +153,49 @@
  }
 </script>
 
-<table>
-    <tbody id="yearHeader">
-    </tbody>
+<body>
+    <table>
+        <tbody id="yearHeader">
+        </tbody>
 
-    <tbody id="yearRevenue">
-    </tbody>
+        <tbody id="yearRevenue">
+        </tbody>
 
-    <tbody id="yearCost">
-    </tbody>
-</table>
+        <tbody id="yearCost">
+        </tbody>
+    </table>
 
-<table>
-    <thead>
-        <tr>
-            <th>Category</th>
-            <th>&nbsp;&nbsp;</th>
-            <th>Cost</th>
-        </tr>
-    </thead>
-    <tbody id="costSummaryByCategory">
-    </tbody>    
-</table>
+    <div class="container">
+        <div class="item">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>&nbsp;&nbsp;</th>
+                        <th>Cost</th>
+                    </tr>
+                </thead>
+                <tbody id="costSummaryByCategory">
+                </tbody>
+            </table>
+        </div>
+        <div class="item">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>&nbsp;&nbsp;</th>
+                            <th>Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody id="savingsSummaryByCategory">
+                    </tbody>
+                </table>
+        </div>
+    </div>
+    
 
-<table>
-    <thead>
-        <tr>
-            <th>Category</th>
-            <th>&nbsp;&nbsp;</th>
-            <th>Revenue</th>
-        </tr>
-    </thead>
-    <tbody id="savingsSummaryByCategory">
-    </tbody>
-</table>
 
 
+</body>
 
