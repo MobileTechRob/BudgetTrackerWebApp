@@ -55,9 +55,9 @@ namespace DatabaseManager
             return crud_Operations.GetDailyTransactions(fromDate, toDate);
         }
 
-        public List<string> GetCostCategories()
+        public CostAndSavingsCategories GetCostAndSavingsCategories()
         {
-            return crud_Operations.GetCostCategories();
+            return crud_Operations.GetCostAndSavingsCategories();
         }
 
         public bool VerifyUser(string userName, string password)

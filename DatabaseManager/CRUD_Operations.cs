@@ -162,6 +162,19 @@ namespace DatabaseManager
             }
         }
 
+        public CostAndSavingsCategories GetCostAndSavingsCategories()
+        {
+            CostAndSavingsCategories costAndSavingsCategories = new CostAndSavingsCategories();
+
+            IEnumerable<KeywordToCostCategory> costCategories = appDbContext.KeywordToCostCategory.AsEnumerable();
+            IEnumerable<KeywordToSavingsCategory> savingsCategories = appDbContext.KeywordToSavingsCategory.AsEnumerable();
+
+            costAndSavingsCategories.CostCategories.AddRange(costCategories);
+            costAndSavingsCategories.SavingsCategories.AddRange(savingsCategories);
+
+            return costAndSavingsCategories;
+        }
+
         public InsertTransactionStatus AddReceiptFromCashTransaction(ReceiptsFromCashTransactions manuallyAddedReceipt, ILogger logger)
         {
             throw new NotImplementedException();

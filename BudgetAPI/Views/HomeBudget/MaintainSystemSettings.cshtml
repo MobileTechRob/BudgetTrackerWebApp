@@ -5,3 +5,131 @@
 *@
 @{
 }
+
+<style>
+    .container {
+        display: flex;
+        gap: 20px; /* Space between divs */
+    }
+
+    .containerwithgap {
+        display: flex;
+        gap: 140px; /* Space between divs */
+    }
+
+    .item {
+        flex: 1; /* Equal width */
+        /* Add your styling here */
+    }
+</style>
+
+<form id="myForm">
+    <input type="text" id="name" placeholder="Cost Keyword" required />
+    <input type="text" id="price" placeholder="Description" required />
+
+    <button type="submit">Submit</button>
+</form>
+
+<script>
+        document.getElementById("myForm").addEventListener("submit", function (e) 
+        {
+            e.preventDefault(); // Prevent default form submission
+
+            console.log("from date from input control [" + document.getElementById("fromDate").value + "]");
+            console.log("to date from input control [" + document.getElementById("toDate").value + "]");
+        });
+
+    window.onload = function () {
+        console.log("window.onload called");
+
+        var queryStr = `/HomeBudget/CostAndSavingsCategories`;
+
+        fetch(queryStr)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(costAndSavingsCategories => {
+                console.log("data is " + JSON.stringify(costAndSavingsCategories));
+
+                // Process the data as needed
+                // For example, you can call a function to update the UI with the fetched data
+
+                ParseCostAndSavingCategories(costAndSavingsCategories);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+
+    function ParseCostAndSavingCategories(costAndSavingsCategories)
+    {                
+                costAndSavingsCategories.costCategories.forEach(costCategory => {                   
+                    console.log("costCategory.keyword " + costCategory.keyword);
+                    console.log("costCategory.costcategory " + costCategory.costcategory);
+                });
+
+                const costCategoryBody = document.getElementById("costKeywords");
+                
+                if (costCategoryBody != null) 
+                {
+                    costAndSavingsCategories.costCategories.forEach(costCategory => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `<td>${costCategory.keyword}</td>`;
+                        document.getElementById("costKeywords").appendChild(row);
+                
+                    });
+                }
+
+                costAndSavingsCategories.savingsCategories.forEach(savingsCategory => {
+                    console.log("savingsCategory.keyword " + savingsCategory.keyword);
+                    console.log("savingsCategory.savingscategory " + savingsCategory.savingscategory);
+                });
+               
+                const savingsCategoryBody = document.getElementById("savingsKeywords");
+
+                if (savingsCategoryBody != null)
+                {
+                    costAndSavingsCategories.savingsCategories.forEach(savingsCategory => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `<td>${savingsCategory.keyword}</td>`;
+                        document.getElementById("savingsKeywords").appendChild(row);
+
+                    });
+                }
+    }
+
+</script>
+
+<body>
+
+    <div class="containerwithgap">
+        <div class="item">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cost Keywords</th>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp;Description</th>
+                    </tr>
+                </thead>
+                <tbody id="costKeywords">
+                </tbody>
+            </table>
+        </div>
+        <div class="item">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Savings Keywords</th>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp;Description</th>
+                    </tr>
+                </thead>
+                <tbody id="savingsKeywords">
+                </tbody>
+        </table>
+    </div>
+</div>
+
+</body>

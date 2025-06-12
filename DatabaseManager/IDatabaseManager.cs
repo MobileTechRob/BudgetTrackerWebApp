@@ -11,9 +11,9 @@ namespace DatabaseManager
     {
         public List<DailyTransaction> GetDailyTransactions(DateOnly? fromDate = null, DateOnly? toDate = null);
         public List<DailyTransaction> GetSummaryByCategory(DateOnly? fromDate = null, DateOnly? toDate = null);
-        public List<string> GetCostCategories();
+        public CostAndSavingsCategories GetCostAndSavingsCategories();
         bool VerifyUser(string userName, string password);
         bool MapKeywordToCostCategoryMapping(string keyword, string costcategory);
-        bool MapKeywordToSavingsCategoryMapping(string keyword, string costcategory);
+        bool MapKeywordToSavingsCategoryMapping(string keyword, string costcategory);        
     }
 }
