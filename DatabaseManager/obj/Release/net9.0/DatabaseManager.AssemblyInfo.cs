@@ -12,9 +12,9 @@ using System;
 using System.Reflection;
 
 [assembly: System.Reflection.AssemblyCompanyAttribute("DatabaseManager")]
-[assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a26b9bc1365b732b60ba3cd56bab39458d2efb86")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c8f2f48521b1f72d7f8402876d551ec204e9b152")]
 [assembly: System.Reflection.AssemblyProductAttribute("DatabaseManager")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DatabaseManager")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
