@@ -22,3 +22,15 @@
 /DailyCostTracker/bin
 /TestProject/bin/Release/net9.0
 /BudgetAPI/bin/Release/net9.0
+/DatabaseManager/bin/Debug/net9.0/DatabaseManager.dll
+/DatabaseManager/bin/Debug/net9.0/DatabaseManager.pdb
+/DatabaseManager/bin/Debug/net9.0/SharedDataModels.dll
+/DatabaseManager/bin/Debug/net9.0/SharedDataModels.pdb
+/DatabaseManager/obj/Debug/net9.0/ref/DatabaseManager.dll
+/DatabaseManager/obj/Debug/net9.0/refint/DatabaseManager.dll
+/DatabaseManager/obj/Debug/net9.0/DatabaseManager.AssemblyInfo.cs
+/DatabaseManager/obj/Debug/net9.0/DatabaseManager.AssemblyInfoInputs.cache
+/DatabaseManager/obj/Debug/net9.0/DatabaseManager.csproj.AssemblyReference.cache
+/DatabaseManager/obj/Debug/net9.0/DatabaseManager.dll
+/DatabaseManager/obj/Debug/net9.0/DatabaseManager.pdb
+/DatabaseManager/obj/Debug/net9.0/DatabaseManager.sourcelink.json
