@@ -24,19 +24,53 @@
 </style>
 
 <form id="myForm">
-    <input type="text" id="name" placeholder="Cost Keyword" required />
-    <input type="text" id="price" placeholder="Description" required />
-
-    <button type="submit">Submit</button>
+    <input type="text" id="costKeyword" placeholder="Cost Keyword" />
+    <input type="text" id="costCategory" placeholder="Cost Category" />
+    
+    <input type="text" id="savingsKeyword" placeholder="Savings Keyword" />
+    <input type="text" id="savingsCategory" placeholder="Saving Category" />
+    <button type="submit">Add Mapping</button>
 </form>
 
 <script>
         document.getElementById("myForm").addEventListener("submit", function (e) 
         {
-            e.preventDefault(); // Prevent default form submission
+            const costKeyword = document.getElementById("costKeyword").value;
+            const costCategory = document.getElementById("costCategory").value;
+            const savingsKeyword = document.getElementById("savingsKeyword").value;
+            const savingsCategory = document.getElementById("savingsCategory").value;
 
-            console.log("from date from input control [" + document.getElementById("fromDate").value + "]");
-            console.log("to date from input control [" + document.getElementById("toDate").value + "]");
+            ///console.log("cost keyword " + costKeyword);
+            //console.log("cost desc " + costCategory);
+            //console.log("savings keyword " + savingsKeyword);
+            //console.log("savings desc " + savingsCategory);
+
+            xorResultCost = xorString(costKeyword, costCategory);
+            xorSavingsCost = xorString(savingsKeyword, savingsCategory);
+
+            if ((xorResultCost == 1) || (xorSavingsCost == 1))
+            {
+                alert("You must enter a keyword | category pair ");
+                return false; // Prevent form submission
+            }   
+
+            console.log("submit mapping");
+
+            if ((costKeyword.length >= 1) && (costCategory.length >= 1))
+            {
+                // Add code to handle the cost category submission
+                console.log("submit cost ");
+                var commandStr = `/HomeBudget/Keyword/${keyword}/CostCategory/${costcategory}`;              
+            }
+
+            if ((savingsKeyword.length >= 1) && (savingsCategory.length >= 1))
+            {
+                // Add code to handle the cost category submission
+                console.log("submit savings ");
+                var commandStr = `/HomeBudget/Keyword/${keyword}/SavingsCategory/${savingscategory}`;
+            }
+
+            e.preventDefault(); // Prevent default form submission
         });
 
     window.onload = function () {
@@ -64,6 +98,20 @@
             });
     }
 
+    function xorString(valueOne, valueTwo)
+    {
+        var bitOne = 0;
+        var bitTwo = 0;
+
+        if (valueOne.length >= 1) 
+            bitOne = 1;
+
+        if (valueTwo.length >= 1)
+            bitTwo = 1;
+
+       return (bitOne ^ bitTwo);
+    }
+
     function ParseCostAndSavingCategories(costAndSavingsCategories)
     {                
                 costAndSavingsCategories.costCategories.forEach(costCategory => {                   
@@ -78,7 +126,7 @@
                     costAndSavingsCategories.costCategories.forEach(costCategory => {
                         const row = document.createElement('tr');
                         row.innerHTML = `<td>${costCategory.keyword}</td>`;
-                        document.getElementById("costKeywords").appendChild(row);
+                        costCategoryBody.appendChild(row);
                 
                     });
                 }
@@ -95,8 +143,7 @@
                     costAndSavingsCategories.savingsCategories.forEach(savingsCategory => {
                         const row = document.createElement('tr');
                         row.innerHTML = `<td>${savingsCategory.keyword}</td>`;
-                        document.getElementById("savingsKeywords").appendChild(row);
-
+                        savingsCategoryBody.appendChild(row);
                     });
                 }
     }
