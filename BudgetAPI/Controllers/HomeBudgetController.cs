@@ -121,9 +121,9 @@ namespace MyPersonalBudgetAPI.Controllers
             return Ok("SummaryCostCategory_YTD - not implemented");
         }
 
-        public ObjectResult CostCategories()
+        public ObjectResult CostAndSavingsCategories()
         {
-            return Ok(databaseManager.GetCostCategories());
+            return Ok(databaseManager.GetCostAndSavingsCategories());
         }
 
 
