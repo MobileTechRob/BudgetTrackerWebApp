@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DatabaseManager
 {
-    internal class BudgetInterval
+    public class BudgetInterval
     {
         [Key]
         public string IntervalName { get; set; }
