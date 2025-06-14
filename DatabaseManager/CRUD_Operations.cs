@@ -93,7 +93,12 @@ namespace DatabaseManager
             var existingMapping = appDbContext.KeywordToCostCategory.FirstOrDefault(k => k.keyword == keyword);
 
             if (existingMapping != null)
-                existingMapping.costcategory = costcategory;
+            {
+                if (existingMapping.costcategory != costcategory)
+                    existingMapping.costcategory = costcategory;
+                else
+                    return true; // No change needed, return true as it already exists with the same category
+            }
             else
             {
                 KeywordToCostCategory newMapping = new KeywordToCostCategory
@@ -130,7 +135,12 @@ namespace DatabaseManager
             var existingMapping = appDbContext.KeywordToSavingsCategory.FirstOrDefault(k => k.keyword == keyword);
 
             if (existingMapping != null)
-                existingMapping.savingscategory = savingscategory;
+            {
+                if (existingMapping.savingscategory != savingscategory)
+                    existingMapping.savingscategory = savingscategory;
+                else
+                    return true; // No change needed, return true as it already exists with the same category   
+            }                
             else
             {
                 KeywordToSavingsCategory newMapping = new KeywordToSavingsCategory

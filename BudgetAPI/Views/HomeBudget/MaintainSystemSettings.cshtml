@@ -1,5 +1,5 @@
 ﻿<h1>Maintain System Settings</h1>
-
+<br />
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -21,15 +21,41 @@
         flex: 1; /* Equal width */
         /* Add your styling here */
     }
+
+    .itemwithgap {
+        flex: 1; /* Equal width */        
+        /* Add your styling here */
+    }
+
+    table th {
+        background-color: #FFFFFF;
+        color: #000000;
+        font-weight: bold;
+    }
+   
+
+    table tr:nth-child(even) {
+        color: #333333; /* Dark gray for even rows */
+    }
+
+    table tr:nth-child(odd) {
+        color: #0074d9; /* Blue for odd rows */
+    }
+
 </style>
 
 <form id="myForm">
-    <input type="text" id="costKeyword" placeholder="Cost Keyword" />
-    <input type="text" id="costCategory" placeholder="Cost Category" />
-    
-    <input type="text" id="savingsKeyword" placeholder="Savings Keyword" />
-    <input type="text" id="savingsCategory" placeholder="Saving Category" />
-    <button type="submit">Add Mapping</button>
+    <div class="containerwithgap">
+        <div class="itemwithgap">
+            <input type="text" id="costKeyword" placeholder="Cost Keyword" />
+            <input type="text" id="costCategory" placeholder="Cost Category" />
+        </div>
+        <div class="itemwithgap">      
+            <input type="text" id="savingsKeyword" placeholder="Savings Keyword" />
+            <input type="text" id="savingsCategory" placeholder="Saving Category" />
+        </div>
+        <button type="submit">Add Mapping</button>
+    </div>
 </form>
 
 <script>
@@ -77,7 +103,8 @@
                         console.log("response (second then) is " + response.statusText);
 
                         // Process the data as needed
-                        // For example, you can call a function to update the UI with the fetched data                    
+                        // For example, you can call a function to update the UI with the fetched data     
+                        location.reload(); // Reload the page to see the updated categories
                     })
                     .catch(error => {
                         console.error('There was a problem with the fetch operation:', error);
@@ -111,6 +138,7 @@
 
                         // Process the data as needed
                         // For example, you can call a function to update the UI with the fetched data
+                        location.reload(); // Reload the page to see the updated categories
                     })
                     .catch(error => {
                         console.error('There was a problem with the fetch operation:', error);
@@ -192,23 +220,22 @@
                         row.innerHTML = `<td>${savingsCategory.keyword}</td>&nbsp;&nbsp;&nbsp;&nbsp;<td>${savingsCategory.savingscategory}</td>`;
                         savingsCategoryBody.appendChild(row);
                     });
-
-
-
                 }
     }
 
 </script>
 
 <body>
-
+    <br />
+    <br />
     <div class="containerwithgap">
         <div class="item">
             <table>
                 <thead>
                     <tr>
-                        <th>Cost Keywords</th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;Category</th>
+                        <th>Keywords from Transaction Text</th>
+                        <th>&nbsp;&nbsp;&nbsp;</th>
+                        <th>Category</th>
                     </tr>
                 </thead>
                 <tbody id="costKeywords">
@@ -219,14 +246,14 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Savings Keywords</th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;Category</th>
+                        <th>Keywords from Transaction Text</th>
+                        <th>&nbsp;&nbsp;&nbsp;</th>
+                        <th>Category</th>
                     </tr>
                 </thead>
                 <tbody id="savingsKeywords">
                 </tbody>
-        </table>
+            </table>
+        </div>
     </div>
-</div>
-
 </body>
