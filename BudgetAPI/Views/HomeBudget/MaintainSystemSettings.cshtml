@@ -40,11 +40,6 @@
             const savingsKeyword = document.getElementById("savingsKeyword").value;
             const savingsCategory = document.getElementById("savingsCategory").value;
 
-            ///console.log("cost keyword " + costKeyword);
-            //console.log("cost desc " + costCategory);
-            //console.log("savings keyword " + savingsKeyword);
-            //console.log("savings desc " + savingsCategory);
-
             xorResultCost = xorString(costKeyword, costCategory);
             xorSavingsCost = xorString(savingsKeyword, savingsCategory);
 
@@ -60,14 +55,66 @@
             {
                 // Add code to handle the cost category submission
                 console.log("submit cost ");
-                var commandStr = `/HomeBudget/Keyword/${keyword}/CostCategory/${costcategory}`;              
+                var commandStr = `/HomeBudget/Keyword/${costKeyword}/CostCategory/${costCategory}`;
+
+                console.log("commandStr is " + commandStr); 
+
+                fetch(commandStr, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                                }
+                    })
+                    .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    console.log("response (first then) is " + response.statusText);
+
+                    return response;
+                    })
+                    .then(response => {
+                        console.log("response (second then) is " + response.statusText);
+
+                        // Process the data as needed
+                        // For example, you can call a function to update the UI with the fetched data                    
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                    });
             }
 
             if ((savingsKeyword.length >= 1) && (savingsCategory.length >= 1))
             {
                 // Add code to handle the cost category submission
                 console.log("submit savings ");
-                var commandStr = `/HomeBudget/Keyword/${keyword}/SavingsCategory/${savingscategory}`;
+                var commandStr = `/HomeBudget/Keyword/${savingsKeyword}/SavingsCategory/${savingsCategory}`;
+
+                console.log("commandStr " + commandStr);
+
+                fetch(commandStr, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                                }
+                    })
+                    .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    console.log("savings response (first then) is " + response.statusText);
+
+                    return response;
+                    })
+                    .then(response => {
+                        console.log("savings response (second then) is " + response.statusText);
+
+                        // Process the data as needed
+                        // For example, you can call a function to update the UI with the fetched data
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                    });
             }
 
             e.preventDefault(); // Prevent default form submission
@@ -125,7 +172,7 @@
                 {
                     costAndSavingsCategories.costCategories.forEach(costCategory => {
                         const row = document.createElement('tr');
-                        row.innerHTML = `<td>${costCategory.keyword}</td>`;
+                        row.innerHTML = `<td>${costCategory.keyword}</td>&nbsp;&nbsp;&nbsp;&nbsp;<td>${costCategory.costcategory}</td>`;
                         costCategoryBody.appendChild(row);
                 
                     });
@@ -142,9 +189,12 @@
                 {
                     costAndSavingsCategories.savingsCategories.forEach(savingsCategory => {
                         const row = document.createElement('tr');
-                        row.innerHTML = `<td>${savingsCategory.keyword}</td>`;
+                        row.innerHTML = `<td>${savingsCategory.keyword}</td>&nbsp;&nbsp;&nbsp;&nbsp;<td>${savingsCategory.savingscategory}</td>`;
                         savingsCategoryBody.appendChild(row);
                     });
+
+
+
                 }
     }
 
@@ -158,7 +208,7 @@
                 <thead>
                     <tr>
                         <th>Cost Keywords</th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;Description</th>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp;Category</th>
                     </tr>
                 </thead>
                 <tbody id="costKeywords">
@@ -170,7 +220,7 @@
                 <thead>
                     <tr>
                         <th>Savings Keywords</th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;Description</th>
+                        <th>&nbsp;&nbsp;&nbsp;&nbsp;Category</th>
                     </tr>
                 </thead>
                 <tbody id="savingsKeywords">
