@@ -12,10 +12,25 @@
         flex: 1; /* Equal width */
         /* Add your styling here */
     }
+
+    table tr:nth-child(even) {
+        color: #333333; /* Dark gray for even rows */
+    }
+
+    table tr:nth-child(odd) {
+        color: #0074d9; /* Blue for odd rows */
+    }
+
+    table th {
+        background-color: #FFFFFF;
+        color: #000000;
+        font-weight: bold;
+    }
+
 </style>
 
 <div class="text-center">
-    <h1 class="display-4">Home Budget - Year To Date Cost and Revenue</h1>
+    <h4>Your Budget - Year To Date Cost and Revenue</h4>
 </div>
 
 <script>
@@ -153,7 +168,7 @@
  }
 </script>
 
-<body>
+<body style="background-color: beige;">
     <table>
         <tbody id="yearHeader">
         </tbody>
@@ -193,9 +208,5 @@
                 </table>
         </div>
     </div>
-    
-
-
-
 </body>
 

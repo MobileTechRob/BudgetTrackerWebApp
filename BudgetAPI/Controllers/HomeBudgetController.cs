@@ -115,10 +115,10 @@ namespace MyPersonalBudgetAPI.Controllers
         }
 
 
-        [Route("HomeBudget/YearToDate")]
-        public ObjectResult SummaryCostCategory_YTD([FromQuery] DateOnly? fromDate = null, [FromQuery] DateOnly? toDate = null)
+        [Route("HomeBudget/YearToDateByQuarter")]
+        public ActionResult SummaryCostCategory_YearToDateByQuarter([FromQuery] DateOnly? fromDate = null, [FromQuery] DateOnly? toDate = null)
         {
-            return Ok("SummaryCostCategory_YTD - not implemented");
+            return View("YearToDateByQuarter");
         }
 
         public ObjectResult CostAndSavingsCategories()
@@ -126,11 +126,16 @@ namespace MyPersonalBudgetAPI.Controllers
             return Ok(databaseManager.GetCostAndSavingsCategories());
         }
 
-
-        [Route("HomeBudget/MaintainSettings")]
+        [Route("HomeBudget/MaintainCategories")]
         public ActionResult MaintainSystemSettings()
         {
-            return View("MaintainSystemSettings");
+            return View("MaintainCategories");
+        }
+
+        [Route("HomeBudget/MaintainQuarters")]
+        public ActionResult MaintainQuarters()
+        {
+            return View("MaintainQuarters");
         }
 
         // GET: BudgetCostsController/Details/5
