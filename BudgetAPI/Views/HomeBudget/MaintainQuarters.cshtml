@@ -1,0 +1,259 @@
+﻿<h1>Maintain Quarters</h1>
+<br />
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<style>
+    .container {
+        display: flex;
+        gap: 20px; /* Space between divs */
+    }
+
+    .containerwithgap {
+        display: flex;
+        gap: 140px; /* Space between divs */
+    }
+
+    .item {
+        flex: 1; /* Equal width */
+        /* Add your styling here */
+    }
+
+    .itemwithgap {
+        flex: 1; /* Equal width */        
+        /* Add your styling here */
+    }
+
+    table th {
+        background-color: #FFFFFF;
+        color: #000000;
+        font-weight: bold;
+    }
+   
+
+    table tr:nth-child(even) {
+        color: #333333; /* Dark gray for even rows */
+    }
+
+    table tr:nth-child(odd) {
+        color: #0074d9; /* Blue for odd rows */
+    }
+
+</style>
+
+<form id="myForm">
+    <div class="containerwithgap">
+        <div class="itemwithgap">
+            <input type="text" id="costKeyword" placeholder="Cost Keyword" />
+            <input type="text" id="costCategory" placeholder="Cost Category" />
+        </div>
+        <div class="itemwithgap">      
+            <input type="text" id="savingsKeyword" placeholder="Savings Keyword" />
+            <input type="text" id="savingsCategory" placeholder="Saving Category" />
+        </div>
+        <button type="submit">Add Mapping</button>
+    </div>
+</form>
+
+<script>
+        document.getElementById("myForm").addEventListener("submit", function (e) 
+        {
+            const costKeyword = document.getElementById("costKeyword").value;
+            const costCategory = document.getElementById("costCategory").value;
+            const savingsKeyword = document.getElementById("savingsKeyword").value;
+            const savingsCategory = document.getElementById("savingsCategory").value;
+
+            xorResultCost = xorString(costKeyword, costCategory);
+            xorSavingsCost = xorString(savingsKeyword, savingsCategory);
+
+            if ((xorResultCost == 1) || (xorSavingsCost == 1))
+            {
+                alert("You must enter a keyword | category pair ");
+                return false; // Prevent form submission
+            }   
+
+            console.log("submit mapping");
+
+            if ((costKeyword.length >= 1) && (costCategory.length >= 1))
+            {
+                // Add code to handle the cost category submission
+                console.log("submit cost ");
+                var commandStr = `/HomeBudget/Keyword/${costKeyword}/CostCategory/${costCategory}`;
+
+                console.log("commandStr is " + commandStr); 
+
+                fetch(commandStr, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                                }
+                    })
+                    .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    console.log("response (first then) is " + response.statusText);
+
+                    return response;
+                    })
+                    .then(response => {
+                        console.log("response (second then) is " + response.statusText);
+
+                        // Process the data as needed
+                        // For example, you can call a function to update the UI with the fetched data     
+                        location.reload(); // Reload the page to see the updated categories
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                    });
+            }
+
+            if ((savingsKeyword.length >= 1) && (savingsCategory.length >= 1))
+            {
+                // Add code to handle the cost category submission
+                console.log("submit savings ");
+                var commandStr = `/HomeBudget/Keyword/${savingsKeyword}/SavingsCategory/${savingsCategory}`;
+
+                console.log("commandStr " + commandStr);
+
+                fetch(commandStr, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                                }
+                    })
+                    .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    console.log("savings response (first then) is " + response.statusText);
+
+                    return response;
+                    })
+                    .then(response => {
+                        console.log("savings response (second then) is " + response.statusText);
+
+                        // Process the data as needed
+                        // For example, you can call a function to update the UI with the fetched data
+                        location.reload(); // Reload the page to see the updated categories
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                    });
+            }
+
+            e.preventDefault(); // Prevent default form submission
+        });
+
+    window.onload = function () {
+        console.log("window.onload called");
+
+        var queryStr = `/HomeBudget/CostAndSavingsCategories`;
+
+        fetch(queryStr)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(costAndSavingsCategories => {
+                console.log("data is " + JSON.stringify(costAndSavingsCategories));
+
+                // Process the data as needed
+                // For example, you can call a function to update the UI with the fetched data
+
+                ParseCostAndSavingCategories(costAndSavingsCategories);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+
+    function xorString(valueOne, valueTwo)
+    {
+        var bitOne = 0;
+        var bitTwo = 0;
+
+        if (valueOne.length >= 1) 
+            bitOne = 1;
+
+        if (valueTwo.length >= 1)
+            bitTwo = 1;
+
+       return (bitOne ^ bitTwo);
+    }
+
+    function ParseCostAndSavingCategories(costAndSavingsCategories)
+    {                
+                costAndSavingsCategories.costCategories.forEach(costCategory => {                   
+                    console.log("costCategory.keyword " + costCategory.keyword);
+                    console.log("costCategory.costcategory " + costCategory.costcategory);
+                });
+
+                const costCategoryBody = document.getElementById("costKeywords");
+                
+                if (costCategoryBody != null) 
+                {
+                    costAndSavingsCategories.costCategories.forEach(costCategory => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `<td>${costCategory.keyword}</td>&nbsp;&nbsp;&nbsp;&nbsp;<td>${costCategory.costcategory}</td>`;
+                        costCategoryBody.appendChild(row);
+                
+                    });
+                }
+
+                costAndSavingsCategories.savingsCategories.forEach(savingsCategory => {
+                    console.log("savingsCategory.keyword " + savingsCategory.keyword);
+                    console.log("savingsCategory.savingscategory " + savingsCategory.savingscategory);
+                });
+               
+                const savingsCategoryBody = document.getElementById("savingsKeywords");
+
+                if (savingsCategoryBody != null)
+                {
+                    costAndSavingsCategories.savingsCategories.forEach(savingsCategory => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `<td>${savingsCategory.keyword}</td>&nbsp;&nbsp;&nbsp;&nbsp;<td>${savingsCategory.savingscategory}</td>`;
+                        savingsCategoryBody.appendChild(row);
+                    });
+                }
+    }
+
+</script>
+
+<body style="background-color: beige;">
+    <br />
+    <br />
+    <div class="containerwithgap">
+        <div class="item">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Keywords from Transaction Text</th>
+                        <th>&nbsp;&nbsp;&nbsp;</th>
+                        <th>Category</th>
+                    </tr>
+                </thead>
+                <tbody id="costKeywords">
+                </tbody>
+            </table>
+        </div>
+        <div class="item">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Keywords from Transaction Text</th>
+                        <th>&nbsp;&nbsp;&nbsp;</th>
+                        <th>Category</th>
+                    </tr>
+                </thead>
+                <tbody id="savingsKeywords">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
