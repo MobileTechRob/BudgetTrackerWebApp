@@ -15,6 +15,7 @@ namespace DatabaseManager
         public DbSet<KeywordToCostCategory> KeywordToCostCategory { get; set; }
         public DbSet<KeywordToSavingsCategory> KeywordToSavingsCategory { get; set; }
         public DbSet<ReceiptsFromCashTransactions> ReceiptsFromCashTransactions { get; set; }
+        public DbSet<BudgetInterval> BudgetIntervals { get; set; }
 
         string connectionString = "";
 
@@ -47,6 +48,7 @@ namespace DatabaseManager
             modelBuilder.Entity<KeywordToCostCategory>().HasKey(d => d.keyword);
             modelBuilder.Entity<KeywordToSavingsCategory>().HasKey(d => d.keyword);
             modelBuilder.Entity<ReceiptsFromCashTransactions>().HasKey(d => d.posted_date);
+            modelBuilder.Entity<BudgetInterval>().HasKey(table => table.IntervalName);
         }
     }
 }
