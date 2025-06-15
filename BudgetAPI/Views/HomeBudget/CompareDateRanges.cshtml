@@ -1,22 +1,56 @@
 ﻿@{
-    ViewData["Title"] = "Year To Date By Quarter";
+    ViewData["Title"] = "Compare Date Ranges";
 }
 
-<h2>ListWithInput of Costs</h2>
+<h2>Compare Date Ranges</h2>
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
 </div>
 
 
-<form id="myForm">
-@*     <input type="text" id="name" placeholder="Name" required />
-    <input type="number" id="price" placeholder="Price" required />
- *@
-    <input type="date" id="fromDate" placeholder="From Date" />
-    <input type="date" id="toDate" placeholder="To Date" />
+<style>
+    .container {
+        display: flex;
+        gap: 20px; /* Space between divs */
+    }
 
-    <button type="submit">Submit</button>
+    .item {
+        flex: 1; /* Equal width */
+        /* Add your styling here */
+    }
+
+    table tr:nth-child(even) {
+        color: #333333; /* Dark gray for even rows */
+    }
+
+    table tr:nth-child(odd) {
+        color: #0074d9; /* Blue for odd rows */
+    }
+
+    table th {
+        background-color: #FFFFFF;
+        color: #000000;
+        font-weight: bold;
+    }
+
+</style>
+
+
+<form id="myForm">
+    <div class="container">
+        <div class="item">
+            <input type="date" id="fromDate_1" placeholder="From Date" />
+            <input type="date" id="toDate_1" placeholder="To Date" />
+        </div>
+
+        <div class="item">
+            <input type="date" id="fromDate_2" placeholder="From Date" />
+            <input type="date" id="toDate_2" placeholder="To Date" />
+        </div>
+
+        <button type="submit">Submit</button>
+    </div>
 </form>
 
 <div id="status"></div>
@@ -25,8 +59,11 @@
     document.getElementById("myForm").addEventListener("submit", function (e) {
         e.preventDefault(); // Prevent default form submission
 
-        console.log("from date from input control [" + document.getElementById("fromDate").value + "]");
-        console.log("to date from input control [" + document.getElementById("toDate").value + "]");
+        console.log("from date from input control [" + document.getElementById("fromDate_1").value + "]");
+        console.log("to date from input control [" + document.getElementById("toDate_1").value + "]");
+
+        console.log("from date from input control [" + document.getElementById("fromDate_2").value + "]");
+        console.log("to date from input control [" + document.getElementById("toDate_2").value + "]");
 
         const startDate = null;
         const endDate = null;
