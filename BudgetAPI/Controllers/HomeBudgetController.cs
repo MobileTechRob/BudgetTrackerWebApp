@@ -123,7 +123,7 @@ namespace MyPersonalBudgetAPI.Controllers
 
 
         [Route("HomeBudget/CompareDateRanges")]
-        public ActionResult SummaryCostCategory_DateRanges([FromQuery] DateOnly? fromDate1 = null, [FromQuery] DateOnly? toDate1 = null, [FromQuery] DateOnly? fromDate2 = null, [FromQuery] DateOnly? toDate2 = null)
+        public ActionResult SummaryCostCategory_DateRanges()
         {
             return View("CompareDateRanges");
         }
