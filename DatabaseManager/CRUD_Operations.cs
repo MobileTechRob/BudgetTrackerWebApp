@@ -189,5 +189,19 @@ namespace DatabaseManager
         {
             throw new NotImplementedException();
         }
+
+        public void RecordImportInformation(DateTime startDate, DateTime endDate, int transactionCount, int insertedTransactions, int alreadyExistingTransactions, int failedInsertions)
+        {
+            ImportTransactionDataLog importLog = new ImportTransactionDataLog
+            {
+                DateTimeOfImport = DateTime.Now,
+                Transaction_StartDate = startDate,
+                Transaction_EndDate = endDate,
+                NumberOfTransactions = transactionCount,
+                NumberOfInsertions = insertedTransactions,
+                NumberOfExistingTransactions = alreadyExistingTransactions,
+                NumberOfFailedInsertions = failedInsertions
+            };
+        }
     }
 }

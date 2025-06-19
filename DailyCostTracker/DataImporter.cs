@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SharedDataModels;
+using DailyCostTracker.DataModels;
 
 namespace DailyCostTracker
 {
@@ -47,6 +48,9 @@ namespace DailyCostTracker
 
         public void UpdateDatabaseWithTransactions(string[] linesOfData)
         {
+            if (linesOfData == null || linesOfData.Length == 0)                            
+               return;
+            
             // Read all lines from the file
             System.Collections.IEnumerator enumerator = linesOfData.GetEnumerator();
 
@@ -58,15 +62,28 @@ namespace DailyCostTracker
             TransactionFileParser parser = new TransactionFileParser();
             databaseManager = new DatabaseManager.DatabaseManager(this.loggerDatabase, crud_Operations);
 
+            DateTime startDate = DateTime.MinValue;
+            DateTime endDate = DateTime.MinValue;
+            DatabaseManager.DataModels.DailyTransaction? dailyTransaction=null;
+
             while (enumerator.MoveNext())
             {
-                bool result = databaseManager.AddDailyTransaction(parser.Parser(enumerator.Current.ToString()!));
+                dailyTransaction = parser.Parser(enumerator.Current.ToString()!);
 
+                bool result = databaseManager.AddDailyTransaction(dailyTransaction);
+                if (startDate == DateTime.MinValue)              
+                    startDate = dailyTransaction.Posted_Date;
+               
                 if (!result)
                 {
                  //   insertErrors++;
                 }
             }
+
+            if (dailyTransaction != null)
+                endDate = dailyTransaction.Posted_Date;
+
+            databaseManager.RecordImportInformation(startDate, endDate, linesOfData.Length - 1);    
 
             loggerDatabase.LogInformation($"UpdateDatabaseWithTransactions: Failures: {databaseManager.DailyTransaction_InsertFailed}");
             loggerDatabase.LogInformation($"UpdateDatabaseWithTransactions: Insertions: {databaseManager.DailyTransaction_Inserted}");
