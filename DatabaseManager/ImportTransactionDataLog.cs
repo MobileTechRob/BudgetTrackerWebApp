@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace DatabaseManager
 {
     public class ImportTransactionDataLog
     {
+        [Key]
         public DateTime DateTimeOfImport { get; set; }
         public string LogData { get; set; }
         public int NumberOfTransactions { get; set; }

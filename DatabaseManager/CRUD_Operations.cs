@@ -202,6 +202,10 @@ namespace DatabaseManager
                 NumberOfExistingTransactions = alreadyExistingTransactions,
                 NumberOfFailedInsertions = failedInsertions
             };
+
+            appDbContext.ImportTransactionDataLog.Add(importLog);
+
+            appDbContext.SaveChanges();
         }
     }
 }

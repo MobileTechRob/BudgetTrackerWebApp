@@ -16,7 +16,7 @@ namespace DatabaseManager
         public DbSet<KeywordToSavingsCategory> KeywordToSavingsCategory { get; set; }
         public DbSet<ReceiptsFromCashTransactions> ReceiptsFromCashTransactions { get; set; }
         public DbSet<BudgetInterval> BudgetIntervals { get; set; }        
-        public DbSet<ImportTransactionDataLog> ImportTransactionDataLogs { get; set; }  
+        public DbSet<ImportTransactionDataLog> ImportTransactionDataLog { get; set; }  
 
         string connectionString = "";
 

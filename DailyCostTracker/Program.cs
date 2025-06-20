@@ -67,6 +67,7 @@ if (files.Length == 1)
 
     if (dataImporter.CanDeleteDailyTransactionsFile())
     {
+        
         logger.LogInformation("Deleting file {file}", files[0]);
         File.Delete(files[0]);
     }
