@@ -118,5 +118,10 @@ namespace DatabaseManager
 
             crud_Operations.RecordImportInformation(startDate, endDate, transactionCount, DailyTransaction_Inserted, DailyTransaction_AlreadyExisted, DailyTransaction_InsertFailed);
         }
+
+        public List<ImportTransactionDataLog> GetImportTransactionHistory()
+        {
+            return crud_Operations.GetImportTransactionHistory();            
+        }
     }
 }

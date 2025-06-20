@@ -14,5 +14,6 @@ namespace DatabaseManager
         InsertTransactionStatus AddReceiptFromCashTransaction(ReceiptsFromCashTransactions manuallyAddedReceipt, ILogger logger);    
         CostAndSavingsCategories GetCostAndSavingsCategories();
         void RecordImportInformation(DateTime startDate, DateTime endDate, int transactionCount, int insertedTransactions, int alreadyExistingTransactions, int failedInsertions);
+        List<ImportTransactionDataLog> GetImportTransactionHistory();
     }
 }

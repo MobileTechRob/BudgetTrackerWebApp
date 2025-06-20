@@ -221,6 +221,11 @@ namespace MyPersonalBudgetAPI.Controllers
             }
         }
 
+        public ObjectResult ImportTransactionHistory()
+        {
+            return Ok(databaseManager.GetImportTransactionHistory());
+        }
+
         // GET: BudgetCostsController/Edit/5
         public ActionResult Edit(int id)
         {

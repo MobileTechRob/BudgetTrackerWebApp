@@ -207,5 +207,9 @@ namespace DatabaseManager
 
             appDbContext.SaveChanges();
         }
+        public List<ImportTransactionDataLog> GetImportTransactionHistory()
+        { 
+            return appDbContext.ImportTransactionDataLog.ToList();
+        }
     }
 }
