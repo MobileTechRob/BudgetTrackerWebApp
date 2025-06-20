@@ -71,8 +71,8 @@ namespace DailyCostTracker
                 dailyTransaction = parser.Parser(enumerator.Current.ToString()!);
 
                 bool result = databaseManager.AddDailyTransaction(dailyTransaction);
-                if (startDate == DateTime.MinValue)              
-                    startDate = dailyTransaction.Posted_Date;
+                if (endDate == DateTime.MinValue)              
+                    endDate = dailyTransaction.Posted_Date;
                
                 if (!result)
                 {
@@ -81,7 +81,7 @@ namespace DailyCostTracker
             }
 
             if (dailyTransaction != null)
-                endDate = dailyTransaction.Posted_Date;
+                startDate = dailyTransaction.Posted_Date;
 
             databaseManager.RecordImportInformation(startDate, endDate, linesOfData.Length - 1);    
 

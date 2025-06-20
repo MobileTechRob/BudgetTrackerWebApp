@@ -52,31 +52,32 @@ if (!string.IsNullOrEmpty(pathToDailyTransactionFile))
 
 logger.LogInformation("PathToApplicationToImportFile environment variable." + pathToDailyTransactionFile);
 
-string[] files = Directory.GetFiles(pathToDailyTransactionFile, "transaction*.csv");
+string[] filesToImport = Directory.GetFiles(pathToDailyTransactionFile, "transaction*.csv");
 
-logger.LogInformation("ImportData processing {count}", files.Length);
+logger.LogInformation("ImportData processing: There are {count} files to process", filesToImport.Length);
 
-if (files.Length == 1)
+if (filesToImport.Length == 1)
 {
-    string[] linesOfData;
+    string[] linesOfTransactionData;
 
-    logger.LogInformation($"ImportData processing {files[0]}");
+    logger.LogInformation($"ImportData processing {filesToImport[0]}");
 
-    if (dataImporter.TryImportTransactionRecordsFromCSVFile(files[0], out linesOfData))
-        dataImporter.UpdateDatabaseWithTransactions(linesOfData);
+    if (dataImporter.TryImportTransactionRecordsFromCSVFile(filesToImport[0], out linesOfTransactionData))
+        dataImporter.UpdateDatabaseWithTransactions(linesOfTransactionData);
 
     if (dataImporter.CanDeleteDailyTransactionsFile())
     {
         
-        logger.LogInformation("Deleting file {file}", files[0]);
-        File.Delete(files[0]);
+        logger.LogInformation("Deleting file {file}", filesToImport[0]);
+        File.Delete(filesToImport[0]);
     }
     else
     {
-        logger.LogWarning("Won't delete file {file} as errors occured during processing", files[0]);
+        logger.LogWarning("Won't delete file {file} as errors occured during processing", filesToImport[0]);
     }
-
-    DatabaseManager.TransactionCategoryMapper transactionCategoryMapper = new DatabaseManager.TransactionCategoryMapper(logger, appDbContext);
-    transactionCategoryMapper.PlaceCategoryOnTransactions();
 }
+
+DatabaseManager.TransactionCategoryMapper transactionCategoryMapper = new DatabaseManager.TransactionCategoryMapper(logger, appDbContext);
+transactionCategoryMapper.PlaceCategoryOnTransactions();
+
 

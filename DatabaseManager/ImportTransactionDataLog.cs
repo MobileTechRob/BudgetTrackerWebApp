@@ -11,12 +11,12 @@ namespace DatabaseManager
     {
         [Key]
         public DateTime DateTimeOfImport { get; set; }
-        public string LogData { get; set; }
-        public int NumberOfTransactions { get; set; }
+        public string LogData { get; set; } = "";
+        public Int64 NumberOfTransactions { get; set; }
         public DateTime Transaction_StartDate { get; set; }
         public DateTime Transaction_EndDate { get; set; }
-        public int NumberOfInsertions { get; set; }
-        public int NumberOfExistingTransactions { get; set; }
-        public int NumberOfFailedInsertions { get; set; }
+        public Int64 NumberOfInsertions { get; set; }
+        public Int64 NumberOfExistingTransactions { get; set; }
+        public Int64 NumberOfFailedInsertions { get; set; }
     }
 }

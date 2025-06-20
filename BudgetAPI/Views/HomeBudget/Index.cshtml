@@ -21,6 +21,10 @@
         color: #0074d9; /* Blue for odd rows */
     }
 
+    table th_center {
+        text-align: center;
+    }
+
     table th {
         background-color: #FFFFFF;
         color: #000000;
@@ -37,19 +41,14 @@
 
     window.onload = function () {
         console.log("window.onload called");
-        //console.log("document.getElementById(fromDate) " + document.getElementById("fromDate"));
-        //console.log("document.getElementById(toDate) " + document.getElementById("toDate"));
 
         const now = new Date();
         const firstDayOfYear = new Date(now.getFullYear(), 0, 1).toISOString().slice(0, 10); // "YYYY-MM-DD" format;
-        //const firstDayOfMonthAsString = firstDayOfMonth.toISOString().slice(0, 10); // "YYYY-MM-DD" format
         const todayDate = new Date().toISOString().slice(0, 10);
 
         console.log("First Day Of Year " +  firstDayOfYear);
         console.log("Todays Date " +  todayDate);
 
-        //document.getElementById("fromDate").value = firstDayOfMonth;
-        //document.getElementById("toDate").value = todayDate;
         const yearHeader = document.getElementById('yearHeader');
         console.log("yearHeader is " + yearHeader);
 
@@ -82,22 +81,44 @@
             });
 
 
-        const tBodycostRevenueSummary = document.getElementById("costRevenueSummaryForYear");
+           const queryStrImportHistory = `/HomeBudget/ImportTransactionHistory`;
 
-        if (tBodycostRevenueSummary) 
-        {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td> test line of data </td>`;
-            tBodycostRevenueSummary.appendChild(row);
-        }
+              console.log("queryStr is " + queryStrImportHistory);
 
-        //tBodycostRevenueSummary.innerHTML = ''; // Clear existing rows
+              fetch(queryStrImportHistory)
+               .then(response => {
+                   if (!response.ok) {
+                       throw new Error('Network response was not ok');
+                   }
+                   return response.json();
+               })
+               .then(importTransactionHistory => {
+                      //console.log("importTransactionHistory is ",  JSON.stringify(importTransactionHistory));
+                   // Process the data as needed
+                   // For example, you can call a function to update the UI with the fetched data
+                   renderImportTransactionHistory(importTransactionHistory);
+               })
+               .catch(error => {
+                   console.error('There was a problem with the fetch operation:', error);
+               });
 
-        //const row = document.createElement('tr');
-        //row.innerHTML = `<td>${savings.categoryName}</td><td>&nbsp;&nbsp;</td><td>${savings.totalAmount}</td><td>&nbsp;&nbsp;</td>`
-        //row.innerHTML = `<td>  test line of date </td>`;        
-        //tBodycostRevenueSummary.appendChild(row);
     };
+
+
+    function renderImportTransactionHistory(importTransactionHistory)
+    {
+           importTransactionHistory.forEach(importTransactionHistory => {                   
+                   console.log("importTransactionHistory line is ", importTransactionHistory);
+                      console.log("importTransactionHistory.dateTimeOfImport line is ",importTransactionHistory.dateTimeOfImport);
+                      console.log("importTransactionHistory.logData line is ",importTransactionHistory.logData);
+                      console.log("importTransactionHistory.numberOfTransactions line is ",importTransactionHistory.numberOfTransactions);
+                      console.log("importTransactionHistory.transaction_StartDate line is ",importTransactionHistory.transaction_StartDate);
+                      console.log("importTransactionHistory.transaction_EndDate line is ",importTransactionHistory.transaction_EndDate);
+                      console.log("importTransactionHistory.numberOfFailedInsertions line is ",importTransactionHistory.numberOfFailedInsertions);
+                      console.log("importTransactionHistory.numberOfExistingTransactions line is ",importTransactionHistory.numberOfExistingTransactions);
+                      console.log("importTransactionHistory.numberOfInsertions line is ",importTransactionHistory.numberOfInsertions);
+              });
+    }
 
     function renderSummaryByCategory(transactionList) {
       console.log('renderSummaryByCategory Start Date:', transactionList.StartDate);
@@ -206,6 +227,30 @@
                     <tbody id="savingsSummaryByCategory">
                     </tbody>
                 </table>
+        </div>
+        <div class="item">
+            <table>
+                <thead>
+                    <tr>
+                       <th>ImportHistory:</th>
+                    </tr>
+                    <tr>
+                        <th>Date Of Import</th>
+                        <th>&nbsp;</th>
+                        <th>Starting Date</th>
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
+                        <th>Ending Date</th>
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
+                        <th>Number of Transactions</th>
+                    </tr>
+                </thead>
+                <tbody id="importHistory">
+                </tbody>
+            </table>
         </div>
     </div>
 </body>
