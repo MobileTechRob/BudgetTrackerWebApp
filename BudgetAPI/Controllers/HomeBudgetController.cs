@@ -221,7 +221,12 @@ namespace MyPersonalBudgetAPI.Controllers
             }
         }
 
-        public ObjectResult ImportTransactionHistory()
+        public ActionResult ImportTransactionHistory()
+        {
+            return View();
+        }
+
+        public ObjectResult ImportedTransactions()
         {
             return Ok(databaseManager.GetImportTransactionHistory());
         }

@@ -104,22 +104,6 @@
 
     };
 
-
-    function renderImportTransactionHistory(importTransactionHistory)
-    {
-           importTransactionHistory.forEach(importTransactionHistory => {                   
-                   console.log("importTransactionHistory line is ", importTransactionHistory);
-                      console.log("importTransactionHistory.dateTimeOfImport line is ",importTransactionHistory.dateTimeOfImport);
-                      console.log("importTransactionHistory.logData line is ",importTransactionHistory.logData);
-                      console.log("importTransactionHistory.numberOfTransactions line is ",importTransactionHistory.numberOfTransactions);
-                      console.log("importTransactionHistory.transaction_StartDate line is ",importTransactionHistory.transaction_StartDate);
-                      console.log("importTransactionHistory.transaction_EndDate line is ",importTransactionHistory.transaction_EndDate);
-                      console.log("importTransactionHistory.numberOfFailedInsertions line is ",importTransactionHistory.numberOfFailedInsertions);
-                      console.log("importTransactionHistory.numberOfExistingTransactions line is ",importTransactionHistory.numberOfExistingTransactions);
-                      console.log("importTransactionHistory.numberOfInsertions line is ",importTransactionHistory.numberOfInsertions);
-              });
-    }
-
     function renderSummaryByCategory(transactionList) {
       console.log('renderSummaryByCategory Start Date:', transactionList.StartDate);
       console.log('renderSummaryByCategory End Date:', transactionList.EndDate);
@@ -227,30 +211,6 @@
                     <tbody id="savingsSummaryByCategory">
                     </tbody>
                 </table>
-        </div>
-        <div class="item">
-            <table>
-                <thead>
-                    <tr>
-                       <th>ImportHistory:</th>
-                    </tr>
-                    <tr>
-                        <th>Date Of Import</th>
-                        <th>&nbsp;</th>
-                        <th>Starting Date</th>
-                        <th>&nbsp;</th>
-                        <th>&nbsp;</th>
-                        <th>&nbsp;</th>
-                        <th>Ending Date</th>
-                        <th>&nbsp;</th>
-                        <th>&nbsp;</th>
-                        <th>&nbsp;</th>
-                        <th>Number of Transactions</th>
-                    </tr>
-                </thead>
-                <tbody id="importHistory">
-                </tbody>
-            </table>
         </div>
     </div>
 </body>

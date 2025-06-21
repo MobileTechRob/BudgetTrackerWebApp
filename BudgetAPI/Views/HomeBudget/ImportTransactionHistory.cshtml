@@ -1,0 +1,136 @@
+﻿@{
+    ViewData["Title"] = "Import Transaction History";
+}
+
+<style>
+    .container {
+        display: flex;
+        gap: 20px; /* Space between divs */
+    }
+
+    .item {
+        flex: 1; /* Equal width */
+        /* Add your styling here */
+    }
+
+    table tr:nth-child(even) {
+        color: #333333; /* Dark gray for even rows */
+    }
+
+    table tr:nth-child(odd) {
+        color: #0074d9; /* Blue for odd rows */
+    }
+
+    table th_center {
+        text-align: center;
+    }
+
+    table th {
+        background-color: #FFFFFF;
+        color: #000000;
+        font-weight: bold;
+    }
+
+</style>
+
+<h4>Import Transaction History</h4>
+
+<br/>
+
+<script>
+    window.onload = function () {
+        console.log("window.onload called");
+
+           const queryStrImportHistory = `/HomeBudget/ImportedTransactions`;
+
+              console.log("queryStr is " , queryStrImportHistory);
+
+              fetch(queryStrImportHistory)
+               .then(response => {
+                   if (!response.ok) {
+                       throw new Error('Network response was not ok');
+                   }
+                   return response.json();
+               })
+               .then(importTransactionHistory => {
+                      //console.log("importTransactionHistory is ",  JSON.stringify(importTransactionHistory));
+                   // Process the data as needed
+                   // For example, you can call a function to update the UI with the fetched data
+                   renderImportTransactionHistory(importTransactionHistory);
+               })
+               .catch(error => {
+                   console.error('There was a problem with the fetch operation:', error);
+               });
+
+    };
+
+
+    function renderImportTransactionHistory(importTransactionHistory)
+    {
+           console.log("importTransactionHistory line is ", importTransactionHistory);
+
+           const tbody = document.getElementById('importHistory');
+
+           if (tbody) 
+           {
+                  tbody.innerHTML = ''; // Clear any old rows
+
+                  importTransactionHistory.forEach(importHistory => 
+                  {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `<td>${importHistory.dateTimeOfImport}</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>${importHistory.transaction_StartDate}</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>${importHistory.transaction_EndDate}</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>${importHistory.numberOfTransactions}</td>`;
+                            tbody.appendChild(row);
+                  });
+           }
+
+           // importTransactionHistory.forEach(importTransactionHistory => {                   
+           //         console.log("importTransactionHistory line is ", importTransactionHistory);
+           //            console.log("importTransactionHistory.dateTimeOfImport line is ",importTransactionHistory.dateTimeOfImport);
+           //            console.log("importTransactionHistory.logData line is ",importTransactionHistory.logData);
+           //            console.log("importTransactionHistory.numberOfTransactions line is ",importTransactionHistory.numberOfTransactions);
+           //            console.log("importTransactionHistory.transaction_StartDate line is ",importTransactionHistory.transaction_StartDate);
+           //            console.log("importTransactionHistory.transaction_EndDate line is ",importTransactionHistory.transaction_EndDate);
+           //            console.log("importTransactionHistory.numberOfFailedInsertions line is ",importTransactionHistory.numberOfFailedInsertions);
+           //            console.log("importTransactionHistory.numberOfExistingTransactions line is ",importTransactionHistory.numberOfExistingTransactions);
+           //            console.log("importTransactionHistory.numberOfInsertions line is ",importTransactionHistory.numberOfInsertions);
+           //    });
+    }
+
+</script>
+
+<body style="background-color: beige;">
+     <table>
+         <thead>
+             <tr>
+                 <th>Date Of Import</th>
+                 <th>&nbsp;</th>
+                 <th>Starting Date</th>
+                 <th>&nbsp;</th>
+                 <th>Ending Date</th>
+                 <th>&nbsp;</th>
+                 <th>&nbsp;</th>
+                 <th>&nbsp;</th>
+                 <th>Number of <br/>Transactions</th>
+                 <th>&nbsp;</th>
+                 <th>&nbsp;</th>
+                 <th>Number of <br/>New Insertions</th>
+                 <th>&nbsp;</th>
+                 <th>&nbsp;</th>
+                 <th>Number of <br/>Existing Transactions</th>
+                 <th>&nbsp;</th>
+                 <th>&nbsp;</th>
+                 <th>Number of <br/>Failed Insertions</th>
+             </tr>
+         </thead>
+         <tbody id="importHistory">
+         </tbody>
+     </table>
+</body>
