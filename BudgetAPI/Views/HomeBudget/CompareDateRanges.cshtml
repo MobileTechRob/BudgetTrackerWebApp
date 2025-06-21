@@ -1,0 +1,172 @@
+﻿@{
+    ViewData["Title"] = "Compare Date Ranges";
+}
+
+<div class="text-center">
+    <h4>Compare Date Ranges</h4>
+</div>
+
+<br />
+
+<style>
+    .container {
+        display: flex;
+        gap: 40px; /* Space between divs */
+    }
+
+    .containerwithbiggap {
+        display: flex;
+        gap: 140px; /* Space between divs */
+    }
+
+    .itemwide {
+        flex: 1; /* Equal width */
+        /* Add your styling here */
+        gap: 70px; /* Fixed width for each item */
+    }
+
+    .item {
+        flex: 1; /* Equal width */
+        /* Add your styling here */
+    }
+
+    table tr:nth-child(even) {
+        color: #333333; /* Dark gray for even rows */
+    }
+
+    table tr:nth-child(odd) {
+        color: #0074d9; /* Blue for odd rows */
+    }
+
+    table th {
+        background-color: #FFFFFF;
+        color: #000000;
+        font-weight: bold;
+    }
+
+</style>
+
+
+<form id="myForm">
+    <div class="container">
+        <div class="item">
+            <input type="date" id="fromDate_1" placeholder="From Date" />
+            <input type="date" id="toDate_1" placeholder="To Date" />
+        </div>
+        
+
+        <div class="item">
+            <input type="date" id="fromDate_2" placeholder="From Date" />
+            <input type="date" id="toDate_2" placeholder="To Date" />
+        </div>
+
+        <button type="submit">Submit</button>
+    </div>
+</form>
+
+<div id="status"></div>
+
+<script>
+    document.getElementById("myForm").addEventListener("submit", function (e) {
+        e.preventDefault(); // Prevent default form submission
+
+        console.log("from date from input control [" + document.getElementById("fromDate_1").value + "]");
+        console.log("to date from input control [" + document.getElementById("toDate_1").value + "]");
+
+        console.log("from date from input control [" + document.getElementById("fromDate_2").value + "]");
+        console.log("to date from input control [" + document.getElementById("toDate_2").value + "]");
+
+        var startDate = null;
+        var endDate = null;
+
+        if ((document.getElementById("fromDate_1").value != "") && (document.getElementById("toDate_1").value != ""))
+        {
+        const fromDate = new Date(document.getElementById("fromDate_1").value);
+        const toDate = new Date(document.getElementById("toDate_1").value);
+
+        console.log("from date is " + fromDate);
+        console.log("to date is " + toDate);
+
+        startDate = encodeURIComponent(fromDate.toISOString()).slice(0, 10);
+        endDate = encodeURIComponent(toDate.toISOString()).slice(0, 10);
+
+        console.log("start date is " + startDate);
+        console.log("end date is " + endDate);
+        }
+      
+        const queryStr = `/HomeBudget/TransactionDollarsByCategory?fromDate=${startDate}&toDate=${endDate}`;
+
+        console.log("queryStr is " + queryStr);
+
+        fetch(queryStr)
+        .then(response => {
+            if (!response.ok) 
+            {
+                throw new Error("Failed to retrieve ");        
+            }
+
+            return response.json();
+        })
+        .then(transactionList => {           
+            console.log("transactionList is ", transactionList);
+            renderList(transactionList);
+        })
+        .catch(error => {
+            document.getElementById("status").textContent = "Error: " + error.message;
+        });
+    });
+
+    function renderList(transactionList) {
+
+      console.log("renderList transactionList is ", transactionList);
+
+      var tbody = document.getElementById('cost_1_body');
+      tbody.innerHTML = ''; // Clear any old rows
+
+      var transactionDollarsByCategory = transactionList.listOfCostTransactionDollarsByCategory;
+
+
+
+      transactionDollarsByCategory.forEach(transaction => {
+        console.log("transactionDollarsByCategory is  ", transaction);
+
+        const row = document.createElement('tr');
+
+        // row.innerHTML = `<td>${transaction.posted_Date}</td><td>&nbsp;&nbsp;</td>
+        //   <td>${transaction.costCategory}</td><td>&nbsp;&nbsp;</td>
+        //   <td>${transaction.savingsCategory}</td><td>&nbsp;&nbsp;</td>
+        //   <td>${transaction.description}</td><td>&nbsp;&nbsp;</td>
+        //   <td>${transaction.amount}</td>`
+        // tbody.appendChild(row);
+      });
+    }
+</script>
+
+<body style="background-color: beige;">
+    <div class="container">
+        <div class="item">
+            <table id="cost_1">
+                <tr><td>Cost Summary</td></tr>
+                <tbody id="cost_1_body"/>
+            </table>
+        </div>
+        <div class="item">
+            <table id="save_1" >
+                <tr><td>Savings Summary</td></tr>
+                <tbody id="save_1_body" />
+            </table>
+        </div>
+        <div class="item">
+            <table id="cost_2" >
+                <tr><td>Cost Summary</td></tr>
+                <tbody id="cost_2_body" />
+            </table>
+        </div>
+        <div class="item">
+            <table id="save_2" >
+                <tr><td>Savings Summary</td></tr>
+                <tbody id="save_2_body" />
+            </table>
+        </div>
+    </div>
+</body>

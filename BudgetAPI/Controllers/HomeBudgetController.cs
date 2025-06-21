@@ -121,6 +121,13 @@ namespace MyPersonalBudgetAPI.Controllers
             return View("YearToDateByQuarter");
         }
 
+
+        [Route("HomeBudget/CompareDateRanges")]
+        public ActionResult SummaryCostCategory_DateRanges()
+        {
+            return View("CompareDateRanges");
+        }
+
         public ObjectResult CostAndSavingsCategories()
         {
             return Ok(databaseManager.GetCostAndSavingsCategories());
@@ -212,6 +219,16 @@ namespace MyPersonalBudgetAPI.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        public ActionResult ImportTransactionHistory()
+        {
+            return View();
+        }
+
+        public ObjectResult ImportedTransactions()
+        {
+            return Ok(databaseManager.GetImportTransactionHistory());
         }
 
         // GET: BudgetCostsController/Edit/5

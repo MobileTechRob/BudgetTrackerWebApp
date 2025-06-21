@@ -12,6 +12,8 @@ namespace DatabaseManager
         bool MapKeywordToCostCategoryMapping(string keyword, string costcategory);
         bool MapKeywordToSavingsCategoryMapping(string keyword, string savingscategory);
         InsertTransactionStatus AddReceiptFromCashTransaction(ReceiptsFromCashTransactions manuallyAddedReceipt, ILogger logger);    
-        CostAndSavingsCategories GetCostAndSavingsCategories();   
+        CostAndSavingsCategories GetCostAndSavingsCategories();
+        void RecordImportInformation(DateTime startDate, DateTime endDate, int transactionCount, int insertedTransactions, int alreadyExistingTransactions, int failedInsertions);
+        List<ImportTransactionDataLog> GetImportTransactionHistory();
     }
 }

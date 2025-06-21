@@ -12,17 +12,17 @@ using SharedDataModels;
 namespace DatabaseManager
 {
     public class DatabaseManager : IDatabaseManager
-    {        
+    {
         private ICRUD_Operations crud_Operations;
         private ILogger logger;
 
-        public int DailyTransaction_Inserted=0;
-        public int DailyTransaction_AlreadyExisted=0;
+        public int DailyTransaction_Inserted = 0;
+        public int DailyTransaction_AlreadyExisted = 0;
         public int DailyTransaction_InsertFailed = 0;
-    
-        public DatabaseManager(ILogger<DatabaseManager> logger,  ICRUD_Operations crud_Operations) 
-        {                        
-            this.crud_Operations = crud_Operations;         
+
+        public DatabaseManager(ILogger<DatabaseManager> logger, ICRUD_Operations crud_Operations)
+        {
+            this.crud_Operations = crud_Operations;
             this.logger = logger;
         }
 
@@ -45,9 +45,9 @@ namespace DatabaseManager
             return true;
         }
 
-        public List<DailyTransaction> GetDailyTransactions(DateOnly? fromDate = null, DateOnly? toDate=null)
+        public List<DailyTransaction> GetDailyTransactions(DateOnly? fromDate = null, DateOnly? toDate = null)
         {
-           return crud_Operations.GetDailyTransactions(fromDate, toDate);
+            return crud_Operations.GetDailyTransactions(fromDate, toDate);
         }
 
         public List<DailyTransaction> GetSummaryByCategory(DateOnly? fromDate = null, DateOnly? toDate = null)
@@ -79,7 +79,7 @@ namespace DatabaseManager
 
             if (keyword.Length > MaxKeywordLength)
             {
-                throw new InvalidFieldLengthException($"Keyword or cost category exceeds maximum length of {MaxKeywordLength} characters.");                           
+                throw new InvalidFieldLengthException($"Keyword or cost category exceeds maximum length of {MaxKeywordLength} characters.");
             }
 
             if (costcategory.Length > CostCategoryMaxLength)
@@ -106,6 +106,22 @@ namespace DatabaseManager
             }
 
             return crud_Operations.MapKeywordToSavingsCategoryMapping(keyword, savingscategory);
+        }
+
+        public void RecordImportInformation(DateTime startDate, DateTime endDate, int transactionCount)
+        {
+            // This method can be used to log or record the import information
+            // For now, we will just log the counts of transactions processed
+            logger.LogInformation($"Daily Transactions Inserted: {DailyTransaction_Inserted}");
+            logger.LogInformation($"Daily Transactions Already Existed: {DailyTransaction_AlreadyExisted}");
+            logger.LogInformation($"Daily Transactions Insert Failed: {DailyTransaction_InsertFailed}");
+
+            crud_Operations.RecordImportInformation(startDate, endDate, transactionCount, DailyTransaction_Inserted, DailyTransaction_AlreadyExisted, DailyTransaction_InsertFailed);
+        }
+
+        public List<ImportTransactionDataLog> GetImportTransactionHistory()
+        {
+            return crud_Operations.GetImportTransactionHistory();            
         }
     }
 }

@@ -1,0 +1,145 @@
+﻿@{
+    ViewData["Title"] = "Import Transaction History";
+}
+
+<style>
+    .container {
+        display: flex;
+        gap: 20px; /* Space between divs */
+    }
+
+    .item {
+        flex: 1; /* Equal width */
+        /* Add your styling here */
+    }
+
+    table tr:nth-child(even) {
+        color: #333333; /* Dark gray for even rows */
+    }
+
+    table tr:nth-child(odd) {
+        color: #0074d9; /* Blue for odd rows */
+    }
+
+    table th_center {
+        text-align: center;
+    }
+
+    table th {
+        background-color: #FFFFFF;
+        color: #000000;
+        font-weight: bold;
+    }
+
+</style>
+
+<h4>Import Transaction History</h4>
+
+<br/>
+
+<script>
+    window.onload = function () {
+        console.log("window.onload called");
+
+           const queryStrImportHistory = `/HomeBudget/ImportedTransactions`;
+
+              console.log("queryStr is " , queryStrImportHistory);
+
+              fetch(queryStrImportHistory)
+               .then(response => {
+                   if (!response.ok) {
+                       throw new Error('Network response was not ok');
+                   }
+                   return response.json();
+               })
+               .then(importTransactionHistory => {
+                      //console.log("importTransactionHistory is ",  JSON.stringify(importTransactionHistory));
+                   // Process the data as needed
+                   // For example, you can call a function to update the UI with the fetched data
+                   renderImportTransactionHistory(importTransactionHistory);
+               })
+               .catch(error => {
+                   console.error('There was a problem with the fetch operation:', error);
+               });
+
+    };
+
+
+    function renderImportTransactionHistory(importTransactionHistory)
+    {
+           console.log("importTransactionHistory line is ", importTransactionHistory);
+
+           const tbody = document.getElementById('importHistory');
+
+           if (tbody) 
+           {
+                  tbody.innerHTML = ''; // Clear any old rows
+
+                  importTransactionHistory.forEach(importHistory => 
+                  {                      
+                      console.log("importHistory.dateTimeOfImport is ", importHistory.dateTimeOfImport);                      
+
+                      var [datePart, timePart] = importHistory.dateTimeOfImport.split('T');
+                      var dateOfImport = datePart + " " + timePart.slice(0,8); // Combine date and time"
+
+                      var [datePart, timePart] = importHistory.transaction_StartDate.split('T');
+                      var startDate = datePart;
+
+                      var [datePart, timePart] = importHistory.transaction_EndDate.split('T');
+                      var endDate = datePart;
+
+                            const row = document.createElement('tr');
+                            row.innerHTML = `<td>${dateOfImport}</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>${startDate}</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>${endDate}</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>${importHistory.numberOfTransactions}</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>${importHistory.numberOfInsertions}</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>${importHistory.numberOfExistingTransactions}</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>${importHistory.numberOfFailedInsertions}</td>`;
+
+                            tbody.appendChild(row);
+                  });
+           }
+    }
+
+</script>
+
+<body style="background-color: beige;">
+     <table>
+         <thead>
+             <tr>
+                 <th>Date Of Import</th>
+                 <th>&nbsp;</th>
+                 <th>Starting Date</th>
+                 <th>&nbsp;</th>
+                 <th>Ending Date</th>
+                 <th>&nbsp;</th>
+                 <th>&nbsp;</th>
+                 <th>&nbsp;</th>
+                 <th>Number of <br/>Transactions</th>
+                 <th>&nbsp;</th>
+                 <th>&nbsp;</th>
+                 <th>Number of <br/>New Insertions</th>
+                 <th>&nbsp;</th>
+                 <th>&nbsp;</th>
+                 <th>Number of <br/>Existing Transactions</th>
+                 <th>&nbsp;</th>
+                 <th>&nbsp;</th>
+                 <th>Number of <br/>Failed Insertions</th>
+             </tr>
+         </thead>
+         <tbody id="importHistory">
+         </tbody>
+     </table>
+</body>
