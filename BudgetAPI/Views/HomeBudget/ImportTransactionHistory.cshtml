@@ -76,32 +76,41 @@
                   tbody.innerHTML = ''; // Clear any old rows
 
                   importTransactionHistory.forEach(importHistory => 
-                  {
+                  {                      
+                      console.log("importHistory.dateTimeOfImport is ", importHistory.dateTimeOfImport);                      
+
+                      var [datePart, timePart] = importHistory.dateTimeOfImport.split('T');
+                      var dateOfImport = datePart + " " + timePart.slice(0,8); // Combine date and time"
+
+                      var [datePart, timePart] = importHistory.transaction_StartDate.split('T');
+                      var startDate = datePart;
+
+                      var [datePart, timePart] = importHistory.transaction_EndDate.split('T');
+                      var endDate = datePart;
+
                             const row = document.createElement('tr');
-                            row.innerHTML = `<td>${importHistory.dateTimeOfImport}</td>
+                            row.innerHTML = `<td>${dateOfImport}</td>
                                               <td>&nbsp;&nbsp;</td>
-                                              <td>${importHistory.transaction_StartDate}</td>
+                                              <td>${startDate}</td>
                                               <td>&nbsp;&nbsp;</td>
-                                              <td>${importHistory.transaction_EndDate}</td>
+                                              <td>${endDate}</td>
                                               <td>&nbsp;&nbsp;</td>
                                               <td>&nbsp;&nbsp;</td>
                                               <td>&nbsp;&nbsp;</td>
-                                              <td>${importHistory.numberOfTransactions}</td>`;
+                                              <td>${importHistory.numberOfTransactions}</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>${importHistory.numberOfInsertions}</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>${importHistory.numberOfExistingTransactions}</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>&nbsp;&nbsp;</td>
+                                              <td>${importHistory.numberOfFailedInsertions}</td>`;
+
                             tbody.appendChild(row);
                   });
            }
-
-           // importTransactionHistory.forEach(importTransactionHistory => {                   
-           //         console.log("importTransactionHistory line is ", importTransactionHistory);
-           //            console.log("importTransactionHistory.dateTimeOfImport line is ",importTransactionHistory.dateTimeOfImport);
-           //            console.log("importTransactionHistory.logData line is ",importTransactionHistory.logData);
-           //            console.log("importTransactionHistory.numberOfTransactions line is ",importTransactionHistory.numberOfTransactions);
-           //            console.log("importTransactionHistory.transaction_StartDate line is ",importTransactionHistory.transaction_StartDate);
-           //            console.log("importTransactionHistory.transaction_EndDate line is ",importTransactionHistory.transaction_EndDate);
-           //            console.log("importTransactionHistory.numberOfFailedInsertions line is ",importTransactionHistory.numberOfFailedInsertions);
-           //            console.log("importTransactionHistory.numberOfExistingTransactions line is ",importTransactionHistory.numberOfExistingTransactions);
-           //            console.log("importTransactionHistory.numberOfInsertions line is ",importTransactionHistory.numberOfInsertions);
-           //    });
     }
 
 </script>
