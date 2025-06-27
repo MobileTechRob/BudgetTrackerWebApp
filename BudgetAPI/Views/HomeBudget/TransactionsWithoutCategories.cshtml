@@ -1,6 +1,37 @@
-﻿@{
-    ViewData["Title"] = "Import Transaction History";
+﻿@using BudgetAPI.Models
+
+@{
+    ViewData["Title"] = "Transactions Without Categories";
 }
+
+<h2>Transactions Without Categories</h2>
+
+<body style="background-color: beige;">
+    <table>
+        <thead>
+            <tr>
+                <th>Posted Date</th>
+                <th>&nbsp;&nbsp;&nbsp;</th>                
+                <th>Description</th>
+                <th>&nbsp;&nbsp;&nbsp;</th>                
+                <th>Amount</th>
+                
+        </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Posted_Date</td>
+                    <th>&nbsp;&nbsp;&nbsp;</th>                    
+                    <td>@item.Description</td>
+                    <th>&nbsp;&nbsp;&nbsp;</th>
+                    <td>@item.Amount</td>
+                </tr>
+            }
+        </tbody>    
+    </table>
+</body>
 
 <style>
     .container {
@@ -26,41 +57,37 @@
     }
 
     table th {
-        background-color: beige;       
+        background-color: beige;
         color: #000000;
         font-weight: bold;
     }
 
 </style>
 
-<h4>Import Transaction History</h4>
-
-<br/>
-
 <script>
     window.onload = function () {
         console.log("window.onload called");
 
-           const queryStrImportHistory = `/HomeBudget/ImportedTransactions`;
+           // const queryStrImportHistory = `/HomeBudget/ImportedTransactions`;
 
-              console.log("queryStr is " , queryStrImportHistory);
+           //    console.log("queryStr is " , queryStrImportHistory);
 
-              fetch(queryStrImportHistory)
-               .then(response => {
-                   if (!response.ok) {
-                       throw new Error('Network response was not ok');
-                   }
-                   return response.json();
-               })
-               .then(importTransactionHistory => {
-                      //console.log("importTransactionHistory is ",  JSON.stringify(importTransactionHistory));
-                   // Process the data as needed
-                   // For example, you can call a function to update the UI with the fetched data
-                   renderImportTransactionHistory(importTransactionHistory);
-               })
-               .catch(error => {
-                   console.error('There was a problem with the fetch operation:', error);
-               });
+           //    fetch(queryStrImportHistory)
+           //     .then(response => {
+           //         if (!response.ok) {
+           //             throw new Error('Network response was not ok');
+           //         }
+           //         return response.json();
+           //     })
+           //     .then(importTransactionHistory => {
+           //            //console.log("importTransactionHistory is ",  JSON.stringify(importTransactionHistory));
+           //         // Process the data as needed
+           //         // For example, you can call a function to update the UI with the fetched data
+           //         renderImportTransactionHistory(importTransactionHistory);
+           //     })
+           //     .catch(error => {
+           //         console.error('There was a problem with the fetch operation:', error);
+           //     });
 
     };
 
@@ -114,32 +141,3 @@
     }
 
 </script>
-
-<body style="background-color: beige;">
-     <table>
-         <thead>
-             <tr>
-                 <th>Date Of Import</th>
-                 <th>&nbsp;</th>
-                 <th>Starting Date</th>
-                 <th>&nbsp;</th>
-                 <th>Ending Date</th>
-                 <th>&nbsp;</th>
-                 <th>&nbsp;</th>
-                 <th>&nbsp;</th>
-                 <th>Number of <br/>Transactions</th>
-                 <th>&nbsp;</th>
-                 <th>&nbsp;</th>
-                 <th>Number of <br/>New Insertions</th>
-                 <th>&nbsp;</th>
-                 <th>&nbsp;</th>
-                 <th>Number of <br/>Existing Transactions</th>
-                 <th>&nbsp;</th>
-                 <th>&nbsp;</th>
-                 <th>Number of <br/>Failed Insertions</th>
-             </tr>
-         </thead>
-         <tbody id="importHistory">
-         </tbody>
-     </table>
-</body>

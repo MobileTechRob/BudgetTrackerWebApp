@@ -9,6 +9,7 @@ namespace DatabaseManager
 {
     public interface IDatabaseManager
     {
+        public List<DailyTransaction> GetTransactionsWithoutCategories();
         public List<DailyTransaction> GetDailyTransactions(DateOnly? fromDate = null, DateOnly? toDate = null);
         public List<DailyTransaction> GetSummaryByCategory(DateOnly? fromDate = null, DateOnly? toDate = null);
         public CostAndSavingsCategories GetCostAndSavingsCategories();

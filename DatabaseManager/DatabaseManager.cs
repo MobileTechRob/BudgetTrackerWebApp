@@ -123,5 +123,10 @@ namespace DatabaseManager
         {
             return crud_Operations.GetImportTransactionHistory();            
         }
+
+        public List<DailyTransaction> GetTransactionsWithoutCategories()
+        {
+            return crud_Operations.GetTransactionsWithoutCategories();
+        }
     }
 }

@@ -9,6 +9,7 @@ namespace DatabaseManager
         InsertTransactionStatus AddDailyTransactions(DailyTransaction dailyTransaction, ILogger logger);
         List<string> GetCostCategories();
         List<DailyTransaction> GetDailyTransactions(DateOnly? fromDate = null, DateOnly? toDate = null);
+        List<DailyTransaction> GetTransactionsWithoutCategories();
         bool MapKeywordToCostCategoryMapping(string keyword, string costcategory);
         bool MapKeywordToSavingsCategoryMapping(string keyword, string savingscategory);
         InsertTransactionStatus AddReceiptFromCashTransaction(ReceiptsFromCashTransactions manuallyAddedReceipt, ILogger logger);    
