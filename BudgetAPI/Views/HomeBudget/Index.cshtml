@@ -5,7 +5,7 @@
 <style>
     .container {
         display: flex;
-        gap: 20px; /* Space between divs */
+        gap: 10px; /* Space between divs */
     }
 
     .item {
@@ -131,12 +131,10 @@
           tbody.innerHTML = ''; // Clear any old rows
 
            costList.forEach(cost => {
-           const row = document.createElement('tr');
-
-           row.innerHTML = `<td>${cost.categoryName}</td><td>&nbsp;&nbsp;</td><td>${cost.totalAmount}</td><td>&nbsp;&nbsp;</td>`
-
-           tbody.appendChild(row);
-        });
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${cost.categoryName}</td><td>&nbsp;&nbsp;</td><td>${cost.totalAmount}</td><td>&nbsp;&nbsp;</td>`
+                tbody.appendChild(row);
+           });
       }
 
       const tbodySavings = document.getElementById('savingsSummaryByCategory');
@@ -159,7 +157,7 @@
       {
           tbodyYearRevenue.innerHTML = ''; // Clear any old rows
           const row = document.createElement('tr');
-          row.innerHTML = `<td>Year To Date Revenue</td><td>&nbsp;&nbsp;</td><td>${savingsTotal}</td>`;
+          row.innerHTML = `<td>Year To Date Revenue</td><td>${savingsTotal}</td>`;
           tbodyYearRevenue.appendChild(row);    
       }
 
@@ -167,7 +165,7 @@
       {   
           tbodyYearCost.innerHTML = ''; // Clear any old rows
           const row = document.createElement('tr');
-          row.innerHTML = `<td>Year To Date Cost</td><td>&nbsp;&nbsp;</td><td>${costTotal}</td>`;
+          row.innerHTML = `<td>Year To Date Cost</td><td>${costTotal}</td>`;
           tbodyYearCost.appendChild(row);
       }
  }

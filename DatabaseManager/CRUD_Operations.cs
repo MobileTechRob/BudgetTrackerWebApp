@@ -211,5 +211,12 @@ namespace DatabaseManager
         { 
             return appDbContext.ImportTransactionDataLog.ToList();
         }
+
+        public List<DailyTransaction> GetTransactionsWithoutCategories()
+        {
+            return appDbContext.DailyTransactions
+                .Where(d => string.IsNullOrEmpty(d.CostCategory) && string.IsNullOrEmpty(d.SavingsCategory))
+                .ToList();
+        }
     }
 }
