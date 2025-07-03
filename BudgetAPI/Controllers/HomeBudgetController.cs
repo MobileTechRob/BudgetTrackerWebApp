@@ -101,9 +101,11 @@ namespace MyPersonalBudgetAPI.Controllers
 
                 List<DatabaseManager.DataModels.DailyTransaction> dailyTransactions = databaseManager.GetDailyTransactions(fromDate, toDate);
 
-                TransactionDollarsByCategoryDateRange transactionDollarsByCategoryDateRange = GetTransactionDollarsByCategoryDateRange(dailyTransactions);
-
-                transactionDollarsByCategoryDateRanges.Add(transactionDollarsByCategoryDateRange);
+                if (dailyTransactions.Count > 0)
+                {
+                    TransactionDollarsByCategoryDateRange transactionDollarsByCategoryDateRange = GetTransactionDollarsByCategoryDateRange(dailyTransactions);
+                    transactionDollarsByCategoryDateRanges.Add(transactionDollarsByCategoryDateRange);
+                }
             }
 
             return View(transactionDollarsByCategoryDateRanges);   
