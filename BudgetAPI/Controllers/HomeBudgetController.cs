@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using DatabaseManager;
 using DatabaseManager.DataModels;
 using DatabaseManager.Exceptions;
+using BudgetAPI.Models;
 
 namespace MyPersonalBudgetAPI.Controllers
 {
@@ -41,6 +42,7 @@ namespace MyPersonalBudgetAPI.Controllers
             //return Ok(databaseManager.GetDailyTransactions());
             return View(databaseManager.GetDailyTransactions(fromDate, toDate));
         }
+
 
         // GET: BudgetCostsController
         [Route("HomeBudget/CostList/{category}")]
@@ -84,14 +86,39 @@ namespace MyPersonalBudgetAPI.Controllers
         {
             List<DatabaseManager.DataModels.DailyTransaction> dailyTransactions = databaseManager.GetDailyTransactions(fromDate, toDate);
 
-            TransactionDollarsByCategory transactionDollarsByCategory = new TransactionDollarsByCategory();
+            return Ok(GetTransactionDollarsByCategoryDateRange(dailyTransactions));
+        }
+        
+        public IActionResult YTD_MonthlyTransactionSummary()
+        {
+            DateTime dateTime = DateTime.Now;
+            List<TransactionDollarsByCategoryDateRange> transactionDollarsByCategoryDateRanges = new List<TransactionDollarsByCategoryDateRange>();
+
+            for (int month = 1; month <= dateTime.Month; month++)
+            {
+                DateOnly fromDate = new DateOnly(dateTime.Year, month, 1);
+                DateOnly toDate = new DateOnly(dateTime.Year, month, DateTime.DaysInMonth(dateTime.Year, month));
+
+                List<DatabaseManager.DataModels.DailyTransaction> dailyTransactions = databaseManager.GetDailyTransactions(fromDate, toDate);
+
+                TransactionDollarsByCategoryDateRange transactionDollarsByCategoryDateRange = GetTransactionDollarsByCategoryDateRange(dailyTransactions);
+
+                transactionDollarsByCategoryDateRanges.Add(transactionDollarsByCategoryDateRange);
+            }
+
+            return View(transactionDollarsByCategoryDateRanges);   
+        }
+
+        private TransactionDollarsByCategoryDateRange GetTransactionDollarsByCategoryDateRange(List<DatabaseManager.DataModels.DailyTransaction> dailyTransactions)
+        {
+
             TransactionDollarsByCategoryDateRange transactionDollarsByCategoryDateRange = new TransactionDollarsByCategoryDateRange();
 
             var costDollarsByCategory = dailyTransactions.Where(x => x.CostCategory != "").GroupBy(t => t.CostCategory).Select(g => new
-                            {
-                                Category = g.Key,
-                                TotalCost = g.Sum(t => t.Amount)
-                            }).ToList();
+            {
+                Category = g.Key,
+                TotalCost = g.Sum(t => t.Amount)
+            }).ToList();
 
             var savingsDollarsByCategory = dailyTransactions.Where(x => x.SavingsCategory != "").GroupBy(t => t.SavingsCategory).Select(g => new
             {
@@ -106,7 +133,7 @@ namespace MyPersonalBudgetAPI.Controllers
                 {
                     CategoryName = categorySum.Category,
                     TotalAmount = categorySum.TotalCost
-                });                                                     
+                });
             }
 
 
@@ -124,13 +151,12 @@ namespace MyPersonalBudgetAPI.Controllers
 
             if (dateQuery.Any())
             {
-                transactionDollarsByCategoryDateRange.StartDate  = dateQuery.First().Posted_Date;
+                transactionDollarsByCategoryDateRange.StartDate = dateQuery.First().Posted_Date;
                 transactionDollarsByCategoryDateRange.EndDate = dateQuery.Last().Posted_Date;
-            }   
+            }
 
-            return Ok(transactionDollarsByCategoryDateRange);
+            return transactionDollarsByCategoryDateRange;
         }
-
 
         [Route("HomeBudget/YearToDateByQuarter")]
         public ActionResult SummaryCostCategory_YearToDateByQuarter([FromQuery] DateOnly? fromDate = null, [FromQuery] DateOnly? toDate = null)

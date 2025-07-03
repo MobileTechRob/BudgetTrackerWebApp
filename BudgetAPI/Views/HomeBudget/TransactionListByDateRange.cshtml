@@ -88,7 +88,7 @@
             return response.json();
         })
         .then(transactionList => {
-            console.log("TransactionDollarsByCategory " + transactionList);
+            console.log("TransactionDollarsByCategory " ,transactionList);
             renderSummaryByCategory(transactionList);
         })
         .catch(error => {
@@ -117,11 +117,18 @@
 
       console.log('renderSummaryByCategory Start Date:', transactionList.StartDate);
       console.log('renderSummaryByCategory End Date:', transactionList.EndDate);
+      
+      console.log('renderSummaryByCategory cost Total:', transactionList.costTotal);
+      console.log('renderSummaryByCategory savings Total:', transactionList.savingsTotal);
+
       console.log('renderSummaryByCategory Cost Transactions:', transactionList.listOfCostTransactionDollarsByCategory);
       console.log('renderSummaryByCategory Savings Transactions:', transactionList.listOfSavingsTransactionDollarsByCategory);
 
       var costList = transactionList.listOfCostTransactionDollarsByCategory;
       var savingsList = transactionList.listOfSavingsTransactionDollarsByCategory;
+
+      var costTotal = transactionList.costTotal;
+      var SavingsTotal = transactionList.savingsTotal;
 
       const tbody = document.getElementById('costSummaryByCategory');
       tbody.innerHTML = ''; // Clear any old rows
@@ -134,6 +141,14 @@
         tbody.appendChild(row);
       });
 
+      const rowspace = document.createElement('tr');
+      rowspace.innerHTML = `<td>&nbsp;&nbsp;</td><td>&nbsp;&nbsp;</td><td>&nbsp;&nbsp;</td><td>&nbsp;&nbsp;</td>`
+      tbody.appendChild(rowspace);
+
+      const row = document.createElement('tr');
+      row.innerHTML = `<td>Cost Total</td><td>&nbsp;&nbsp;</td><td>${costTotal}</td><td>&nbsp;&nbsp;</td>`
+      tbody.appendChild(row);
+
       const tbodySavings = document.getElementById('savingsSummaryByCategory');
       tbodySavings.innerHTML = ''; // Clear any old rows
       
@@ -143,6 +158,11 @@
         tbodySavings.appendChild(row);
       });
 
+      tbodySavings.appendChild(rowspace);
+
+      const savingsRow = document.createElement('tr');
+      savingsRow.innerHTML = `<td>Savings Total</td><td>&nbsp;&nbsp;</td><td>${SavingsTotal}</td><td>&nbsp;&nbsp;</td>`
+      tbodySavings.appendChild(savingsRow);
     }
 
 </script>

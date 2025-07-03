@@ -56,6 +56,9 @@ namespace DatabaseManager
 
         public List<DailyTransaction> GetDailyTransactions(DateOnly? fromDate = null, DateOnly? toDate = null)
         {
+
+            List<DailyTransaction> transactionList = new List<DailyTransaction>();
+
             if (fromDate != null && toDate != null)
             {
                 var fromDateTime = new DateTime(fromDate.Value.Year, fromDate.Value.Month, fromDate.Value.Day);
@@ -65,12 +68,12 @@ namespace DatabaseManager
 
                 if (CostByDateSql.Any())
                 {
-                    return CostByDateSql.ToList();
+                    transactionList = CostByDateSql.ToList();
                 }
 
             }
 
-            return appDbContext.DailyTransactions.ToList();
+            return transactionList;            
         }
 
         public List<string> GetCostCategories()
