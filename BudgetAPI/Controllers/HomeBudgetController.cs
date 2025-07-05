@@ -4,6 +4,8 @@ using DatabaseManager;
 using DatabaseManager.DataModels;
 using DatabaseManager.Exceptions;
 using BudgetAPI.Models;
+using System;
+using System.Numerics;
 
 namespace MyPersonalBudgetAPI.Controllers
 {
@@ -109,6 +111,38 @@ namespace MyPersonalBudgetAPI.Controllers
             }
 
             return View(transactionDollarsByCategoryDateRanges);   
+        }
+
+        [Route("HomeBudget/GetYTDAndForward")]
+        public ObjectResult GetYTDAndForward_UserSelectedYear([FromQuery] string? startYear = null)
+        {
+            List<TransactionDollarsByCategoryDateRange> transactionDollarsByCategoryDateRanges = new List<TransactionDollarsByCategoryDateRange>();
+
+            int startYearAsInt = string.IsNullOrEmpty(startYear) ? DateTime.Now.Year : int.Parse(startYear);
+
+            DateOnly fromDate = new DateOnly(startYearAsInt, 1, 1);
+            DateOnly toDate = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, 1));
+
+            List<DatabaseManager.DataModels.DailyTransaction> dailyTransactions;
+
+            for (int year = startYearAsInt; year <= DateTime.Now.Year; year++)
+            {
+                for (int month = 1; month <= 12; month++)
+                {
+                    fromDate = new DateOnly(year, month, 1);
+                    toDate = new DateOnly(year, month, DateTime.DaysInMonth(year, DateTime.Now.Month));
+                
+                    dailyTransactions = databaseManager.GetDailyTransactions(fromDate, toDate);
+                    
+                    if (dailyTransactions.Count > 0)
+                    {
+                        TransactionDollarsByCategoryDateRange transactionDollarsByCategoryDateRange = GetTransactionDollarsByCategoryDateRange(dailyTransactions);
+                        transactionDollarsByCategoryDateRanges.Add(transactionDollarsByCategoryDateRange);
+                    }
+                }
+            }
+       
+            return Ok(transactionDollarsByCategoryDateRanges);
         }
 
         private TransactionDollarsByCategoryDateRange GetTransactionDollarsByCategoryDateRange(List<DatabaseManager.DataModels.DailyTransaction> dailyTransactions)
