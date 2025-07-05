@@ -11,10 +11,37 @@
 @*     <input type="text" id="name" placeholder="Name" required />
     <input type="number" id="price" placeholder="Price" required />
  *@
-    <input type="date" id="fromDate" placeholder="From Date" />
-    <input type="date" id="toDate" placeholder="To Date" />
-
-    <button type="submit">Submit</button>
+    <table>
+        <tr>
+            <td>
+                <select name="month" id="month" onchange="onmonthchangehandler()">
+                    <option value="00">Select Month</option>
+                    <option value="01">January</option>
+                    <option value="02">February</option>
+                    <option value="03">March</option>
+                    <option value="04">April</option>
+                    <option value="05">May</option>
+                    <option value="06">June</option>
+                    <option value="07">July</option>
+                    <option value="08">August</option>
+                    <option value="09">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;</td>
+            <td>
+                <input type="date" id="fromDate" placeholder="From Date" />
+            </td>
+            <td>
+                <input type="date" id="toDate" placeholder="To Date" />
+            </td>
+            <td>
+                <button type="submit">Get Transactions</button>
+            </td>
+        </tr>
+    </table>   
 </form>
 
 <div id="status"></div>
@@ -22,9 +49,9 @@
 <script>
 
     window.onload = function () {
-        console.log("window.onload called");
-        console.log("document.getElementById(fromDate) " + document.getElementById("fromDate"));
-        console.log("document.getElementById(toDate) " + document.getElementById("toDate"));
+        console.log("window.onload called");        
+        console.log("document.getElementById(fromDate) " , document.getElementById("fromDate"));
+        console.log("document.getElementById(toDate) " , document.getElementById("toDate"));
 
         const now = new Date();
         const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10); // "YYYY-MM-DD" format;
@@ -38,30 +65,68 @@
         document.getElementById("toDate").value = todayDate;
     };  
 
+
+    function onmonthchangehandler() {
+        console.log("onmonthchangehandler called");
+        const month = document.getElementById("month").value;
+        console.log("Selected month is " + month);
+        if (month != "00") {
+            document.getElementById("fromDate").disabled = true;
+            document.getElementById("toDate").disabled = true;
+        }
+        else
+        {
+            document.getElementById("fromDate").disabled = false;
+            document.getElementById("toDate").disabled = false;
+        }
+    };
+
     document.getElementById("myForm").addEventListener("submit", function (e) {
         e.preventDefault(); // Prevent default form submission
 
+        console.log("document.getElementById(month) " , document.getElementById("month").value);
         console.log("from date from input control [" + document.getElementById("fromDate").value + "]");
         console.log("to date from input control [" + document.getElementById("toDate").value + "]");
 
         var startDate = null;
         var endDate = null;
 
-        if ((document.getElementById("toDate").value != "") && (document.getElementById("fromDate").value != ""))
+        const month = document.getElementById("month").value;
+
+        if (month == "00") 
         {
-        const fromDate = new Date(document.getElementById("fromDate").value);
-        const toDate = new Date(document.getElementById("toDate").value);
+            console.log("month is not 0, so using month value");
+            if ((document.getElementById("toDate").value != "") && (document.getElementById("fromDate").value != ""))
+            {   
+                const fromDate = new Date(document.getElementById("fromDate").value);
+                const toDate = new Date(document.getElementById("toDate").value);
 
-        console.log("from date is " + fromDate);
-        console.log("to date is " + toDate);
+                console.log("from date is " + fromDate);
+                console.log("to date is " + toDate);
 
-        startDate = encodeURIComponent(fromDate.toISOString()).slice(0, 10);
-        endDate = encodeURIComponent(toDate.toISOString()).slice(0, 10);
+                startDate = encodeURIComponent(fromDate.toISOString()).slice(0, 10);
+                endDate = encodeURIComponent(toDate.toISOString()).slice(0, 10);
 
-        console.log("start date is " + startDate);
-        console.log("end date is " + endDate);
+                console.log("start date is " + startDate);
+                console.log("end date is " + endDate);
+            }
         }
-      
+        else if (month >= "01")
+        {
+            startDate = "2025-" + month + "-01"; // Start of the month
+
+            console.log("month  is " , month);
+            console.log("parseInt(month) " , parseInt(month));
+
+            const now = new Date();
+            const lastDayOfMonth = lastday(now.getFullYear(), parseInt(month)); // "YYYY-MM-DD" format;
+           
+            endDate = "2025-" + month + "-" + lastDayOfMonth;
+
+            console.log("startDate is " + startDate);
+            console.log("endDate is " + endDate);
+        }
+
         const queryStr = `http://localhost:5065/HomeBudget/CostListByDateRange?fromDate=${startDate}&toDate=${endDate}`;
 
         console.log("queryStr is " + queryStr);
@@ -95,6 +160,13 @@
             document.getElementById("status").textContent = "Error: " + error.message;
         });
     });
+
+    function lastday(year, month) 
+    {
+        // Create a date object for the first day of the next month
+        return new Date(year, month, 0).getDate();        
+    }
+
 
     function renderList(transactionList) {
       const tbody = document.getElementById('costTableBody');
