@@ -6,8 +6,17 @@
 
 <h2>Year To Date Monthly Transaction Summary</h2>
 
+<form id="myForm">
+    <select id="selectYear" name="selectYear" onchange="onyearchanged()">
+        <option value="0000">Select Year To Start From</option>
+        <option value="2025">2025</option>
+        <option value="2024">2024</option>
+        <option value="2023">2023</option>
+    </select>
+</form>
+
 <body style="background-color: beige;">
-    <table>
+    <table id="tableYearToDate">
         <thead>
             <tr>
                 <th>Month Start</th>
@@ -68,6 +77,8 @@
 
 </style>
 
+
+
 <script>
     window.onload = function () {
         console.log("window.onload called");
@@ -95,6 +106,34 @@
 
     };
 
+    function onyearchanged()
+    {
+        console.log("onyearchanged called")
+        
+        const year = document.getElementById("selectYear");
+
+        console.log("selected year is ", year.value);    
+
+        const queryStr = `/HomeBudget/GetYTDAndForward?startYear=${year.value}`;
+
+        console.log("query str ", queryStr);
+
+        fetch (queryStr)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("data is ", data);
+                renderImportTransactionHistory(data);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+
+    }
 
     function renderImportTransactionHistory(importTransactionHistory)
     {
