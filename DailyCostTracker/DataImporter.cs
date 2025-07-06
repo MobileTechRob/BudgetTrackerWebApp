@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SharedDataModels;
 using DailyCostTracker.DataModels;
+using System.Speech.Synthesis;
 
 namespace DailyCostTracker
 {
@@ -15,11 +16,13 @@ namespace DailyCostTracker
         DatabaseManager.AppDbContext appDbContext;
         ILogger<DatabaseManager.DatabaseManager> loggerDatabase;
         DatabaseManager.DatabaseManager databaseManager = null;
+        SpeechSynthesizer synth = null;
 
-        public DataImporter(ILogger<DatabaseManager.DatabaseManager> logger, DatabaseManager.AppDbContext appDbContext)
+        public DataImporter(ILogger<DatabaseManager.DatabaseManager> logger, DatabaseManager.AppDbContext appDbContext, SpeechSynthesizer synth)
         { 
             this.loggerDatabase = logger;
             this.appDbContext = appDbContext;
+            this.synth = synth; 
         }
 
         public bool TryImportTransactionRecordsFromCSVFile(string filePath, out string[] lines)
@@ -48,9 +51,13 @@ namespace DailyCostTracker
 
         public void UpdateDatabaseWithTransactions(string[] linesOfData)
         {
-            if (linesOfData == null || linesOfData.Length == 0)                            
-               return;
-            
+            if (linesOfData == null || linesOfData.Length == 0)
+            {
+                loggerDatabase.LogWarning("UpdateDatabaseWithTransactions: No data to import.");
+                synth.Speak("No data to import.");
+                return;
+            }
+                           
             // Read all lines from the file
             System.Collections.IEnumerator enumerator = linesOfData.GetEnumerator();
 
@@ -88,6 +95,9 @@ namespace DailyCostTracker
             loggerDatabase.LogInformation($"UpdateDatabaseWithTransactions: Failures: {databaseManager.DailyTransaction_InsertFailed}");
             loggerDatabase.LogInformation($"UpdateDatabaseWithTransactions: Insertions: {databaseManager.DailyTransaction_Inserted}");
             loggerDatabase.LogInformation($"UpdateDatabaseWithTransactions: Already Exists: {databaseManager.DailyTransaction_AlreadyExisted}");
+
+            synth.Speak($"You have {databaseManager.DailyTransaction_InsertFailed} failures and {databaseManager.DailyTransaction_Inserted} new records  ");
+
         }    
     }
 }
