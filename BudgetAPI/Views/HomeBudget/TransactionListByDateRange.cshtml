@@ -143,7 +143,7 @@
             document.getElementById("status").textContent = "Error: " + error.message;
         });
 
-        const summaryQueryStr = `http://localhost:5065/HomeBudget/TransactionDollarsByCategory?fromDate=${startDate}&toDate=${endDate}`;
+        const summaryQueryStr = `/HomeBudget/TransactionDollarsByCategory?fromDate=${startDate}&toDate=${endDate}`;
 
         console.log("summaryQueryStr is " + summaryQueryStr);
 
