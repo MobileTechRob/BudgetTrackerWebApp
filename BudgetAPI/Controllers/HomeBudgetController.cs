@@ -118,10 +118,19 @@ namespace MyPersonalBudgetAPI.Controllers
         {
             List<TransactionDollarsByCategoryDateRange> transactionDollarsByCategoryDateRanges = new List<TransactionDollarsByCategoryDateRange>();
 
-            int startYearAsInt = string.IsNullOrEmpty(startYear) ? DateTime.Now.Year : int.Parse(startYear);
+            int startYearAsInt = 0;
 
-            DateOnly fromDate = new DateOnly(startYearAsInt, 1, 1);
-            DateOnly toDate = new DateOnly(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, 1));
+            DateOnly fromDate;
+            DateOnly toDate;
+
+            if ((startYear == null) || (startYear == "0000"))
+            {
+                startYearAsInt = DateTime.Now.Year;
+            }
+            else
+            {
+                startYearAsInt = int.Parse(startYear);
+            }
 
             List<DatabaseManager.DataModels.DailyTransaction> dailyTransactions;
 
@@ -130,7 +139,7 @@ namespace MyPersonalBudgetAPI.Controllers
                 for (int month = 1; month <= 12; month++)
                 {
                     fromDate = new DateOnly(year, month, 1);
-                    toDate = new DateOnly(year, month, DateTime.DaysInMonth(year, DateTime.Now.Month));
+                    toDate = new DateOnly(year, month, DateTime.DaysInMonth(year, month));
                 
                     dailyTransactions = databaseManager.GetDailyTransactions(fromDate, toDate);
                     
