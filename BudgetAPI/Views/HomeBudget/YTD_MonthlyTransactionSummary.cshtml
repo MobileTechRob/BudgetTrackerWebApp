@@ -7,17 +7,25 @@
 <h2>Year To Date Monthly Transaction Summary</h2>
 
 <form id="myForm">
-    <select id="selectYear" name="selectYear" onchange="onyearchanged()">
-        <option value="0000">Select Year To Start From</option>
-        <option value="2025">2025</option>
-        <option value="2024">2024</option>
-        <option value="2023">2023</option>
-    </select>
+    <table>
+        <tr>
+            <td>
+                <label>Select Year:</label>
+            </td>
+            <td>
+                <select id="selectYear" name="selectYear" onchange="onyearchanged()">
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                </select>
+            </td>
+        </tr>
+    </table>
 </form>
 
 <body style="background-color: beige;">
     <table id="tableYearToDate">
-        <thead>
+        <thead id="header-row-1">
             <tr>
                 <th>Month Start</th>
                 <th>&nbsp;&nbsp;&nbsp;</th>
@@ -25,17 +33,16 @@
                 <th>&nbsp;&nbsp;&nbsp;</th>
                 <th>Cost Total</th>
                 <th>&nbsp;&nbsp;&nbsp;</th>                
-                <th>Savings Total</th>
-                
-        </tr>
+                <th>Savings Total</th>                
+            </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.StartDate</td>
+                    <td>@item.StartDate.ToString().Split(" ")[0]</td>
                     <th>&nbsp;&nbsp;&nbsp;</th>
-                    <td>@item.EndDate</td>
+                    <td>@item.EndDate.ToString().Split(" ")[0]</td>
                     <th>&nbsp;&nbsp;&nbsp;</th>
                     <td>@item.CostTotal</td>
                     <th>&nbsp;&nbsp;&nbsp;</th>
@@ -43,6 +50,22 @@
                 </tr>
             }
         </tbody>    
+    </table>
+
+    <table id="tableYearToDate_UserSelectedEarlierDate">
+        <thead id="header-row-2">
+            <tr>
+                <th>Month Start</th>
+                <th>&nbsp;&nbsp;&nbsp;</th>
+                <th>Month End</th>
+                <th>&nbsp;&nbsp;&nbsp;</th>
+                <th>Cost Total</th>
+                <th>&nbsp;&nbsp;&nbsp;</th>
+                <th>Savings Total</th>
+            </tr>
+        </thead>
+        <tbody id="tableYearToDate_UserSelectedEarlierDate_body">
+        </tbody>
     </table>
 </body>
 
@@ -75,6 +98,9 @@
         font-weight: bold;
     }
 
+    .hidden {
+        display: none;
+    }
 </style>
 
 
@@ -83,28 +109,10 @@
     window.onload = function () {
         console.log("window.onload called");
 
-           // const queryStrImportHistory = `/HomeBudget/ImportedTransactions`;
-
-           //    console.log("queryStr is " , queryStrImportHistory);
-
-           //    fetch(queryStrImportHistory)
-           //     .then(response => {
-           //         if (!response.ok) {
-           //             throw new Error('Network response was not ok');
-           //         }
-           //         return response.json();
-           //     })
-           //     .then(importTransactionHistory => {
-           //            //console.log("importTransactionHistory is ",  JSON.stringify(importTransactionHistory));
-           //         // Process the data as needed
-           //         // For example, you can call a function to update the UI with the fetched data
-           //         renderImportTransactionHistory(importTransactionHistory);
-           //     })
-           //     .catch(error => {
-           //         console.error('There was a problem with the fetch operation:', error);
-           //     });
-
+        const userSelectedYearTable = document.getElementById("tableYearToDate_UserSelectedEarlierDate");        
+        userSelectedYearTable.style.display = "none";
     };
+
 
     function onyearchanged()
     {
@@ -114,6 +122,15 @@
 
         console.log("selected year is ", year.value);    
 
+        const defaultYearTable = document.getElementById("tableYearToDate");
+        const userSelectedYearTable = document.getElementById("tableYearToDate_UserSelectedEarlierDate");
+        
+        defaultYearTable.style.display = "none"; // Hide the user selected year table
+        userSelectedYearTable.style.display = "table";
+        
+        console.log("defaultYearTable.style.display" , defaultYearTable.style.display);
+        console.log("userSelectedYearTable.style.display" , userSelectedYearTable.style.display);
+        
         const queryStr = `/HomeBudget/GetYTDAndForward?startYear=${year.value}`;
 
         console.log("query str ", queryStr);
@@ -127,7 +144,8 @@
             })
             .then(data => {
                 console.log("data is ", data);
-                renderImportTransactionHistory(data);
+
+                renderYTDspendingHistory(data);
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
@@ -135,50 +153,39 @@
 
     }
 
-    function renderImportTransactionHistory(importTransactionHistory)
+    function renderYTDspendingHistory(spendingHistory)
     {
-           console.log("importTransactionHistory line is ", importTransactionHistory);
+           console.log("renderYTDspendingHistory line is ", spendingHistory);
 
-           const tbody = document.getElementById('importHistory');
+           const tbody = document.getElementById('tableYearToDate_UserSelectedEarlierDate_body');
 
            if (tbody) 
            {
                   tbody.innerHTML = ''; // Clear any old rows
 
-                  importTransactionHistory.forEach(importHistory => 
+                  spendingHistory.forEach(spendingMonth =>
                   {                      
-                      console.log("importHistory.dateTimeOfImport is ", importHistory.dateTimeOfImport);                      
+                      console.log("renderYTDspendingHistory ", spendingMonth);
+                      console.log("renderYTDspendingHistory startDate", spendingMonth.startDate);
 
-                      var [datePart, timePart] = importHistory.dateTimeOfImport.split('T');
-                      var dateOfImport = datePart + " " + timePart.slice(0,8); // Combine date and time"
+                      var [startDatePart, timePart1] = spendingMonth.startDate.split('T');
+                      var [endDatePart, timePart2] = spendingMonth.endDate.split('T');
 
-                      var [datePart, timePart] = importHistory.transaction_StartDate.split('T');
-                      var startDate = datePart;
-
-                      var [datePart, timePart] = importHistory.transaction_EndDate.split('T');
-                      var endDate = datePart;
-
-                            const row = document.createElement('tr');
-                            row.innerHTML = `<td>${dateOfImport}</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>${startDate}</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>${endDate}</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>${importHistory.numberOfTransactions}</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>${importHistory.numberOfInsertions}</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>${importHistory.numberOfExistingTransactions}</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>${importHistory.numberOfFailedInsertions}</td>`;
-
-                            tbody.appendChild(row);
+                      // var dateOfImport = datePart + " " + timePart.slice(0,8); // Combine date and time"
+                      // var [datePart, timePart] = importHistory.transaction_StartDate.split('T');
+                      // var startDate = datePart;
+                      // var [datePart, timePart] = importHistory.transaction_EndDate.split('T');
+                      // var endDate = datePart;
+                      const row = document.createElement('tr');
+                      row.innerHTML = `<td>${startDatePart}</td>
+                                       <td>&nbsp;&nbsp;</td>
+                                       <td>${endDatePart}</td>
+                                       <td>&nbsp;&nbsp;</td>
+                                       <td>${spendingMonth.costTotal}</td>
+                                       <td>&nbsp;&nbsp;</td>
+                                       <td>${spendingMonth.savingsTotal}</td>`;
+                                       
+                      tbody.appendChild(row);
                   });
            }
     }
