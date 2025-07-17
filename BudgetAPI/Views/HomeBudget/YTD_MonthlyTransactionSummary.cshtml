@@ -82,17 +82,20 @@
                 <th>Savings Total</th>
             </tr>
         </thead>
-        <tbody id="tableYearToDate_UserSelectedEarlierDate_body">
+        <tbody id="bodyForDateCostAndSavingsfromUserSelectingDates">
         </tbody>
     </table>
 </body>
 
-
-
-
 <script>
     window.onload = function () {
         console.log("window.onload called");
+
+            const defaultYearTable = document.getElementById("tableYearToDate");
+            const userSelectedYearTable = document.getElementById("tableYearToDate_UserSelectedEarlierDate");
+
+            defaultYearTable.style.display = "table"; // Hide the user selected year table
+            userSelectedYearTable.style.display = "none";
 
             const queryStrTransactionYears = `/HomeBudget/TransactionYears`;
 
@@ -122,10 +125,6 @@
         const selectElement = document.getElementById("selectYear");
 
         console.log("window.onload selectElement is " , selectElement.value);
-
-        // Create a new option element        
-        // Append the new option to the select element
-        //selectElement.appendChild(newOption);
 
         transactionYears.forEach(year => {
             console.log("transaction Year is ", year);
@@ -177,12 +176,12 @@
 
     }
 
-    function renderMonthlyTransactionSummary(importTransactionHistory)
+    function renderMonthlyTransactionSummary(spendingHistory)
     {
-           console.log("renderImportTransactionHistory ", importTransactionHistory);
-           console.log("importTransactionHistory line is ", importTransactionHistory);
+           console.log("renderImportTransactionHistory ", spendingHistory);
+           console.log("importTransactionHistory line is ", spendingHistory);
 
-           const tbody = document.getElementById('bodyForDateCostAndSavings');
+           const tbody = document.getElementById('bodyForDateCostAndSavingsfromUserSelectingDates');
 
            if (tbody != null) 
            {
@@ -192,16 +191,16 @@
 
                   spendingHistory.forEach(spendingMonth =>
                   {                      
-                      console.log("importHistory ", importHistory);
-                      var [startDate, timePart] = importHistory.startDate.split('T');
+                      console.log("importHistory ", spendingMonth);
+                      var [startDate, timePart] = spendingMonth.startDate.split('T');
 
                       console.log ("startDate ", startDate);
-                      var [endDate, timePart] = importHistory.endDate.split('T');
+                      var [endDate, timePart] = spendingMonth.endDate.split('T');
 
                       console.log ("endDate" , endDate);
 
-                      var costTotal = importHistory.costTotal;
-                      var savingsTotal = importHistory.savingsTotal;
+                      var costTotal = spendingMonth.costTotal;
+                      var savingsTotal = spendingMonth.savingsTotal;
 
                       console.log("costTotal is ", costTotal);
                       console.log("savingsTotal is ", savingsTotal);
@@ -216,15 +215,13 @@
                                         <td>${savingsTotal}</td>
                                         <td>&nbsp;&nbsp;&nbsp;</td>`;                                       
 
-                       tbody.appendChild(row);
-
-                       console.log("row appended to tbody");
+                       tbody.appendChild(row);                       
                   });
            }
            else
-              {
+           {
                 console.log("tbody is null, cannot render import history");
-              } 
+           } 
     }
 
 </script>
