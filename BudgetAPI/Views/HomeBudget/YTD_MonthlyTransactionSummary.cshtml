@@ -5,47 +5,6 @@
 }
 
 <h2>Year To Date Monthly Transaction Summary</h2>
-
-<form id="myForm">
-    <select id="selectYear" name="selectYear" onchange="onyearchanged()">
-        <option value="0000">Select Year To Start From</option>
-        <option value="2025">2025</option>
-        <option value="2024">2024</option>
-        <option value="2023">2023</option>
-    </select>
-</form>
-
-<body style="background-color: beige;">
-    <table id="tableYearToDate">
-        <thead>
-            <tr>
-                <th>Month Start</th>
-                <th>&nbsp;&nbsp;&nbsp;</th>
-                <th>Month End</th>
-                <th>&nbsp;&nbsp;&nbsp;</th>
-                <th>Cost Total</th>
-                <th>&nbsp;&nbsp;&nbsp;</th>                
-                <th>Savings Total</th>
-                
-        </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.StartDate</td>
-                    <th>&nbsp;&nbsp;&nbsp;</th>
-                    <td>@item.EndDate</td>
-                    <th>&nbsp;&nbsp;&nbsp;</th>
-                    <td>@item.CostTotal</td>
-                    <th>&nbsp;&nbsp;&nbsp;</th>
-                    <td>@item.SavingsTotal</td>
-                </tr>
-            }
-        </tbody>    
-    </table>
-</body>
-
 <style>
     .container {
         display: flex;
@@ -77,34 +36,97 @@
 
 </style>
 
+<form id="myForm">
+    <select id="selectYear" name="selectYear" onchange="onyearchanged()">         
+    </select>
+</form>
+
+<body style="background-color: beige;">
+    <table id="tableYearToDate">
+        <thead>
+            <tr>
+                <th>Month Start</th>
+                <th>&nbsp;&nbsp;&nbsp;</th>
+                <th>Month End</th>
+                <th>&nbsp;&nbsp;&nbsp;</th>
+                <th>Cost Total</th>
+                <th>&nbsp;&nbsp;&nbsp;</th>                
+                <th>Savings Total</th>
+                
+        </tr>
+        </thead>
+        <tbody id="bodyForDateCostAndSavings">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.StartDte</td>
+                    <th>&nbsp;&nbsp;&nbsp;</th>
+                    <td>@item.EndDte</td>
+                    <th>&nbsp;&nbsp;&nbsp;</th>
+                    <td>@item.CostTotal</td>
+                    <th>&nbsp;&nbsp;&nbsp;</th>
+                    <td>@item.SavingsTotal</td>
+                </tr>
+            }
+        </tbody>    
+    </table>
+</body>
+
+
 
 
 <script>
     window.onload = function () {
         console.log("window.onload called");
 
-           // const queryStrImportHistory = `/HomeBudget/ImportedTransactions`;
+            const queryStrTransactionYears = `/HomeBudget/TransactionYears`;
 
-           //    console.log("queryStr is " , queryStrImportHistory);
+            console.log("queryStr is " , queryStrTransactionYears);
 
-           //    fetch(queryStrImportHistory)
-           //     .then(response => {
-           //         if (!response.ok) {
-           //             throw new Error('Network response was not ok');
-           //         }
-           //         return response.json();
-           //     })
-           //     .then(importTransactionHistory => {
-           //            //console.log("importTransactionHistory is ",  JSON.stringify(importTransactionHistory));
-           //         // Process the data as needed
-           //         // For example, you can call a function to update the UI with the fetched data
-           //         renderImportTransactionHistory(importTransactionHistory);
-           //     })
-           //     .catch(error => {
-           //         console.error('There was a problem with the fetch operation:', error);
-           //     });
+               fetch(queryStrTransactionYears)
+               .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(transactionYears => {
+                    // Process the data as needed
+                    // For example, you can call a function to update the UI with the fetched data
+                    renderTransactionYears(transactionYears);
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
 
     };
+
+    function renderTransactionYears(transactionYears)
+    {
+        console.log("renderTransactionYears ");
+
+        const selectElement = document.getElementById("selectYear");
+
+        console.log("window.onload selectElement is " , selectElement.value);
+
+        // Create a new option element
+        
+
+
+        // Append the new option to the select element
+        //selectElement.appendChild(newOption);
+
+        transactionYears.forEach(year => {
+            console.log("transaction Year is ", year);
+
+            const newOption = document.createElement('option');
+
+            newOption.value = year;
+            newOption.textContent = year;           
+            selectElement.appendChild(newOption);
+        });
+
+    }
 
     function onyearchanged()
     {
@@ -127,7 +149,7 @@
             })
             .then(data => {
                 console.log("data is ", data);
-                renderImportTransactionHistory(data);
+                renderMonthlyTransactionSummary(data);
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
@@ -135,52 +157,54 @@
 
     }
 
-    function renderImportTransactionHistory(importTransactionHistory)
+    function renderMonthlyTransactionSummary(importTransactionHistory)
     {
+           console.log("renderImportTransactionHistory ", importTransactionHistory);
            console.log("importTransactionHistory line is ", importTransactionHistory);
 
-           const tbody = document.getElementById('importHistory');
+           const tbody = document.getElementById('bodyForDateCostAndSavings');
 
-           if (tbody) 
+           if (tbody != null) 
            {
+                  console.log("tbody is not null, clearing old rows");
+
                   tbody.innerHTML = ''; // Clear any old rows
 
                   importTransactionHistory.forEach(importHistory => 
                   {                      
-                      console.log("importHistory.dateTimeOfImport is ", importHistory.dateTimeOfImport);                      
+                      console.log("importHistory ", importHistory);
+                      var [startDate, timePart] = importHistory.startDate.split('T');
 
-                      var [datePart, timePart] = importHistory.dateTimeOfImport.split('T');
-                      var dateOfImport = datePart + " " + timePart.slice(0,8); // Combine date and time"
+                      console.log ("startDate ", startDate);
+                      var [endDate, timePart] = importHistory.endDate.split('T');
 
-                      var [datePart, timePart] = importHistory.transaction_StartDate.split('T');
-                      var startDate = datePart;
+                      console.log ("endDate" , endDate);
 
-                      var [datePart, timePart] = importHistory.transaction_EndDate.split('T');
-                      var endDate = datePart;
+                      var costTotal = importHistory.costTotal;
+                      var savingsTotal = importHistory.savingsTotal;
 
-                            const row = document.createElement('tr');
-                            row.innerHTML = `<td>${dateOfImport}</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>${startDate}</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>${endDate}</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>${importHistory.numberOfTransactions}</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>${importHistory.numberOfInsertions}</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>${importHistory.numberOfExistingTransactions}</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>${importHistory.numberOfFailedInsertions}</td>`;
+                      console.log("costTotal is ", costTotal);
+                      console.log("savingsTotal is ", savingsTotal);
+                   
+                       const row = document.createElement('tr');
+                       row.innerHTML = `<td>${startDate}</td>
+                                        <td>&nbsp;&nbsp;&nbsp;</td>
+                                        <td>${endDate}</td>
+                                        <td>&nbsp;&nbsp;&nbsp;</td>                                        
+                                        <td>${costTotal}</td>
+                                        <td>&nbsp;&nbsp;&nbsp;</td>                                        
+                                        <td>${savingsTotal}</td>
+                                        <td>&nbsp;&nbsp;&nbsp;</td>`;                                       
 
-                            tbody.appendChild(row);
+                       tbody.appendChild(row);
+
+                       console.log("row appended to tbody");
                   });
            }
+           else
+              {
+                console.log("tbody is null, cannot render import history");
+              } 
     }
 
 </script>

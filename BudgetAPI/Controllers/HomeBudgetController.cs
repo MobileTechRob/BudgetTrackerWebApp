@@ -45,6 +45,11 @@ namespace MyPersonalBudgetAPI.Controllers
             return View(databaseManager.GetDailyTransactions(fromDate, toDate));
         }
 
+        [Route("HomeBudget/TransactionYears")]
+        public ObjectResult GetTransactionYears()
+        { 
+            return Ok(databaseManager.GetTransactionYears());
+        }
 
         // GET: BudgetCostsController
         [Route("HomeBudget/CostList/{category}")]
@@ -52,7 +57,6 @@ namespace MyPersonalBudgetAPI.Controllers
         {
             return Ok(databaseManager.GetDailyTransactions());
         }
-
 
         // GET: BudgetCostsController
         public ObjectResult CostListByDateRange([FromQuery] DateOnly? fromDate= null, [FromQuery] DateOnly? toDate = null)

@@ -221,5 +221,10 @@ namespace DatabaseManager
                 .Where(d => string.IsNullOrEmpty(d.CostCategory) && string.IsNullOrEmpty(d.SavingsCategory))
                 .ToList();
         }
+
+        public List<int> GetTransactionYears()
+        {
+            return appDbContext.DailyTransactions.Select(d => d.Posted_Date.Year).Distinct().OrderDescending().ToList();             
+        }
     }
 }
