@@ -43,7 +43,7 @@
 
 <body style="background-color: beige;">
     <table id="tableYearToDate">
-        <thead>
+        <thead id="header-row-1">
             <tr>
                 <th>Month Start</th>
                 <th>&nbsp;&nbsp;&nbsp;</th>
@@ -51,9 +51,8 @@
                 <th>&nbsp;&nbsp;&nbsp;</th>
                 <th>Cost Total</th>
                 <th>&nbsp;&nbsp;&nbsp;</th>                
-                <th>Savings Total</th>
-                
-        </tr>
+                <th>Savings Total</th>                
+            </tr>
         </thead>
         <tbody id="bodyForDateCostAndSavings">
             @foreach (var item in Model)
@@ -69,6 +68,22 @@
                 </tr>
             }
         </tbody>    
+    </table>
+
+    <table id="tableYearToDate_UserSelectedEarlierDate">
+        <thead id="header-row-2">
+            <tr>
+                <th>Month Start</th>
+                <th>&nbsp;&nbsp;&nbsp;</th>
+                <th>Month End</th>
+                <th>&nbsp;&nbsp;&nbsp;</th>
+                <th>Cost Total</th>
+                <th>&nbsp;&nbsp;&nbsp;</th>
+                <th>Savings Total</th>
+            </tr>
+        </thead>
+        <tbody id="tableYearToDate_UserSelectedEarlierDate_body">
+        </tbody>
     </table>
 </body>
 
@@ -104,15 +119,11 @@
     function renderTransactionYears(transactionYears)
     {
         console.log("renderTransactionYears ");
-
         const selectElement = document.getElementById("selectYear");
 
         console.log("window.onload selectElement is " , selectElement.value);
 
-        // Create a new option element
-        
-
-
+        // Create a new option element        
         // Append the new option to the select element
         //selectElement.appendChild(newOption);
 
@@ -136,6 +147,15 @@
 
         console.log("selected year is ", year.value);    
 
+        const defaultYearTable = document.getElementById("tableYearToDate");
+        const userSelectedYearTable = document.getElementById("tableYearToDate_UserSelectedEarlierDate");
+        
+        defaultYearTable.style.display = "none"; // Hide the user selected year table
+        userSelectedYearTable.style.display = "table";
+        
+        console.log("defaultYearTable.style.display" , defaultYearTable.style.display);
+        console.log("userSelectedYearTable.style.display" , userSelectedYearTable.style.display);
+        
         const queryStr = `/HomeBudget/GetYTDAndForward?startYear=${year.value}`;
 
         console.log("query str ", queryStr);
@@ -170,7 +190,7 @@
 
                   tbody.innerHTML = ''; // Clear any old rows
 
-                  importTransactionHistory.forEach(importHistory => 
+                  spendingHistory.forEach(spendingMonth =>
                   {                      
                       console.log("importHistory ", importHistory);
                       var [startDate, timePart] = importHistory.startDate.split('T');

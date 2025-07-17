@@ -34,7 +34,7 @@
 </style>
 
 <div class="text-center">
-    <h4>Your Budget - Year To Date Cost and Revenue</h4>
+    <h4>Year To Date Cost and Revenue</h4>
 </div>
 
 <script>
@@ -55,7 +55,7 @@
         if (yearHeader) 
         {
             const row = document.createElement('tr');
-            row.innerHTML = `<td>Year To Date Summary for ${firstDayOfYear} to ${todayDate}</td>`;
+            row.innerHTML = `<td>Summary for ${firstDayOfYear} to ${todayDate}</td>`;
             yearHeader.appendChild(row);
         }
 
@@ -157,7 +157,7 @@
       {
           tbodyYearRevenue.innerHTML = ''; // Clear any old rows
           const row = document.createElement('tr');
-          row.innerHTML = `<td>Year To Date Revenue</td><td>${savingsTotal}</td>`;
+          row.innerHTML = `<td>Revenue</td><td>${savingsTotal}</td>`;
           tbodyYearRevenue.appendChild(row);    
       }
 
@@ -165,7 +165,7 @@
       {   
           tbodyYearCost.innerHTML = ''; // Clear any old rows
           const row = document.createElement('tr');
-          row.innerHTML = `<td>Year To Date Cost</td><td>${costTotal}</td>`;
+          row.innerHTML = `<td>Cost</td><td>${costTotal}</td>`;
           tbodyYearCost.appendChild(row);
       }
  }
