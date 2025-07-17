@@ -3,6 +3,7 @@ namespace BudgetAPI.Models
 {
     public class DailyTransaction
     {
+        //public string PostedDate { get { return Posted_Date.ToString("yyyy-MM-dd"); } }
         public DateTime Posted_Date { get; set; }
         public string Description { get; set; }
         public Decimal Amount { get; set; }
@@ -16,7 +17,7 @@ namespace BudgetAPI.Models
         public string SavingsCategory { get; set; }
 
         public DailyTransaction()
-        {
+        {         
             Posted_Date = DateTime.MinValue;
             Description = string.Empty;
             Amount = 0;

@@ -128,5 +128,10 @@ namespace DatabaseManager
         {
             return crud_Operations.GetTransactionsWithoutCategories();
         }
+
+        public List<int> GetTransactionYears()
+        {
+            return crud_Operations.GetTransactionYears();
+        }
     }
 }

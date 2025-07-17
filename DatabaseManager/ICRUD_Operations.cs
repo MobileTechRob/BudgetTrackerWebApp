@@ -16,5 +16,6 @@ namespace DatabaseManager
         CostAndSavingsCategories GetCostAndSavingsCategories();
         void RecordImportInformation(DateTime startDate, DateTime endDate, int transactionCount, int insertedTransactions, int alreadyExistingTransactions, int failedInsertions);
         List<ImportTransactionDataLog> GetImportTransactionHistory();
+        List<int> GetTransactionYears();
     }
 }

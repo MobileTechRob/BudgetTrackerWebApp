@@ -17,5 +17,6 @@ namespace DatabaseManager
         bool MapKeywordToCostCategoryMapping(string keyword, string costcategory);
         bool MapKeywordToSavingsCategoryMapping(string keyword, string costcategory);     
         List<ImportTransactionDataLog> GetImportTransactionHistory();
+        List<int> GetTransactionYears();
     }
 }

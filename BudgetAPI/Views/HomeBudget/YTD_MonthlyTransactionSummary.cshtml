@@ -5,70 +5,6 @@
 }
 
 <h2>Year To Date Monthly Transaction Summary</h2>
-
-<form id="myForm">
-    <table>
-        <tr>
-            <td>
-                <label>Select Year:</label>
-            </td>
-            <td>
-                <select id="selectYear" name="selectYear" onchange="onyearchanged()">
-                    <option value="2025">2025</option>
-                    <option value="2024">2024</option>
-                    <option value="2023">2023</option>
-                </select>
-            </td>
-        </tr>
-    </table>
-</form>
-
-<body style="background-color: beige;">
-    <table id="tableYearToDate">
-        <thead id="header-row-1">
-            <tr>
-                <th>Month Start</th>
-                <th>&nbsp;&nbsp;&nbsp;</th>
-                <th>Month End</th>
-                <th>&nbsp;&nbsp;&nbsp;</th>
-                <th>Cost Total</th>
-                <th>&nbsp;&nbsp;&nbsp;</th>                
-                <th>Savings Total</th>                
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.StartDate.ToString().Split(" ")[0]</td>
-                    <th>&nbsp;&nbsp;&nbsp;</th>
-                    <td>@item.EndDate.ToString().Split(" ")[0]</td>
-                    <th>&nbsp;&nbsp;&nbsp;</th>
-                    <td>@item.CostTotal</td>
-                    <th>&nbsp;&nbsp;&nbsp;</th>
-                    <td>@item.SavingsTotal</td>
-                </tr>
-            }
-        </tbody>    
-    </table>
-
-    <table id="tableYearToDate_UserSelectedEarlierDate">
-        <thead id="header-row-2">
-            <tr>
-                <th>Month Start</th>
-                <th>&nbsp;&nbsp;&nbsp;</th>
-                <th>Month End</th>
-                <th>&nbsp;&nbsp;&nbsp;</th>
-                <th>Cost Total</th>
-                <th>&nbsp;&nbsp;&nbsp;</th>
-                <th>Savings Total</th>
-            </tr>
-        </thead>
-        <tbody id="tableYearToDate_UserSelectedEarlierDate_body">
-        </tbody>
-    </table>
-</body>
-
 <style>
     .container {
         display: flex;
@@ -98,10 +34,59 @@
         font-weight: bold;
     }
 
-    .hidden {
-        display: none;
-    }
 </style>
+
+<form id="myForm">
+    <select id="selectYear" name="selectYear" onchange="onyearchanged()">         
+    </select>
+</form>
+
+<body style="background-color: beige;">
+    <table id="tableYearToDate">
+        <thead id="header-row-1">
+            <tr>
+                <th>Month Start</th>
+                <th>&nbsp;&nbsp;&nbsp;</th>
+                <th>Month End</th>
+                <th>&nbsp;&nbsp;&nbsp;</th>
+                <th>Cost Total</th>
+                <th>&nbsp;&nbsp;&nbsp;</th>                
+                <th>Savings Total</th>                
+            </tr>
+        </thead>
+        <tbody id="bodyForDateCostAndSavings">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.StartDte</td>
+                    <th>&nbsp;&nbsp;&nbsp;</th>
+                    <td>@item.EndDte</td>
+                    <th>&nbsp;&nbsp;&nbsp;</th>
+                    <td>@item.CostTotal</td>
+                    <th>&nbsp;&nbsp;&nbsp;</th>
+                    <td>@item.SavingsTotal</td>
+                </tr>
+            }
+        </tbody>    
+    </table>
+
+    <table id="tableYearToDate_UserSelectedEarlierDate">
+        <thead id="header-row-2">
+            <tr>
+                <th>Month Start</th>
+                <th>&nbsp;&nbsp;&nbsp;</th>
+                <th>Month End</th>
+                <th>&nbsp;&nbsp;&nbsp;</th>
+                <th>Cost Total</th>
+                <th>&nbsp;&nbsp;&nbsp;</th>
+                <th>Savings Total</th>
+            </tr>
+        </thead>
+        <tbody id="tableYearToDate_UserSelectedEarlierDate_body">
+        </tbody>
+    </table>
+</body>
+
 
 
 
@@ -109,10 +94,50 @@
     window.onload = function () {
         console.log("window.onload called");
 
-        const userSelectedYearTable = document.getElementById("tableYearToDate_UserSelectedEarlierDate");        
-        userSelectedYearTable.style.display = "none";
+            const queryStrTransactionYears = `/HomeBudget/TransactionYears`;
+
+            console.log("queryStr is " , queryStrTransactionYears);
+
+               fetch(queryStrTransactionYears)
+               .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(transactionYears => {
+                    // Process the data as needed
+                    // For example, you can call a function to update the UI with the fetched data
+                    renderTransactionYears(transactionYears);
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+
     };
 
+    function renderTransactionYears(transactionYears)
+    {
+        console.log("renderTransactionYears ");
+        const selectElement = document.getElementById("selectYear");
+
+        console.log("window.onload selectElement is " , selectElement.value);
+
+        // Create a new option element        
+        // Append the new option to the select element
+        //selectElement.appendChild(newOption);
+
+        transactionYears.forEach(year => {
+            console.log("transaction Year is ", year);
+
+            const newOption = document.createElement('option');
+
+            newOption.value = year;
+            newOption.textContent = year;           
+            selectElement.appendChild(newOption);
+        });
+
+    }
 
     function onyearchanged()
     {
@@ -144,8 +169,7 @@
             })
             .then(data => {
                 console.log("data is ", data);
-
-                renderYTDspendingHistory(data);
+                renderMonthlyTransactionSummary(data);
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
@@ -153,41 +177,54 @@
 
     }
 
-    function renderYTDspendingHistory(spendingHistory)
+    function renderMonthlyTransactionSummary(importTransactionHistory)
     {
-           console.log("renderYTDspendingHistory line is ", spendingHistory);
+           console.log("renderImportTransactionHistory ", importTransactionHistory);
+           console.log("importTransactionHistory line is ", importTransactionHistory);
 
-           const tbody = document.getElementById('tableYearToDate_UserSelectedEarlierDate_body');
+           const tbody = document.getElementById('bodyForDateCostAndSavings');
 
-           if (tbody) 
+           if (tbody != null) 
            {
+                  console.log("tbody is not null, clearing old rows");
+
                   tbody.innerHTML = ''; // Clear any old rows
 
                   spendingHistory.forEach(spendingMonth =>
                   {                      
-                      console.log("renderYTDspendingHistory ", spendingMonth);
-                      console.log("renderYTDspendingHistory startDate", spendingMonth.startDate);
+                      console.log("importHistory ", importHistory);
+                      var [startDate, timePart] = importHistory.startDate.split('T');
 
-                      var [startDatePart, timePart1] = spendingMonth.startDate.split('T');
-                      var [endDatePart, timePart2] = spendingMonth.endDate.split('T');
+                      console.log ("startDate ", startDate);
+                      var [endDate, timePart] = importHistory.endDate.split('T');
 
-                      // var dateOfImport = datePart + " " + timePart.slice(0,8); // Combine date and time"
-                      // var [datePart, timePart] = importHistory.transaction_StartDate.split('T');
-                      // var startDate = datePart;
-                      // var [datePart, timePart] = importHistory.transaction_EndDate.split('T');
-                      // var endDate = datePart;
-                      const row = document.createElement('tr');
-                      row.innerHTML = `<td>${startDatePart}</td>
-                                       <td>&nbsp;&nbsp;</td>
-                                       <td>${endDatePart}</td>
-                                       <td>&nbsp;&nbsp;</td>
-                                       <td>${spendingMonth.costTotal}</td>
-                                       <td>&nbsp;&nbsp;</td>
-                                       <td>${spendingMonth.savingsTotal}</td>`;
-                                       
-                      tbody.appendChild(row);
+                      console.log ("endDate" , endDate);
+
+                      var costTotal = importHistory.costTotal;
+                      var savingsTotal = importHistory.savingsTotal;
+
+                      console.log("costTotal is ", costTotal);
+                      console.log("savingsTotal is ", savingsTotal);
+                   
+                       const row = document.createElement('tr');
+                       row.innerHTML = `<td>${startDate}</td>
+                                        <td>&nbsp;&nbsp;&nbsp;</td>
+                                        <td>${endDate}</td>
+                                        <td>&nbsp;&nbsp;&nbsp;</td>                                        
+                                        <td>${costTotal}</td>
+                                        <td>&nbsp;&nbsp;&nbsp;</td>                                        
+                                        <td>${savingsTotal}</td>
+                                        <td>&nbsp;&nbsp;&nbsp;</td>`;                                       
+
+                       tbody.appendChild(row);
+
+                       console.log("row appended to tbody");
                   });
            }
+           else
+              {
+                console.log("tbody is null, cannot render import history");
+              } 
     }
 
 </script>
