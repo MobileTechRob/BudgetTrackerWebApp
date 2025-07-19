@@ -1,4 +1,5 @@
 using DatabaseManager;
+using DatabaseManager.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MyPersonalBudgetAPI.Controllers;
@@ -16,9 +17,9 @@ builder.Services.AddCors(options =>
                           .AllowAnyHeader());
 });
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString)); // Or your DB setup
-builder.Services.AddTransient<ICRUD_Operations, CRUD_Operations>();
+builder.Services.AddTransient<ICrudOperations, CrudOperations>();
+builder.Services.AddTransient<IQueryOperations, QueryOperations>();
 builder.Services.AddTransient<IDatabaseManager, DatabaseManager.DatabaseManager>();
-
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

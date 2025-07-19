@@ -4,20 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DatabaseManager;
 using Microsoft.AspNetCore.Mvc;
 using DatabaseManager.DataModels;
 using SharedDataModels;
 using Microsoft.EntityFrameworkCore;
+using DatabaseManager.Interfaces;
 
 
 namespace DatabaseManager
 {
-    public class CRUD_Operations : ICRUD_Operations
+    public class CrudOperations : ICrudOperations
     {
         AppDbContext appDbContext;
 
-        public CRUD_Operations(AppDbContext appDbContext)
+        public CrudOperations(AppDbContext appDbContext)
         {
             this.appDbContext = appDbContext;
         }
@@ -54,42 +54,7 @@ namespace DatabaseManager
             return insertState;
         }
 
-        public List<DailyTransaction> GetDailyTransactions(DateOnly? fromDate = null, DateOnly? toDate = null)
-        {
 
-            List<DailyTransaction> transactionList = new List<DailyTransaction>();
-
-            if (fromDate != null && toDate != null)
-            {
-                var fromDateTime = new DateTime(fromDate.Value.Year, fromDate.Value.Month, fromDate.Value.Day);
-                var toDateTime = new DateTime(toDate.Value.Year, toDate.Value.Month, toDate.Value.Day);
-
-                var CostByDateSql = from transaction in appDbContext.DailyTransactions.ToList() where transaction.Posted_Date >= fromDateTime && transaction.Posted_Date <= toDateTime select transaction;
-
-                if (CostByDateSql.Any())
-                {
-                    transactionList = CostByDateSql.ToList();
-                }
-
-            }
-
-            return transactionList;            
-        }
-
-        public List<string> GetCostCategories()
-        {
-            List<string> uniqueCosts = new List<string>();
-
-            foreach (KeywordToCostCategory keyworktocostCategory in appDbContext.KeywordToCostCategory.ToList())
-            {
-                if (!uniqueCosts.Contains(keyworktocostCategory.costcategory))
-                {
-                    uniqueCosts.Add(keyworktocostCategory.costcategory);
-                }
-            }
-
-            return uniqueCosts;
-        }
 
         public bool MapKeywordToCostCategoryMapping(string keyword, string costcategory)
         {
@@ -175,18 +140,6 @@ namespace DatabaseManager
             }
         }
 
-        public CostAndSavingsCategories GetCostAndSavingsCategories()
-        {
-            CostAndSavingsCategories costAndSavingsCategories = new CostAndSavingsCategories();
-
-            IEnumerable<KeywordToCostCategory> costCategories = appDbContext.KeywordToCostCategory.AsEnumerable();
-            IEnumerable<KeywordToSavingsCategory> savingsCategories = appDbContext.KeywordToSavingsCategory.AsEnumerable();
-
-            costAndSavingsCategories.CostCategories.AddRange(costCategories);
-            costAndSavingsCategories.SavingsCategories.AddRange(savingsCategories);
-
-            return costAndSavingsCategories;
-        }
 
         public InsertTransactionStatus AddReceiptFromCashTransaction(ReceiptsFromCashTransactions manuallyAddedReceipt, ILogger logger)
         {
@@ -210,21 +163,7 @@ namespace DatabaseManager
 
             appDbContext.SaveChanges();
         }
-        public List<ImportTransactionDataLog> GetImportTransactionHistory()
-        { 
-            return appDbContext.ImportTransactionDataLog.ToList();
-        }
 
-        public List<DailyTransaction> GetTransactionsWithoutCategories()
-        {
-            return appDbContext.DailyTransactions
-                .Where(d => string.IsNullOrEmpty(d.CostCategory) && string.IsNullOrEmpty(d.SavingsCategory))
-                .ToList();
-        }
 
-        public List<int> GetTransactionYears()
-        {
-            return appDbContext.DailyTransactions.Select(d => d.Posted_Date.Year).Distinct().OrderDescending().ToList();             
-        }
     }
 }

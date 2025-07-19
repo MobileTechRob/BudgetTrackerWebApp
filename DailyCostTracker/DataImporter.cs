@@ -1,5 +1,4 @@
-﻿using DatabaseManager;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +7,7 @@ using System.Threading.Tasks;
 using SharedDataModels;
 using DailyCostTracker.DataModels;
 using System.Speech.Synthesis;
+using DatabaseManager.Interfaces;
 
 namespace DailyCostTracker
 {
@@ -64,7 +64,7 @@ namespace DailyCostTracker
             // skip first line
             enumerator.MoveNext();
 
-            ICRUD_Operations crud_Operations = new DatabaseManager.CRUD_Operations(this.appDbContext);
+            ICrudOperations crud_Operations = new DatabaseManager.CrudOperations(this.appDbContext);
 
             TransactionFileParser parser = new TransactionFileParser();
             databaseManager = new DatabaseManager.DatabaseManager(this.loggerDatabase, crud_Operations);
