@@ -32,8 +32,8 @@ namespace TestProject
 
             using (var context = new DatabaseManager.AppDbContext(connectionString))
             {
-                var crudOperations = new DatabaseManager.CRUD_Operations(context);
-                var logger = new Mock<ILogger<DatabaseManager.CRUD_Operations>>().Object;
+                var crudOperations = new DatabaseManager.CrudOperations(context);
+                var logger = new Mock<ILogger<DatabaseManager.CrudOperations>>().Object;
 
                 var dailyTransaction = new DatabaseManager.DataModels.DailyTransaction
                 {
@@ -62,8 +62,8 @@ namespace TestProject
 
             using (var context = new DatabaseManager.AppDbContext(connectionString))
             {
-                var crudOperations = new DatabaseManager.CRUD_Operations(context);
-                var logger = new Mock<ILogger<DatabaseManager.CRUD_Operations>>().Object;
+                var crudOperations = new DatabaseManager.CrudOperations(context);
+                var logger = new Mock<ILogger<DatabaseManager.CrudOperations>>().Object;
 
                 var dailyTransaction = new DatabaseManager.DataModels.DailyTransaction
                 {
@@ -93,8 +93,8 @@ namespace TestProject
 
             using (var context = new DatabaseManager.AppDbContext(connectionString))
             {
-                var crudOperations = new DatabaseManager.CRUD_Operations(context);
-                var logger = new Mock<ILogger<DatabaseManager.CRUD_Operations>>().Object;
+                var crudOperations = new DatabaseManager.CrudOperations(context);
+                var logger = new Mock<ILogger<DatabaseManager.CrudOperations>>().Object;
 
                 var dailyTransaction = new DatabaseManager.DataModels.DailyTransaction
                 {

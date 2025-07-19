@@ -8,27 +8,30 @@ using DatabaseManager.DataModels;
 using DatabaseManager.Exceptions;
 using Microsoft.Extensions.Logging;
 using SharedDataModels;
+using DatabaseManager.Interfaces;
 
 namespace DatabaseManager
 {
     public class DatabaseManager : IDatabaseManager
     {
-        private ICRUD_Operations crud_Operations;
+        private ICrudOperations crudOperations;
+        private IQueryOperations queryOperations;
         private ILogger logger;
 
         public int DailyTransaction_Inserted = 0;
         public int DailyTransaction_AlreadyExisted = 0;
         public int DailyTransaction_InsertFailed = 0;
 
-        public DatabaseManager(ILogger<DatabaseManager> logger, ICRUD_Operations crud_Operations)
+        public DatabaseManager(ILogger<DatabaseManager> logger, ICrudOperations crudOperations, IQueryOperations queryOperations)
         {
-            this.crud_Operations = crud_Operations;
+            this.crudOperations = crudOperations;
+            this.queryOperations = queryOperations;
             this.logger = logger;
         }
 
         public bool AddDailyTransaction(DailyTransaction dailyTransaction)
         {
-            InsertTransactionStatus result = crud_Operations.AddDailyTransactions(dailyTransaction, this.logger);
+            InsertTransactionStatus result = crudOperations.AddDailyTransactions(dailyTransaction, this.logger);
 
             if (result == InsertTransactionStatus.INSERTED)
                 DailyTransaction_Inserted++;
@@ -47,17 +50,17 @@ namespace DatabaseManager
 
         public List<DailyTransaction> GetDailyTransactions(DateOnly? fromDate = null, DateOnly? toDate = null)
         {
-            return crud_Operations.GetDailyTransactions(fromDate, toDate);
+            return queryOperations.GetDailyTransactions(fromDate, toDate);
         }
 
         public List<DailyTransaction> GetSummaryByCategory(DateOnly? fromDate = null, DateOnly? toDate = null)
         {
-            return crud_Operations.GetDailyTransactions(fromDate, toDate);
+            return queryOperations.GetDailyTransactions(fromDate, toDate);
         }
 
         public CostAndSavingsCategories GetCostAndSavingsCategories()
         {
-            return crud_Operations.GetCostAndSavingsCategories();
+            return queryOperations.GetCostAndSavingsCategories();
         }
 
         public bool VerifyUser(string userName, string password)
@@ -87,7 +90,7 @@ namespace DatabaseManager
                 throw new InvalidFieldLengthException($"Keyword or cost category exceeds maximum length of {CostCategoryMaxLength} characters.");
             }
 
-            return crud_Operations.MapKeywordToCostCategoryMapping(keyword, costcategory);
+            return crudOperations.MapKeywordToCostCategoryMapping(keyword, costcategory);
         }
 
         public bool MapKeywordToSavingsCategoryMapping(string keyword, string savingscategory)
@@ -105,7 +108,7 @@ namespace DatabaseManager
                 throw new InvalidFieldLengthException($"Keyword or savings category exceeds maximum length of {SavingsCategoryMaxLength} characters.");
             }
 
-            return crud_Operations.MapKeywordToSavingsCategoryMapping(keyword, savingscategory);
+            return crudOperations.MapKeywordToSavingsCategoryMapping(keyword, savingscategory);
         }
 
         public void RecordImportInformation(DateTime startDate, DateTime endDate, int transactionCount)
@@ -116,22 +119,22 @@ namespace DatabaseManager
             logger.LogInformation($"Daily Transactions Already Existed: {DailyTransaction_AlreadyExisted}");
             logger.LogInformation($"Daily Transactions Insert Failed: {DailyTransaction_InsertFailed}");
 
-            crud_Operations.RecordImportInformation(startDate, endDate, transactionCount, DailyTransaction_Inserted, DailyTransaction_AlreadyExisted, DailyTransaction_InsertFailed);
+            crudOperations.RecordImportInformation(startDate, endDate, transactionCount, DailyTransaction_Inserted, DailyTransaction_AlreadyExisted, DailyTransaction_InsertFailed);
         }
 
         public List<ImportTransactionDataLog> GetImportTransactionHistory()
         {
-            return crud_Operations.GetImportTransactionHistory();            
+            return queryOperations.GetImportTransactionHistory();            
         }
 
         public List<DailyTransaction> GetTransactionsWithoutCategories()
         {
-            return crud_Operations.GetTransactionsWithoutCategories();
+            return queryOperations.GetTransactionsWithoutCategories();
         }
 
         public List<int> GetTransactionYears()
         {
-            return crud_Operations.GetTransactionYears();
+            return queryOperations.GetTransactionYears();
         }
     }
 }
