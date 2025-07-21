@@ -3,12 +3,23 @@ using DatabaseManager.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MyPersonalBudgetAPI.Controllers;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
 string? connectionString= builder.Configuration.SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json").Build().GetConnectionString("CostTracker");
 
+#pragma warning disable CA1416 // Validate platform compatibility
+builder.Logging.AddEventLog(builder =>
+{
+    builder.LogName = "Application";
+    builder.SourceName = "MyPersonalBudgetAPI";
+});
+#pragma warning restore CA1416 // Validate platform compatibility
+
+builder.Services.AddSingleton(sp => { var factory = sp.GetRequiredService<ILoggerFactory>(); return factory.CreateLogger("MyPersonalBudgetAPI"); });
+builder.Services.AddHostedService<BackendWorker.MyBackgroundWorker>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
