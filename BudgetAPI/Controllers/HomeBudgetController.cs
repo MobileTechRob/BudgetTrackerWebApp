@@ -16,7 +16,8 @@ namespace MyPersonalBudgetAPI.Controllers
 
         public HomeBudgetController(ILogger<HomeBudgetController> logger, IDatabaseManager databaseManager)         
         {            
-            this.databaseManager = databaseManager;         
+            this.databaseManager = databaseManager;   
+            this.logger = logger;
         }
 
         // GET: BudgetCostsController
