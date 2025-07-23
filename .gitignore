@@ -48,3 +48,5 @@
 /DatabaseManager/obj/Release/net9.0/DatabaseManager.sourcelink.json
 /DatabaseManager/obj/Release/net9.0/DatabaseManager.csproj.CoreCompileInputs.cache
 /DatabaseManager/obj/Debug/net9.0/DatabaseManager.csproj.CoreCompileInputs.cache
+/DatabaseManager/obj/Release/net9.0
+/Publish

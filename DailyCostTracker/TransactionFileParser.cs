@@ -25,11 +25,11 @@ namespace DailyCostTracker
             dailyAccountTransaction.Amount = Decimal.Parse(fields[2]);
             dailyAccountTransaction.Currency = fields[3];
            
-            long trn;
+            //long trn;
             //if (long.TryParse(fields[4], out trn))
                 dailyAccountTransaction.Transaction_Reference_Number = fields[4];
 
-            long fitrn;
+            //long fitrn;
             //if (long.TryParse(fields[5], out fitrn))
                 dailyAccountTransaction.Fi_Transaction_Reference = fields[5];
 

@@ -64,10 +64,11 @@ namespace DailyCostTracker
             // skip first line
             enumerator.MoveNext();
 
-            ICrudOperations crud_Operations = new DatabaseManager.CrudOperations(this.appDbContext);
+            ICrudOperations crudOperations = new DatabaseManager.CrudOperations(this.appDbContext);
+            IQueryOperations queryOperations = new DatabaseManager.QueryOperations(this.appDbContext);
 
             TransactionFileParser parser = new TransactionFileParser();
-            databaseManager = new DatabaseManager.DatabaseManager(this.loggerDatabase, crud_Operations);
+            databaseManager = new DatabaseManager.DatabaseManager(this.loggerDatabase, crudOperations, queryOperations);
 
             DateTime startDate = DateTime.MinValue;
             DateTime endDate = DateTime.MinValue;
