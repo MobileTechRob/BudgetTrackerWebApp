@@ -12,9 +12,9 @@ namespace MyPersonalBudgetAPI.Controllers
     public class HomeBudgetController : Controller
     {
         private DatabaseManager.IDatabaseManager databaseManager;
-        ILogger<HomeBudgetController> logger;
+        ILogger logger;
 
-        public HomeBudgetController(ILogger<HomeBudgetController> logger, IDatabaseManager databaseManager)         
+        public HomeBudgetController(ILogger logger, IDatabaseManager databaseManager)         
         {            
             this.databaseManager = databaseManager;   
             this.logger = logger;
@@ -269,12 +269,17 @@ namespace MyPersonalBudgetAPI.Controllers
         [HttpPost]
         public IActionResult VerifyUser([FromQuery] string username, [FromQuery] string password)
         {
+
+            logger.LogInformation($"Verifying user: {username} "); 
+
             if (databaseManager.VerifyUser(username, password))
             {
+                logger.LogInformation($"Verifying user: verification passed ");
                 return Ok("User verified successfully");
             }
             else
             {
+                logger.LogInformation($"Verifying user: verification failed ");
                 return Unauthorized("User verification failed");
             }
         }
