@@ -9,55 +9,85 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 using System.Speech.Synthesis;
-
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 // See https://aka.ms/new-console-template for more information
 Console.WriteLine("DailyCostTracker");
 
-var loggerFactory = LoggerFactory.Create(builder =>
-{
-    builder.AddConsole();
-    builder.ClearProviders();
-    builder.AddProvider(new MyLoggingProvider());
-    builder.SetMinimumLevel(LogLevel.Information);
-});
+string pathToDailyTransactionFile = Environment.GetEnvironmentVariable("PathToBankTransactionFile");
 
-var logger = loggerFactory.CreateLogger("DailyCostTracker");
-var loggerDatabase = loggerFactory.CreateLogger<DatabaseManager.DatabaseManager>();
+ILoggerFactory loggerFactory = null;
+ILogger logger = null;
+ILogger<DatabaseManager.DatabaseManager> loggerDatabase = null;
+
+if (Environment.CommandLine.Contains("integrateWithWebApp"))
+{
+    // If the command line contains PathToBankTransactionFile, use that value
+    pathToDailyTransactionFile = AppContext.BaseDirectory + Environment.GetEnvironmentVariable("PathToBankTransactionFile");
+
+
+    IHost host = Host.CreateDefaultBuilder(args)
+            .ConfigureLogging(logging =>
+            {
+                logging.ClearProviders();
+
+                logging.AddConsole();
+
+                // Add EventLog provider
+                logging.AddEventLog(options =>
+                {
+                    options.LogName = "Application";
+                    options.SourceName = "MyPersonalBudgetAPI";
+                });
+            }).Build();
+
+            logger = host.Services.GetRequiredService<ILogger<Program>>();
+
+    logger.LogInformation("Daily Cost Tracker starting");
+}
+else 
+{
+    loggerFactory = LoggerFactory.Create(builder =>
+    {
+        builder.AddConsole();
+        builder.ClearProviders();
+        builder.AddProvider(new MyLoggingProvider());
+        builder.SetMinimumLevel(LogLevel.Information);
+    });
+
+    logger = loggerFactory.CreateLogger("DailyCostTracker");
+    loggerDatabase = loggerFactory.CreateLogger<DatabaseManager.DatabaseManager>();
+}
+
 
 int insertErrors = 0;
+
+logger.LogInformation("Command line " + Environment.CommandLine);
 
 var configuration = new ConfigurationBuilder()
            .SetBasePath(Directory.GetCurrentDirectory())  // Needed for .NET CLI
            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
            .Build();
 
-logger.LogInformation("Command line " + Environment.CommandLine);
 
 IConfiguration config = configuration.GetSection("ConnectionString");
 string? sqlServer = config.GetValue<string>("CostTracker");
 
-SpeechSynthesizer synth = new();
-
-synth.Speak("Daily Cost Tracker started.");
-
-AppDbContext appDbContext = new AppDbContext(sqlServer);
-DataImporter dataImporter = new DataImporter(loggerDatabase, appDbContext, synth);
-
-string pathToDailyTransactionFile = Environment.GetEnvironmentVariable("PathToBankTransactionFile");
+AppDbContext appDbContext = new AppDbContext(sqlServer!);
+DataImporter dataImporter = new DataImporter(loggerDatabase!, appDbContext);
 
 
 if (!string.IsNullOrEmpty(pathToDailyTransactionFile))
 {
     if (Path.Exists(pathToDailyTransactionFile) == false)
     {
-        synth.Speak("PathToApplicationToImportFile environment variable is not set or is invalid.");
-        logger.LogError("PathToApplicationToImportFile environment variable is not set or is invalid.");
+        logger.LogError("PathToBankTransactionFile environment variable is not set or is invalid.");
         return;
     }
 }
 
-logger.LogInformation("PathToApplicationToImportFile environment variable." + pathToDailyTransactionFile);
+logger.LogInformation("PathToBankTransactionFile environment variable." + pathToDailyTransactionFile);
 
 string[] filesToImport = Directory.GetFiles(pathToDailyTransactionFile, "transaction*.csv");
 
@@ -69,7 +99,6 @@ if (filesToImport.Length == 1)
 
     logger.LogInformation($"ImportData processing {filesToImport[0]}");
 
-    synth.Speak("Found a file to process");
 
     if (dataImporter.TryImportTransactionRecordsFromCSVFile(filesToImport[0], out linesOfTransactionData))
     {
@@ -81,7 +110,6 @@ if (filesToImport.Length == 1)
         
         logger.LogInformation("Deleting file {file}", filesToImport[0]);
         File.Delete(filesToImport[0]);
-        synth.Speak("Deleted file after processing.");
     }
     else
     {
@@ -90,7 +118,7 @@ if (filesToImport.Length == 1)
 }
 else
 {
-    synth.Speak("No files processed");
+    logger.LogInformation("ImportData processing: No files to process");
 }
 
 DatabaseManager.TransactionCategoryMapper transactionCategoryMapper = new DatabaseManager.TransactionCategoryMapper(logger, appDbContext);
