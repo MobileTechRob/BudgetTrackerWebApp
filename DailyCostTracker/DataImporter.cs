@@ -8,6 +8,7 @@ using SharedDataModels;
 using DailyCostTracker.DataModels;
 using System.Speech.Synthesis;
 using DatabaseManager.Interfaces;
+using Newtonsoft.Json;
 
 namespace DailyCostTracker
 {
@@ -17,10 +18,10 @@ namespace DailyCostTracker
         ILogger<DatabaseManager.DatabaseManager> loggerDatabase;
         DatabaseManager.DatabaseManager databaseManager = null;        
 
-        public DataImporter(ILogger<DatabaseManager.DatabaseManager> logger, DatabaseManager.AppDbContext appDbContext)
+        public DataImporter(ILogger<DatabaseManager.DatabaseManager> logger)
         { 
             this.loggerDatabase = logger;
-            this.appDbContext = appDbContext;            
+            
         }
 
         public bool TryImportTransactionRecordsFromCSVFile(string filePath, out string[] lines)
@@ -61,39 +62,33 @@ namespace DailyCostTracker
             // skip first line
             enumerator.MoveNext();
 
-            ICrudOperations crudOperations = new DatabaseManager.CrudOperations(this.appDbContext);
-            IQueryOperations queryOperations = new DatabaseManager.QueryOperations(this.appDbContext);
-
             TransactionFileParser parser = new TransactionFileParser();
-            databaseManager = new DatabaseManager.DatabaseManager(this.loggerDatabase, crudOperations, queryOperations);
 
-            DateTime startDate = DateTime.MinValue;
-            DateTime endDate = DateTime.MinValue;
             DatabaseManager.DataModels.DailyTransaction? dailyTransaction=null;
+
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri("http://localhost:5065/HomeBudget");
+
+            List<DatabaseManager.DataModels.DailyTransaction> dailyTransactions = new List<DatabaseManager.DataModels.DailyTransaction> ();
 
             while (enumerator.MoveNext())
             {
                 dailyTransaction = parser.Parser(enumerator.Current.ToString()!);
-
-                bool result = databaseManager.AddDailyTransaction(dailyTransaction);
-                if (endDate == DateTime.MinValue)              
-                    endDate = dailyTransaction.Posted_Date;
-               
-                if (!result)
-                {
-                 //   insertErrors++;
-                }
+                dailyTransactions.Add(dailyTransaction);
             }
 
-            if (dailyTransaction != null)
-                startDate = dailyTransaction.Posted_Date;
+            StringContent dailyTransactionContent = new StringContent(JsonConvert.SerializeObject(dailyTransactions), Encoding.UTF8, "application/json");
 
-            databaseManager.RecordImportInformation(startDate, endDate, linesOfData.Length - 1);    
+            var response = client.PostAsync("HomeBudget/DailyTransactions", dailyTransactionContent).Result;
 
-            loggerDatabase.LogInformation($"UpdateDatabaseWithTransactions: Failures: {databaseManager.DailyTransaction_InsertFailed}");
-            loggerDatabase.LogInformation($"UpdateDatabaseWithTransactions: Insertions: {databaseManager.DailyTransaction_Inserted}");
-            loggerDatabase.LogInformation($"UpdateDatabaseWithTransactions: Already Exists: {databaseManager.DailyTransaction_AlreadyExisted}");
-
+            //if (endDate == DateTime.MinValue)
+            //    endDate = dailyTransaction.Posted_Date;
+            //if (dailyTransaction != null)
+            //    startDate = dailyTransaction.Posted_Date;
+            //databaseManager.RecordImportInformation(startDate, endDate, linesOfData.Length - 1);    
+            //loggerDatabase.LogInformation($"UpdateDatabaseWithTransactions: Failures: {databaseManager.DailyTransaction_InsertFailed}");
+            //loggerDatabase.LogInformation($"UpdateDatabaseWithTransactions: Insertions: {databaseManager.DailyTransaction_Inserted}");
+            //loggerDatabase.LogInformation($"UpdateDatabaseWithTransactions: Already Exists: {databaseManager.DailyTransaction_AlreadyExisted}");
         }    
     }
 }

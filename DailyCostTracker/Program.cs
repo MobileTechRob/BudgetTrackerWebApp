@@ -11,6 +11,9 @@ using System.IO;
 using System.Speech.Synthesis;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using System.Text;
+using DatabaseManager.DataModels;
 
 // See https://aka.ms/new-console-template for more information
 Console.WriteLine("DailyCostTracker");
@@ -21,62 +24,26 @@ ILoggerFactory loggerFactory = null;
 ILogger logger = null;
 ILogger<DatabaseManager.DatabaseManager> loggerDatabase = null;
 
-if (Environment.CommandLine.Contains("integrateWithWebApp"))
-{
-    // If the command line contains PathToBankTransactionFile, use that value
-    pathToDailyTransactionFile = AppContext.BaseDirectory + Environment.GetEnvironmentVariable("PathToBankTransactionFile");
+
+//int insertErrors = 0;
+
+//logger.LogInformation("Command line " + Environment.CommandLine);
+
+//var configuration = new ConfigurationBuilder()
+//           .SetBasePath(Directory.GetCurrentDirectory())  // Needed for .NET CLI
+//           .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+//           .Build();
 
 
-    IHost host = Host.CreateDefaultBuilder(args)
-            .ConfigureLogging(logging =>
-            {
-                logging.ClearProviders();
+//IConfiguration config = configuration.GetSection("ConnectionString");
+//string? sqlServer = config.GetValue<string>("CostTracker");
 
-                logging.AddConsole();
+//AppDbContext appDbContext = new AppDbContext(sqlServer!);
+DataImporter dataImporter = new DataImporter(loggerDatabase!); 
 
-                // Add EventLog provider
-                logging.AddEventLog(options =>
-                {
-                    options.LogName = "Application";
-                    options.SourceName = "MyPersonalBudgetAPI";
-                });
-            }).Build();
+HttpClient client = new HttpClient();
 
-            logger = host.Services.GetRequiredService<ILogger<Program>>();
-
-    logger.LogInformation("Daily Cost Tracker starting");
-}
-else 
-{
-    loggerFactory = LoggerFactory.Create(builder =>
-    {
-        builder.AddConsole();
-        builder.ClearProviders();
-        builder.AddProvider(new MyLoggingProvider());
-        builder.SetMinimumLevel(LogLevel.Information);
-    });
-
-    logger = loggerFactory.CreateLogger("DailyCostTracker");
-    loggerDatabase = loggerFactory.CreateLogger<DatabaseManager.DatabaseManager>();
-}
-
-
-int insertErrors = 0;
-
-logger.LogInformation("Command line " + Environment.CommandLine);
-
-var configuration = new ConfigurationBuilder()
-           .SetBasePath(Directory.GetCurrentDirectory())  // Needed for .NET CLI
-           .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-           .Build();
-
-
-IConfiguration config = configuration.GetSection("ConnectionString");
-string? sqlServer = config.GetValue<string>("CostTracker");
-
-AppDbContext appDbContext = new AppDbContext(sqlServer!);
-DataImporter dataImporter = new DataImporter(loggerDatabase!, appDbContext);
-
+DailyTransaction dailyTransaction = new DailyTransaction() {Description = "Test Cost" };
 
 if (!string.IsNullOrEmpty(pathToDailyTransactionFile))
 {
@@ -121,7 +88,7 @@ else
     logger.LogInformation("ImportData processing: No files to process");
 }
 
-DatabaseManager.TransactionCategoryMapper transactionCategoryMapper = new DatabaseManager.TransactionCategoryMapper(logger, appDbContext);
-transactionCategoryMapper.PlaceCategoryOnTransactions();
+//DatabaseManager.TransactionCategoryMapper transactionCategoryMapper = new DatabaseManager.TransactionCategoryMapper(logger, appDbContext);
+//transactionCategoryMapper.PlaceCategoryOnTransactions();
 
 

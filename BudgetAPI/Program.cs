@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MyPersonalBudgetAPI.Controllers;
 using System.Diagnostics;
+using Newtonsoft;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,9 @@ builder.Services.AddTransient<IDatabaseManager, DatabaseManager.DatabaseManager>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
+builder.Services.AddMvc();
+
 
 var app = builder.Build();
 app.UseCors("AllowReactApp");

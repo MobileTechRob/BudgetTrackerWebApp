@@ -6,6 +6,8 @@ using DatabaseManager.Exceptions;
 using BudgetAPI.Models;
 using System;
 using System.Numerics;
+using DatabaseManager.Interfaces;
+using System.Text;
 
 namespace MyPersonalBudgetAPI.Controllers
 {
@@ -14,9 +16,14 @@ namespace MyPersonalBudgetAPI.Controllers
         private DatabaseManager.IDatabaseManager databaseManager;
         ILogger logger;
 
-        public HomeBudgetController(ILogger logger, IDatabaseManager databaseManager)         
-        {            
+        private ICrudOperations crudOperations;
+        private IQueryOperations queryOperations;
+
+        public HomeBudgetController(ILogger logger, IDatabaseManager databaseManager,  ICrudOperations crudOperations, IQueryOperations queryOperations)         
+        {
             this.databaseManager = databaseManager;   
+            this.crudOperations = crudOperations;
+            this.queryOperations = queryOperations;
             this.logger = logger;
         }
 
@@ -29,40 +36,32 @@ namespace MyPersonalBudgetAPI.Controllers
         // GET: BudgetCostsController
         public ActionResult List()
         {
-            //databaseManager.GetDailyTransactions();
-
-            //return View(databaseManager.GetDailyTransactions());
-            //return Ok(databaseManager.GetDailyTransactions());
-            return View(databaseManager.GetDailyTransactions());
+            return View(queryOperations.GetDailyTransactions());
         }
 
         // GET: BudgetCostsController
         public ActionResult TransactionListByDateRange([FromQuery] DateOnly? fromDate = null, [FromQuery] DateOnly? toDate = null)
         {
-            //databaseManager.GetDailyTransactions();
-
-            //return View(databaseManager.GetDailyTransactions());
-            //return Ok(databaseManager.GetDailyTransactions());
-            return View(databaseManager.GetDailyTransactions(fromDate, toDate));
+            return View(queryOperations.GetDailyTransactions(fromDate, toDate));
         }
 
         [Route("HomeBudget/TransactionYears")]
         public ObjectResult GetTransactionYears()
         { 
-            return Ok(databaseManager.GetTransactionYears());
+            return Ok(queryOperations.GetTransactionYears());
         }
 
         // GET: BudgetCostsController
         [Route("HomeBudget/CostList/{category}")]
         public ObjectResult CostList(string category)
         {
-            return Ok(databaseManager.GetDailyTransactions());
+            return Ok(queryOperations.GetDailyTransactions());
         }
 
         // GET: BudgetCostsController
         public ObjectResult CostListByDateRange([FromQuery] DateOnly? fromDate= null, [FromQuery] DateOnly? toDate = null)
         {
-            return Ok(databaseManager.GetDailyTransactions(fromDate, toDate));
+            return Ok(queryOperations.GetDailyTransactions(fromDate, toDate));
         }
 
 
@@ -91,7 +90,7 @@ namespace MyPersonalBudgetAPI.Controllers
         [Route("HomeBudget/TransactionDollarsByCategory")]
         public ObjectResult SummaryCostCategoryByDateRange([FromQuery] DateOnly? fromDate = null, [FromQuery] DateOnly? toDate = null)
         {
-            List<DatabaseManager.DataModels.DailyTransaction> dailyTransactions = databaseManager.GetDailyTransactions(fromDate, toDate);
+            List<DatabaseManager.DataModels.DailyTransaction> dailyTransactions = queryOperations.GetDailyTransactions(fromDate, toDate);
 
             return Ok(GetTransactionDollarsByCategoryDateRange(dailyTransactions));
         }
@@ -106,7 +105,7 @@ namespace MyPersonalBudgetAPI.Controllers
                 DateOnly fromDate = new DateOnly(dateTime.Year, month, 1);
                 DateOnly toDate = new DateOnly(dateTime.Year, month, DateTime.DaysInMonth(dateTime.Year, month));
 
-                List<DatabaseManager.DataModels.DailyTransaction> dailyTransactions = databaseManager.GetDailyTransactions(fromDate, toDate);
+                List<DatabaseManager.DataModels.DailyTransaction> dailyTransactions = queryOperations.GetDailyTransactions(fromDate, toDate);
 
                 if (dailyTransactions.Count > 0)
                 {
@@ -146,7 +145,7 @@ namespace MyPersonalBudgetAPI.Controllers
                     fromDate = new DateOnly(year, month, 1);
                     toDate = new DateOnly(year, month, DateTime.DaysInMonth(year, month));
                 
-                    dailyTransactions = databaseManager.GetDailyTransactions(fromDate, toDate);
+                    dailyTransactions = queryOperations.GetDailyTransactions(fromDate, toDate);
                     
                     if (dailyTransactions.Count > 0)
                     {
@@ -223,7 +222,7 @@ namespace MyPersonalBudgetAPI.Controllers
 
         public ObjectResult CostAndSavingsCategories()
         {
-            return Ok(databaseManager.GetCostAndSavingsCategories());
+            return Ok(queryOperations.GetCostAndSavingsCategories());
         }
 
         [Route("HomeBudget/MaintainCategories")]
@@ -265,6 +264,45 @@ namespace MyPersonalBudgetAPI.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("HomeBudget/DailyTransactions")]
+        public async Task<IActionResult> ImportBatchTransactions([FromBody] List<DatabaseManager.DataModels.DailyTransaction> dailyTransactions) 
+        {
+            logger.LogInformation($"ImportBatchTransactions ");
+
+            int existing = 0; 
+            int newInsertions = 0;
+            int failedInsertions = 0    ;
+
+            if (dailyTransactions != null)
+            {
+                foreach (var dailyTransaction in dailyTransactions)
+                {
+                    SharedDataModels.InsertTransactionStatus insertTransactionStatus;
+
+                    insertTransactionStatus = crudOperations.AddDailyTransactions(dailyTransaction, logger);
+
+                    if (insertTransactionStatus == SharedDataModels.InsertTransactionStatus.INSERTED)
+                    {
+                        logger.LogInformation($"Transaction imported successfully: {dailyTransaction.Posted_Date} {dailyTransaction.Description} {dailyTransaction.Amount}");
+                        newInsertions++;
+                    }
+                    else if (insertTransactionStatus == SharedDataModels.InsertTransactionStatus.ALREADY_EXIST_NO_INSERTION)
+                        existing++;
+                    else if (insertTransactionStatus == SharedDataModels.InsertTransactionStatus.INSERT_FAILED)
+                        failedInsertions++;
+                }
+
+                IOrderedEnumerable<DatabaseManager.DataModels.DailyTransaction> ascendingDates = from dailyTransaction in dailyTransactions orderby dailyTransaction.Fi_Transaction_Reference ascending select dailyTransaction;
+                
+                DateTime from =  ascendingDates.First<DatabaseManager.DataModels.DailyTransaction>().Posted_Date;
+                DateTime to = ascendingDates.Last<DatabaseManager.DataModels.DailyTransaction>().Posted_Date;
+
+                crudOperations.RecordImportInformation(from, to,dailyTransactions.Count,newInsertions,existing, failedInsertions);
+            }
+
+            return View();
+        }
 
         [HttpPost]
         public IActionResult VerifyUser([FromQuery] string username, [FromQuery] string password)
