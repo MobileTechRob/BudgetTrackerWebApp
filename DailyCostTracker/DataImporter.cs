@@ -16,12 +16,13 @@ namespace DailyCostTracker
     {
         DatabaseManager.AppDbContext appDbContext;
         ILogger<DatabaseManager.DatabaseManager> loggerDatabase;
-        DatabaseManager.DatabaseManager databaseManager = null;        
+        DatabaseManager.DatabaseManager databaseManager = null;
+        int webServicePort;
 
-        public DataImporter(ILogger<DatabaseManager.DatabaseManager> logger)
+        public DataImporter(ILogger<DatabaseManager.DatabaseManager> logger, int webServicePort)
         { 
             this.loggerDatabase = logger;
-            
+            this.webServicePort = webServicePort;            
         }
 
         public bool TryImportTransactionRecordsFromCSVFile(string filePath, out string[] lines)
@@ -67,7 +68,7 @@ namespace DailyCostTracker
             DatabaseManager.DataModels.DailyTransaction? dailyTransaction=null;
 
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:5065/HomeBudget");
+            client.BaseAddress = new Uri($"http://localhost:{webServicePort}/HomeBudget");
 
             List<DatabaseManager.DataModels.DailyTransaction> dailyTransactions = new List<DatabaseManager.DataModels.DailyTransaction> ();
 
@@ -81,14 +82,6 @@ namespace DailyCostTracker
 
             var response = client.PostAsync("HomeBudget/DailyTransactions", dailyTransactionContent).Result;
 
-            //if (endDate == DateTime.MinValue)
-            //    endDate = dailyTransaction.Posted_Date;
-            //if (dailyTransaction != null)
-            //    startDate = dailyTransaction.Posted_Date;
-            //databaseManager.RecordImportInformation(startDate, endDate, linesOfData.Length - 1);    
-            //loggerDatabase.LogInformation($"UpdateDatabaseWithTransactions: Failures: {databaseManager.DailyTransaction_InsertFailed}");
-            //loggerDatabase.LogInformation($"UpdateDatabaseWithTransactions: Insertions: {databaseManager.DailyTransaction_Inserted}");
-            //loggerDatabase.LogInformation($"UpdateDatabaseWithTransactions: Already Exists: {databaseManager.DailyTransaction_AlreadyExisted}");
         }    
     }
 }

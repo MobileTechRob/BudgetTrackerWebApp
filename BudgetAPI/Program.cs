@@ -31,7 +31,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString)); // Or your DB setup
 builder.Services.AddTransient<ICrudOperations, CrudOperations>();
 builder.Services.AddTransient<IQueryOperations, QueryOperations>();
-builder.Services.AddTransient<IDatabaseManager, DatabaseManager.DatabaseManager>();
+builder.Services.AddTransient<IAuthenticationOperations, AuthenticationOperations>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

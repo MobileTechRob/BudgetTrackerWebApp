@@ -13,17 +13,19 @@ namespace MyPersonalBudgetAPI.Controllers
 {
     public class HomeBudgetController : Controller
     {
-        private DatabaseManager.IDatabaseManager databaseManager;
+        //private DatabaseManager.IDatabaseManager databaseManager;
         ILogger logger;
 
         private ICrudOperations crudOperations;
         private IQueryOperations queryOperations;
+        private IAuthenticationOperations authenticationOperations;
 
-        public HomeBudgetController(ILogger logger, IDatabaseManager databaseManager,  ICrudOperations crudOperations, IQueryOperations queryOperations)         
-        {
-            this.databaseManager = databaseManager;   
+
+        public HomeBudgetController(ILogger logger,  ICrudOperations crudOperations, IQueryOperations queryOperations, IAuthenticationOperations authenticationOperations)         
+        {            
             this.crudOperations = crudOperations;
             this.queryOperations = queryOperations;
+            this.authenticationOperations = authenticationOperations;
             this.logger = logger;
         }
 
@@ -266,7 +268,7 @@ namespace MyPersonalBudgetAPI.Controllers
 
         [HttpPost]
         [Route("HomeBudget/DailyTransactions")]
-        public async Task<IActionResult> ImportBatchTransactions([FromBody] List<DatabaseManager.DataModels.DailyTransaction> dailyTransactions) 
+        public async Task<ObjectResult> ImportBatchTransactions([FromBody] List<DatabaseManager.DataModels.DailyTransaction> dailyTransactions) 
         {
             logger.LogInformation($"ImportBatchTransactions ");
 
@@ -280,7 +282,7 @@ namespace MyPersonalBudgetAPI.Controllers
                 {
                     SharedDataModels.InsertTransactionStatus insertTransactionStatus;
 
-                    insertTransactionStatus = crudOperations.AddDailyTransactions(dailyTransaction, logger);
+                    insertTransactionStatus = crudOperations.AddDailyTransaction(dailyTransaction, logger);
 
                     if (insertTransactionStatus == SharedDataModels.InsertTransactionStatus.INSERTED)
                     {
@@ -293,15 +295,13 @@ namespace MyPersonalBudgetAPI.Controllers
                         failedInsertions++;
                 }
 
-                IOrderedEnumerable<DatabaseManager.DataModels.DailyTransaction> ascendingDates = from dailyTransaction in dailyTransactions orderby dailyTransaction.Fi_Transaction_Reference ascending select dailyTransaction;
-                
-                DateTime from =  ascendingDates.First<DatabaseManager.DataModels.DailyTransaction>().Posted_Date;
-                DateTime to = ascendingDates.Last<DatabaseManager.DataModels.DailyTransaction>().Posted_Date;
-
-                crudOperations.RecordImportInformation(from, to,dailyTransactions.Count,newInsertions,existing, failedInsertions);
+                //IOrderedEnumerable<DatabaseManager.DataModels.DailyTransaction> ascendingDates = from dailyTransaction in dailyTransactions orderby dailyTransaction.Fi_Transaction_Reference ascending select dailyTransaction;                
+                //DateTime from =  ascendingDates.First<DatabaseManager.DataModels.DailyTransaction>().Posted_Date;
+                //DateTime to = ascendingDates.Last<DatabaseManager.DataModels.DailyTransaction>().Posted_Date;
+                //crudOperations.RecordImportInformation(from, to,dailyTransactions.Count,newInsertions,existing, failedInsertions);
             }
 
-            return View();
+            return Ok($"{newInsertions}  {existing}  {failedInsertions}");
         }
 
         [HttpPost]
@@ -310,7 +310,7 @@ namespace MyPersonalBudgetAPI.Controllers
 
             logger.LogInformation($"Verifying user: {username} "); 
 
-            if (databaseManager.VerifyUser(username, password))
+            if (authenticationOperations.VerifyUser(username, password))
             {
                 logger.LogInformation($"Verifying user: verification passed ");
                 return Ok("User verified successfully");
@@ -329,7 +329,7 @@ namespace MyPersonalBudgetAPI.Controllers
 
             try
             {
-                if (databaseManager.MapKeywordToCostCategoryMapping(keyword, costcategory))
+                if (crudOperations.MapKeywordToCostCategoryMapping(keyword, costcategory))
                     return Ok("Keyword to CostCategory mapped successfully");
                 else
                     return BadRequest("Failed to map keyword to cost category. Please check the input values.");
@@ -346,7 +346,7 @@ namespace MyPersonalBudgetAPI.Controllers
         {
             try
             {
-                if (databaseManager.MapKeywordToSavingsCategoryMapping(keyword, savingscategory))
+                if (crudOperations.MapKeywordToSavingsCategoryMapping(keyword, savingscategory))
                     return Ok("Keyword to SavingsCategory mapped successfully");
                 else
                     return BadRequest("Failed to map keyword to savings category. Please check the input values.");
@@ -364,7 +364,7 @@ namespace MyPersonalBudgetAPI.Controllers
 
         public ObjectResult ImportedTransactions()
         {
-            return Ok(databaseManager.GetImportTransactionHistory());
+            return Ok(queryOperations.GetImportTransactionHistory());
         }
 
         // GET: BudgetCostsController/Edit/5

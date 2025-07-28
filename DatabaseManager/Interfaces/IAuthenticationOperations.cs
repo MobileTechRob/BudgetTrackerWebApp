@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DatabaseManager.Interfaces
 {
-    internal interface IAuthenticationOperations
+    public interface IAuthenticationOperations
     {
         bool VerifyUser(string userName, string password);
     }

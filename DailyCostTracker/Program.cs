@@ -29,17 +29,14 @@ ILogger<DatabaseManager.DatabaseManager> loggerDatabase = null;
 
 //logger.LogInformation("Command line " + Environment.CommandLine);
 
-//var configuration = new ConfigurationBuilder()
-//           .SetBasePath(Directory.GetCurrentDirectory())  // Needed for .NET CLI
-//           .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-//           .Build();
+var configuration = new ConfigurationBuilder()
+           .SetBasePath(Directory.GetCurrentDirectory())  // Needed for .NET CLI
+           .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+           .Build();
 
+IConfiguration config = configuration.GetSection("WebServicePort");
 
-//IConfiguration config = configuration.GetSection("ConnectionString");
-//string? sqlServer = config.GetValue<string>("CostTracker");
-
-//AppDbContext appDbContext = new AppDbContext(sqlServer!);
-DataImporter dataImporter = new DataImporter(loggerDatabase!); 
+DataImporter dataImporter = new DataImporter(loggerDatabase!,0); 
 
 HttpClient client = new HttpClient();
 

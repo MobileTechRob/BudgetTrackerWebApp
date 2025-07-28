@@ -12,7 +12,7 @@ using DatabaseManager.Interfaces;
 
 namespace DatabaseManager
 {
-    public class DatabaseManager : IDatabaseManager
+    public class DatabaseManager 
     {
         private ICrudOperations crudOperations;
         private IQueryOperations queryOperations;
@@ -22,7 +22,7 @@ namespace DatabaseManager
         public int DailyTransaction_AlreadyExisted = 0;
         public int DailyTransaction_InsertFailed = 0;
 
-        public DatabaseManager(ILogger<DatabaseManager> logger, ICrudOperations crudOperations, IQueryOperations queryOperations)
+        public DatabaseManager(ILogger logger, ICrudOperations crudOperations, IQueryOperations queryOperations)
         {
             this.crudOperations = crudOperations;
             this.queryOperations = queryOperations;
@@ -31,7 +31,7 @@ namespace DatabaseManager
 
         public bool AddDailyTransaction(DailyTransaction dailyTransaction)
         {
-            InsertTransactionStatus result = crudOperations.AddDailyTransactions(dailyTransaction, this.logger);
+            InsertTransactionStatus result = crudOperations.AddDailyTransaction(dailyTransaction, this.logger);
 
             if (result == InsertTransactionStatus.INSERTED)
                 DailyTransaction_Inserted++;
