@@ -12,8 +12,7 @@ using System.Text;
 namespace MyPersonalBudgetAPI.Controllers
 {
     public class HomeBudgetController : Controller
-    {
-        //private DatabaseManager.IDatabaseManager databaseManager;
+    {    
         ILogger logger;
 
         private ICrudOperations crudOperations;
