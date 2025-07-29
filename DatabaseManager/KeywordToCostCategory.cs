@@ -10,7 +10,7 @@ namespace DatabaseManager.DataModels
     public class KeywordToCostCategory
     {
         [Key]
-        public string keyword {  get; set; }
-        public string costcategory { get; set; }
+        public string keyword {  get; set; } = "";
+        public string costcategory { get; set; } = "";
     }
 }

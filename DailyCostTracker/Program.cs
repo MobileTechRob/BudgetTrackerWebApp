@@ -20,42 +20,39 @@ Console.WriteLine("DailyCostTracker");
 
 string pathToDailyTransactionFile = Environment.GetEnvironmentVariable("PathToBankTransactionFile");
 
-ILoggerFactory loggerFactory = null;
-ILogger logger = null;
-ILogger<DatabaseManager.DatabaseManager> loggerDatabase = null;
+ILogger<Program> logger = null;
 
+logger = LoggerFactory.Create(builder =>
+{
+    builder
+        .AddConsole()
+        .SetMinimumLevel(LogLevel.Information);
+}).CreateLogger<Program>();
 
-//int insertErrors = 0;
-
-//logger.LogInformation("Command line " + Environment.CommandLine);
 
 var configuration = new ConfigurationBuilder()
            .SetBasePath(Directory.GetCurrentDirectory())  // Needed for .NET CLI
            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
            .Build();
 
-IConfiguration config = configuration.GetSection("WebServicePort");
+IConfiguration config = configuration.GetSection("WebService");
 
-DataImporter dataImporter = new DataImporter(loggerDatabase!,0); 
+int webServicePort = 0;
 
-HttpClient client = new HttpClient();
+webServicePort = config.GetValue<int>("Port");
 
-DailyTransaction dailyTransaction = new DailyTransaction() {Description = "Test Cost" };
+DataImporter dataImporter = new DataImporter(logger, webServicePort); 
 
 if (!string.IsNullOrEmpty(pathToDailyTransactionFile))
 {
     if (Path.Exists(pathToDailyTransactionFile) == false)
     {
-        logger.LogError("PathToBankTransactionFile environment variable is not set or is invalid.");
+        Console.WriteLine("PathToBankTransactionFile environment variable is not set or is invalid.");
         return;
     }
 }
 
-logger.LogInformation("PathToBankTransactionFile environment variable." + pathToDailyTransactionFile);
-
 string[] filesToImport = Directory.GetFiles(pathToDailyTransactionFile, "transaction*.csv");
-
-logger.LogInformation("ImportData processing: There are {count} files to process", filesToImport.Length);
 
 if (filesToImport.Length == 1)
 {
@@ -63,17 +60,18 @@ if (filesToImport.Length == 1)
 
     logger.LogInformation($"ImportData processing {filesToImport[0]}");
 
-
     if (dataImporter.TryImportTransactionRecordsFromCSVFile(filesToImport[0], out linesOfTransactionData))
     {
         dataImporter.UpdateDatabaseWithTransactions(linesOfTransactionData);        
     }
 
     if (dataImporter.CanDeleteDailyTransactionsFile())
-    {
-        
+    {        
         logger.LogInformation("Deleting file {file}", filesToImport[0]);
         File.Delete(filesToImport[0]);
+
+        Console.WriteLine($"File {filesToImport[0]} deleted successfully.");
+        Console.ReadLine();
     }
     else
     {
@@ -85,7 +83,5 @@ else
     logger.LogInformation("ImportData processing: No files to process");
 }
 
-//DatabaseManager.TransactionCategoryMapper transactionCategoryMapper = new DatabaseManager.TransactionCategoryMapper(logger, appDbContext);
-//transactionCategoryMapper.PlaceCategoryOnTransactions();
 
 
