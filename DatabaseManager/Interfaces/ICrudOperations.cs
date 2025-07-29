@@ -6,7 +6,7 @@ namespace DatabaseManager.Interfaces
 {
     public interface ICrudOperations
     {
-        InsertTransactionStatus AddDailyTransactions(DailyTransaction dailyTransaction, ILogger logger);
+        InsertTransactionStatus AddDailyTransaction(DataModels.DailyTransaction dailyTransaction, ILogger logger);
         bool MapKeywordToCostCategoryMapping(string keyword, string costcategory);
         bool MapKeywordToSavingsCategoryMapping(string keyword, string savingscategory);
         InsertTransactionStatus AddReceiptFromCashTransaction(ReceiptsFromCashTransactions manuallyAddedReceipt, ILogger logger);    

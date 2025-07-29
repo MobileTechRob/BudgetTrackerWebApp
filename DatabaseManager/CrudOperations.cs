@@ -29,7 +29,7 @@ namespace DatabaseManager
             appDbContext.SaveChanges();
         }
 
-        public InsertTransactionStatus AddDailyTransactions(DailyTransaction dailyTransaction, ILogger logger)
+        public InsertTransactionStatus AddDailyTransaction(DailyTransaction dailyTransaction, ILogger logger)
         {
             InsertTransactionStatus insertState = InsertTransactionStatus.INSERTED;
 
