@@ -14,14 +14,16 @@ namespace DailyCostTracker
 {
     public class DataImporter
     {
-        DatabaseManager.AppDbContext appDbContext;
-        ILogger<DatabaseManager.DatabaseManager> loggerDatabase;
+
+        string statusText = "";
+        ILogger logger;
         DatabaseManager.DatabaseManager databaseManager = null;
         int webServicePort;
+        FileProcessingCounts? databaseCounts = null;
 
-        public DataImporter(ILogger<DatabaseManager.DatabaseManager> logger, int webServicePort)
+        public DataImporter(ILogger logger, int webServicePort)
         { 
-            this.loggerDatabase = logger;
+            this.logger = logger;
             this.webServicePort = webServicePort;            
         }
 
@@ -40,20 +42,19 @@ namespace DailyCostTracker
 
         public bool CanDeleteDailyTransactionsFile()
         {
-            if (databaseManager == null)
-            {
-                return false;
-            }   
+            if (databaseCounts != null)
+            {            
+                return (databaseCounts.InsertFailed == 0);
+            }
 
-            // Check if the database is empty
-            return (databaseManager.DailyTransaction_InsertFailed == 0);
+            return false;
         }
 
         public void UpdateDatabaseWithTransactions(string[] linesOfData)
         {
             if (linesOfData == null || linesOfData.Length == 0)
             {
-                loggerDatabase.LogWarning("UpdateDatabaseWithTransactions: No data to import.");                
+                logger.LogWarning("UpdateDatabaseWithTransactions: No data to import.");                
                 return;
             }
                            
@@ -82,6 +83,20 @@ namespace DailyCostTracker
 
             var response = client.PostAsync("HomeBudget/DailyTransactions", dailyTransactionContent).Result;
 
+            if (response.IsSuccessStatusCode)
+            {
+                logger.LogInformation("Daily transactions imported successfully.");
+
+                string content = response.Content.ReadAsStringAsync().Result;
+
+                databaseCounts=  JsonConvert.DeserializeObject<FileProcessingCounts>(content);
+
+                logger.LogInformation("Daily transactions imported successfully. ");
+            }
+            else
+            {
+                logger.LogError("Failed to import daily transactions. Status Code: {StatusCode}", response.StatusCode);
+            }   
         }    
     }
 }

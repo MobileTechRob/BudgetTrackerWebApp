@@ -8,6 +8,7 @@ using System;
 using System.Numerics;
 using DatabaseManager.Interfaces;
 using System.Text;
+using SharedDataModels;
 
 namespace MyPersonalBudgetAPI.Controllers
 {
@@ -273,7 +274,8 @@ namespace MyPersonalBudgetAPI.Controllers
 
             int existing = 0; 
             int newInsertions = 0;
-            int failedInsertions = 0    ;
+            int failedInsertions = 0;
+            FileProcessingCounts? fileProcessingCounts = null;
 
             if (dailyTransactions != null)
             {
@@ -294,13 +296,20 @@ namespace MyPersonalBudgetAPI.Controllers
                         failedInsertions++;
                 }
 
+                fileProcessingCounts = new FileProcessingCounts()
+                {
+                    Inserted = newInsertions,
+                    AlreadyExisted = existing,
+                    InsertFailed = failedInsertions
+                };
+
                 IOrderedEnumerable<DatabaseManager.DataModels.DailyTransaction> ascendingDates = from dailyTransaction in dailyTransactions orderby dailyTransaction.Fi_Transaction_Reference ascending select dailyTransaction;                
                 DateTime from =  ascendingDates.First<DatabaseManager.DataModels.DailyTransaction>().Posted_Date;
                 DateTime to = ascendingDates.Last<DatabaseManager.DataModels.DailyTransaction>().Posted_Date;
                 crudOperations.RecordImportInformation(from, to,dailyTransactions.Count,newInsertions,existing, failedInsertions);
             }
 
-            return Ok($"Insertions:{newInsertions} Existing:{existing} FailedInsertions:{failedInsertions}");
+            return Ok(fileProcessingCounts);
         }
 
         [HttpPost]

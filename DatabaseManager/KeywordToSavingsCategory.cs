@@ -10,7 +10,7 @@ namespace DatabaseManager.DataModels
     public class KeywordToSavingsCategory
     {
         [Key]
-        public string keyword {  get; set; }
-        public string savingscategory { get; set; }
+        public string keyword {  get; set; } = "";
+        public string savingscategory { get; set; } = "";
     }
 }
