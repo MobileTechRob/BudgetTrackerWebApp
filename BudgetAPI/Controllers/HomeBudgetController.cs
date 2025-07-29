@@ -267,7 +267,7 @@ namespace MyPersonalBudgetAPI.Controllers
 
         [HttpPost]
         [Route("HomeBudget/DailyTransactions")]
-        public async Task<ObjectResult> ImportBatchTransactions([FromBody] List<DatabaseManager.DataModels.DailyTransaction> dailyTransactions) 
+        public ObjectResult ImportBatchTransactions([FromBody] List<DatabaseManager.DataModels.DailyTransaction> dailyTransactions) 
         {
             logger.LogInformation($"ImportBatchTransactions ");
 
@@ -294,13 +294,13 @@ namespace MyPersonalBudgetAPI.Controllers
                         failedInsertions++;
                 }
 
-                //IOrderedEnumerable<DatabaseManager.DataModels.DailyTransaction> ascendingDates = from dailyTransaction in dailyTransactions orderby dailyTransaction.Fi_Transaction_Reference ascending select dailyTransaction;                
-                //DateTime from =  ascendingDates.First<DatabaseManager.DataModels.DailyTransaction>().Posted_Date;
-                //DateTime to = ascendingDates.Last<DatabaseManager.DataModels.DailyTransaction>().Posted_Date;
-                //crudOperations.RecordImportInformation(from, to,dailyTransactions.Count,newInsertions,existing, failedInsertions);
+                IOrderedEnumerable<DatabaseManager.DataModels.DailyTransaction> ascendingDates = from dailyTransaction in dailyTransactions orderby dailyTransaction.Fi_Transaction_Reference ascending select dailyTransaction;                
+                DateTime from =  ascendingDates.First<DatabaseManager.DataModels.DailyTransaction>().Posted_Date;
+                DateTime to = ascendingDates.Last<DatabaseManager.DataModels.DailyTransaction>().Posted_Date;
+                crudOperations.RecordImportInformation(from, to,dailyTransactions.Count,newInsertions,existing, failedInsertions);
             }
 
-            return Ok($"{newInsertions}  {existing}  {failedInsertions}");
+            return Ok($"Insertions:{newInsertions} Existing:{existing} FailedInsertions:{failedInsertions}");
         }
 
         [HttpPost]

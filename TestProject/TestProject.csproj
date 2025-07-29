@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BudgetAPI\BudgetAPI.csproj" />
     <ProjectReference Include="..\DatabaseManager\DatabaseManager.csproj" />
   </ItemGroup>
 
