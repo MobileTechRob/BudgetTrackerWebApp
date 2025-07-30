@@ -23,17 +23,17 @@ namespace BudgetAPI.Services
 
         bool IConfigurationService.MapKeywordToCostCategoryMapping(string keyword, string costcategory)
         {
-            throw new NotImplementedException();
+            return crudOperations.MapKeywordToCostCategoryMapping(keyword, costcategory);
         }
 
         bool IConfigurationService.MapKeywordToSavingsCategoryMapping(string keyword, string savingscategory)
         {
-            throw new NotImplementedException();
+            return crudOperations.MapKeywordToSavingsCategoryMapping(keyword, savingscategory);            
         }
 
         void IConfigurationService.RecordImportInformation(DateTime startDate, DateTime endDate, int transactionCount, int insertedTransactions, int alreadyExistingTransactions, int failedInsertions)
         {
-            throw new NotImplementedException();
+            crudOperations.RecordImportInformation(startDate, endDate, transactionCount, insertedTransactions, alreadyExistingTransactions, failedInsertions);
         }
     }
 }

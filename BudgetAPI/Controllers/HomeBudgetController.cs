@@ -50,7 +50,7 @@ namespace MyPersonalBudgetAPI.Controllers
         // GET: BudgetCostsController
         public ActionResult List()
         {
-            return View(queryOperations.GetDailyTransactions());
+            return View(transactionService.GetDailyTransactions());
         }
 
         // GET: BudgetCostsController
@@ -62,14 +62,14 @@ namespace MyPersonalBudgetAPI.Controllers
         [Route("HomeBudget/TransactionYears")]
         public ObjectResult GetTransactionYears()
         { 
-            return Ok(queryOperations.GetTransactionYears());
+            return Ok(transactionService.GetTransactionYears());
         }
 
         // GET: BudgetCostsController
         [Route("HomeBudget/CostList/{category}")]
         public ObjectResult CostList(string category)
         {
-            return Ok(queryOperations.GetDailyTransactions());
+            return Ok(transactionService.GetDailyTransactions());
         }
 
         // GET: BudgetCostsController

@@ -16,7 +16,7 @@ namespace BudgetAPI.Services
 
         bool IAuthenticationService.VerifyUser(string userName, string password)
         {
-            throw new NotImplementedException();
+            return authenticationOperations.VerifyUser(userName, password);            
         }
     }
 }
