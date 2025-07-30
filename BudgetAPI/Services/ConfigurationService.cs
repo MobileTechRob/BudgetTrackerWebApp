@@ -1,11 +1,21 @@
 ﻿using BudgetAPI.Interfaces;
 using DatabaseManager;
+using DatabaseManager.Interfaces;
 using SharedDataModels;
 
 namespace BudgetAPI.Services
 {
     public class ConfigurationService : IConfigurationService
     {
+        private ICrudOperations crudOperations;
+        private IQueryOperations queryOperations;
+
+        public ConfigurationService(ICrudOperations crudOperations, IQueryOperations queryOperations)
+        {
+            this.crudOperations = crudOperations;
+            this.queryOperations = queryOperations;
+        }   
+
         InsertTransactionStatus IConfigurationService.AddReceiptFromCashTransaction(ReceiptsFromCashTransactions manuallyAddedReceipt, ILogger logger)
         {
             throw new NotImplementedException();
