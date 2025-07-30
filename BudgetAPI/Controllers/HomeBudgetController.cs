@@ -8,6 +8,7 @@ using System;
 using System.Numerics;
 using DatabaseManager.Interfaces;
 using System.Text;
+using BudgetAPI.Interfaces;
 
 namespace MyPersonalBudgetAPI.Controllers
 {
@@ -19,12 +20,24 @@ namespace MyPersonalBudgetAPI.Controllers
         private IQueryOperations queryOperations;
         private IAuthenticationOperations authenticationOperations;
 
+        private ITransactionService transactionService;
+        private IConfigurationService ConfigurationService;
+        private IAuthenticationService authenticationService;
+
 
         public HomeBudgetController(ILogger logger,  ICrudOperations crudOperations, IQueryOperations queryOperations, IAuthenticationOperations authenticationOperations)         
         {            
             this.crudOperations = crudOperations;
             this.queryOperations = queryOperations;
             this.authenticationOperations = authenticationOperations;
+            this.logger = logger;
+        }
+
+        public HomeBudgetController(ILogger logger, ITransactionService transactionService, IConfigurationService configurationService, IAuthenticationService authenticationService)
+        {
+            this.transactionService = transactionService;
+            this.ConfigurationService = configurationService;
+            this.authenticationService = authenticationService; 
             this.logger = logger;
         }
 

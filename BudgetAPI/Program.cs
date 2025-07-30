@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using MyPersonalBudgetAPI.Controllers;
 using System.Diagnostics;
 using Newtonsoft;
+using BudgetAPI.Interfaces;
+using BudgetAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,9 +31,11 @@ builder.Services.AddCors(options =>
                           .AllowAnyHeader());
 });
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString)); // Or your DB setup
-builder.Services.AddTransient<ICrudOperations, CrudOperations>();
-builder.Services.AddTransient<IQueryOperations, QueryOperations>();
-builder.Services.AddTransient<IAuthenticationOperations, AuthenticationOperations>();
+builder.Services.AddSingleton<ICrudOperations, CrudOperations>();
+builder.Services.AddSingleton<IQueryOperations, QueryOperations>();
+builder.Services.AddSingleton<IAuthenticationOperations, AuthenticationOperations>();
+builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
+builder.Services.AddSingleton<ITransactionService, TransactionService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
