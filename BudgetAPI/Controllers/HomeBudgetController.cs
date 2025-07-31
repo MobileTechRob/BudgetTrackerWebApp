@@ -10,6 +10,7 @@ using DatabaseManager.Interfaces;
 using System.Text;
 using BudgetAPI.Interfaces;
 using BudgetAPI.Services;
+using SharedDataModels;
 
 namespace MyPersonalBudgetAPI.Controllers
 {
@@ -305,6 +306,8 @@ namespace MyPersonalBudgetAPI.Controllers
                     else if (insertTransactionStatus == SharedDataModels.InsertTransactionStatus.INSERT_FAILED)
                         failedInsertions++;
                 }
+
+                transactionCategoryMappingService.PlaceCategoryOnTransactions();
 
                 IOrderedEnumerable<DatabaseManager.DataModels.DailyTransaction> ascendingDates = from dailyTransaction in dailyTransactions orderby dailyTransaction.Fi_Transaction_Reference ascending select dailyTransaction;                
                 DateTime from =  ascendingDates.First<DatabaseManager.DataModels.DailyTransaction>().Posted_Date;
