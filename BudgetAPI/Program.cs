@@ -30,12 +30,19 @@ builder.Services.AddCors(options =>
                           .AllowAnyMethod()
                           .AllowAnyHeader());
 });
+
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString)); // Or your DB setup
-builder.Services.AddSingleton<ICrudOperations, CrudOperations>();
-builder.Services.AddSingleton<IQueryOperations, QueryOperations>();
-builder.Services.AddSingleton<IAuthenticationOperations, AuthenticationOperations>();
-builder.Services.AddSingleton<IConfigurationService, ConfigurationService>();
-builder.Services.AddSingleton<ITransactionService, TransactionService>();
+
+// database level
+builder.Services.AddScoped<ICrudOperations, CrudOperations>();
+builder.Services.AddScoped<IQueryOperations, QueryOperations>();
+builder.Services.AddScoped<ITransactionCategoryMapper, TransactionCategoryMapper>();
+
+// service level
+builder.Services.AddScoped<IAuthenticationOperations, AuthenticationOperations>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

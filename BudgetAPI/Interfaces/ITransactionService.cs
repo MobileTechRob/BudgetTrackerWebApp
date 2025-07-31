@@ -13,5 +13,6 @@ namespace BudgetAPI.Interfaces
         List<DailyTransaction> GetTransactionsWithoutCategories();
         CostAndSavingsCategories GetCostAndSavingsCategories();
         List<ImportTransactionDataLog> GetImportTransactionHistory();
+        void RecordImportInformation(DateTime startDate, DateTime endDate, int transactionCount, int insertedTransactions, int alreadyExistingTransactions, int failedInsertions);
     }
 }

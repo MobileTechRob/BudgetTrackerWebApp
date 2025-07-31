@@ -14,7 +14,12 @@ namespace BudgetAPI.Services
         {
             this.crudOperations = crudOperations;
             this.queryOperations = queryOperations;
-        }   
+        }
+
+        public CostAndSavingsCategories GetCostAndSavingsCategories()
+        {
+            return queryOperations.GetCostAndSavingsCategories();
+        }
 
         InsertTransactionStatus IConfigurationService.AddReceiptFromCashTransaction(ReceiptsFromCashTransactions manuallyAddedReceipt, ILogger logger)
         {

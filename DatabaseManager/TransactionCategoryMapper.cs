@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using SharedDataModels;
 using DatabaseManager.DataModels;
 using Microsoft.Extensions.Logging;
+using DatabaseManager.Interfaces;
 
 namespace DatabaseManager
 {

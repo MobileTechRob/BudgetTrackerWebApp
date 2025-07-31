@@ -7,6 +7,7 @@ namespace BudgetAPI.Interfaces
     {
         bool MapKeywordToCostCategoryMapping(string keyword, string costcategory);
         bool MapKeywordToSavingsCategoryMapping(string keyword, string savingscategory);
+        CostAndSavingsCategories GetCostAndSavingsCategories();
         InsertTransactionStatus AddReceiptFromCashTransaction(ReceiptsFromCashTransactions manuallyAddedReceipt, ILogger logger);
         void RecordImportInformation(DateTime startDate, DateTime endDate, int transactionCount, int insertedTransactions, int alreadyExistingTransactions, int failedInsertions);
     }

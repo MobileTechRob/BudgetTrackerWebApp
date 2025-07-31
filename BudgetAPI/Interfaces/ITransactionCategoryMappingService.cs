@@ -1,8 +1,8 @@
 ﻿using SharedDataModels;
 
-namespace DatabaseManager
+namespace BudgetAPI.Interfaces
 {
-    public interface ITransactionCategoryMapper
+    public interface ITransactionCategoryMappingService
     {
         IEnumerable<Transactions> GetUnReconciledTransactions();
         void PlaceCategoryOnTransactions();

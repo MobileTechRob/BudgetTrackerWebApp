@@ -18,6 +18,11 @@ namespace BudgetAPI.Services
             this.queryOperations = queryOperations; 
         }
 
+        public void RecordImportInformation(DateTime startDate, DateTime endDate, int transactionCount, int insertedTransactions, int alreadyExistingTransactions, int failedInsertions)
+        {
+            crudOperations.RecordImportInformation(startDate, endDate, transactionCount, insertedTransactions, alreadyExistingTransactions, failedInsertions);
+        }
+
         InsertTransactionStatus ITransactionService.AddDailyTransaction(DailyTransaction dailyTransaction, ILogger logger)
         {
             return crudOperations.AddDailyTransaction(dailyTransaction, logger);            
