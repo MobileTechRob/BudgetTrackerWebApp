@@ -284,7 +284,8 @@ namespace MyPersonalBudgetAPI.Controllers
 
             int existing = 0; 
             int newInsertions = 0;
-            int failedInsertions = 0    ;
+            int failedInsertions = 0;
+            FileProcessingCounts? fileProcessingCounts = null;
 
             if (dailyTransactions != null)
             {
@@ -305,16 +306,13 @@ namespace MyPersonalBudgetAPI.Controllers
                         failedInsertions++;
                 }
 
-
-                transactionCategoryMappingService.PlaceCategoryOnTransactions();
-
                 IOrderedEnumerable<DatabaseManager.DataModels.DailyTransaction> ascendingDates = from dailyTransaction in dailyTransactions orderby dailyTransaction.Fi_Transaction_Reference ascending select dailyTransaction;                
                 DateTime from =  ascendingDates.First<DatabaseManager.DataModels.DailyTransaction>().Posted_Date;
                 DateTime to = ascendingDates.Last<DatabaseManager.DataModels.DailyTransaction>().Posted_Date;
                 transactionService.RecordImportInformation(from, to,dailyTransactions.Count,newInsertions,existing, failedInsertions);
             }
 
-            return Ok($"Insertions:{newInsertions} Existing:{existing} FailedInsertions:{failedInsertions}");
+            return Ok(fileProcessingCounts);
         }
 
         [HttpPost]
