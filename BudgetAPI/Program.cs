@@ -43,6 +43,7 @@ builder.Services.AddScoped<IAuthenticationOperations, AuthenticationOperations>(
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<ITransactionCategoryMappingService, TransactionCategoryMappingService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
