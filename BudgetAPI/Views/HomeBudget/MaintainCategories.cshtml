@@ -59,17 +59,43 @@
             <input type="text" id="savingsKeyword" placeholder="Savings Keyword" />
             <input type="text" id="savingsCategory" placeholder="Saving Category" />
         </div>
-        <button type="submit">Add Mapping</button>
+        <button type="submit" id="AddMapping">Add Mapping</button>
+        <button type="submit" id="RebuildCategories">Rebuild Categories on Transactions</button>
+
+
     </div>
 </form>
 
 <script>
         document.getElementById("myForm").addEventListener("submit", function (e) 
         {
+            var submitterElementName = e.submitter.id;
+
+            console.log("submit form called submitter is called id is " , submitterElementName);
+
+            if (submitterElementName == "AddMapping")
+                SubmitCategories();
+            else if (submitterElementName == "RebuildCategories")
+                RebuildCategories();
+
+            e.preventDefault(); // Prevent default form submission
+        });
+
+
+    function SubmitCategories()
+    {
+            console.log("SubmitCategories function")
+
             const costKeyword = document.getElementById("costKeyword").value;
             const costCategory = document.getElementById("costCategory").value;
             const savingsKeyword = document.getElementById("savingsKeyword").value;
             const savingsCategory = document.getElementById("savingsCategory").value;
+
+            if (costKeyword == "" && costCategory == "" && savingsCategory == "" && savingsKeyword == "")
+            {
+                console.log("No keywords or categories entered, nothing to submit");
+                return false; // Prevent form submission
+            }
 
             xorResultCost = xorString(costKeyword, costCategory);
             xorSavingsCost = xorString(savingsKeyword, savingsCategory);
@@ -78,7 +104,7 @@
             {
                 alert("You must enter a keyword | category pair ");
                 return false; // Prevent form submission
-            }   
+            }
 
             console.log("submit mapping");
 
@@ -88,7 +114,7 @@
                 console.log("submit cost ");
                 var commandStr = `/HomeBudget/Keyword/${costKeyword}/CostCategory/${costCategory}`;
 
-                console.log("commandStr is " + commandStr); 
+                console.log("commandStr is " + commandStr);
 
                 fetch(commandStr, {
                         method: 'POST',
@@ -108,7 +134,7 @@
                         console.log("response (second then) is " + response.statusText);
 
                         // Process the data as needed
-                        // For example, you can call a function to update the UI with the fetched data     
+                        // For example, you can call a function to update the UI with the fetched data
                         location.reload(); // Reload the page to see the updated categories
                     })
                     .catch(error => {
@@ -149,9 +175,46 @@
                         console.error('There was a problem with the fetch operation:', error);
                     });
             }
+    }
 
-            e.preventDefault(); // Prevent default form submission
-        });
+    function RebuildCategories()
+    {
+         console.log("RebuildCategories function")
+
+         var commandStr = `/HomeBudget/MapCostRevenueCategory`;
+
+         console.log("commandStr is " + commandStr);
+         
+         fetch(commandStr, {
+                   method: 'POST',
+                  headers: {
+                            'Content-Type': 'application/json'
+                           }
+           })
+           .then(response => {
+           if (!response.ok) {
+               throw new Error('Network response was not ok');
+           }
+           console.log("RebuildCategories response (first then) is " + response.statusText);
+
+           return response.json();
+           })
+           .then(response => {               
+               console.log("RebuildCategories  response (second then) response is " + response);
+    
+               HandleResponse(response);
+
+               // Process the data as needed
+               // For example, you can call a function to update the UI with the fetched data
+               //location.reload(); // Reload the page to see the updated categories
+           })
+           .catch(error => {
+               console.error('There was a problem with the fetch operation:', error);
+           });
+
+    }
+
+
 
     window.onload = function () {
         console.log("window.onload called");
@@ -176,6 +239,17 @@
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
             });
+    }
+
+    function HandleResponse(response)
+    {
+        console.log("HandleResponse called with response " + JSON.stringify(response)); 
+
+        if (response != "0")
+        {
+            console.log("HandleResponse success");
+            alert("Un-reconcile transaction count is " + response);
+        }
     }
 
     function xorString(valueOne, valueTwo)

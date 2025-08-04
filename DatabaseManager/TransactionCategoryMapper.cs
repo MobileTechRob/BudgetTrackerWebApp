@@ -26,6 +26,7 @@ namespace DatabaseManager
 
         public void PlaceCategoryOnTransactions()
         {
+            listOfUnReconciledCosts.Clear();
             listOfUnReconciledCosts.AddRange(MapCostDescriptionToCostCategory());
             listOfUnReconciledCosts.AddRange(MapCostDescriptionToSavingCategory());
         }
@@ -49,67 +50,60 @@ namespace DatabaseManager
         List<DailyTransaction> MapCostDescriptionToCostCategory()
         {
             bool mappedToCostCategory = false;
-            bool mappedToSavingsCategory = false;
-            List<DailyTransaction> listOfUnReconciledCosts = new List<DailyTransaction>();
+            bool mappedToSavingsCategory = false;            
             string cleanedDescription = "";
 
-            // look through all the records that don't have cost category.
-            // for each record, use appropiate table key words to a Cost Category.
-            //using (var context = new AppDbContext())
-            //{
-                IQueryable<DailyTransaction> dailyCostsWithoutCategory = context.DailyTransactions.Where(dailyTransaction => dailyTransaction.Amount < 0 && (dailyTransaction.CostCategory == "") && (dailyTransaction.SavingsCategory == ""));
+            IQueryable<DailyTransaction> dailyCostsWithoutCategory = context.DailyTransactions.Where(dailyTransaction => dailyTransaction.Amount < 0 && (dailyTransaction.CostCategory == "") && (dailyTransaction.SavingsCategory == ""));
 
-                if (dailyCostsWithoutCategory.Any())
+            if (dailyCostsWithoutCategory.Any())
+            {
+                List<KeywordToCostCategory> keywordToCostCategoryList = context.KeywordToCostCategory.ToList();
+                List<KeywordToSavingsCategory> keywordToSavingsCategoryList = context.KeywordToSavingsCategory.ToList();
+
+                foreach (DailyTransaction d in dailyCostsWithoutCategory)
                 {
-                    List<KeywordToCostCategory> keywordToCostCategoryList = context.KeywordToCostCategory.ToList();
-                    List<KeywordToSavingsCategory> keywordToSavingsCategoryList = context.KeywordToSavingsCategory.ToList();
+                    mappedToCostCategory = false;
+                    mappedToSavingsCategory = false;
 
-                    foreach (DailyTransaction d in dailyCostsWithoutCategory)
+                    cleanedDescription = Regex.Replace(d.Description, @"\s+", " ");
+
+                    foreach (KeywordToCostCategory keywordToCostCategory in keywordToCostCategoryList)
                     {
-                        mappedToCostCategory = false;
-                        mappedToSavingsCategory = false;
-
-                        cleanedDescription = Regex.Replace(d.Description, @"\s+", " ");
-
-                        foreach (KeywordToCostCategory keywordToCostCategory in keywordToCostCategoryList)
+                        if (cleanedDescription.Contains(keywordToCostCategory.keyword, StringComparison.CurrentCultureIgnoreCase))
                         {
-                            if (cleanedDescription.Contains(keywordToCostCategory.keyword, StringComparison.CurrentCultureIgnoreCase))
-                            {
-                                d.CostCategory = keywordToCostCategory.costcategory;
-                                context.DailyTransactions.Update(d);
-                                mappedToCostCategory = true;
+                            d.CostCategory = keywordToCostCategory.costcategory;
+                            context.DailyTransactions.Update(d);
+                            mappedToCostCategory = true;
 
-                                logger.LogInformation($"{d.Posted_Date} ${cleanedDescription} ${d.Amount} is a cost ");
+                            logger.LogInformation($"{d.Posted_Date} ${cleanedDescription} ${d.Amount} is a cost ");
+
+                            break;
+                        }
+                    }
+
+                    if (!mappedToCostCategory)
+                    {
+                        foreach (KeywordToSavingsCategory keywordToSavingsCategory in keywordToSavingsCategoryList)
+                        {
+                            if (cleanedDescription.Contains(keywordToSavingsCategory.keyword, StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                d.SavingsCategory = keywordToSavingsCategory.savingscategory;
+                                d.Amount = Math.Abs(d.Amount);
+                                context.DailyTransactions.Update(d);
+                                mappedToSavingsCategory = true;
+
+                                logger.LogInformation($"{d.Posted_Date} ${cleanedDescription} ${d.Amount} is a savings ");
 
                                 break;
                             }
                         }
-
-                        if (!mappedToCostCategory)
-                        {
-                            foreach (KeywordToSavingsCategory keywordToSavingsCategory in keywordToSavingsCategoryList)
-                            {
-                                if (cleanedDescription.Contains(keywordToSavingsCategory.keyword, StringComparison.CurrentCultureIgnoreCase))
-                                {
-                                    d.SavingsCategory = keywordToSavingsCategory.savingscategory;
-                                    d.Amount = Math.Abs(d.Amount);
-                                    context.DailyTransactions.Update(d);
-                                    mappedToSavingsCategory = true;
-
-                                    logger.LogInformation($"{d.Posted_Date} ${cleanedDescription} ${d.Amount} is a savings ");
-
-                                    break;
-                                }
-                            }
-                        }
-
-                        if ((!mappedToCostCategory) && (!mappedToSavingsCategory))
-                            listOfUnReconciledCosts.Add(d);
                     }
-                }
-                context.SaveChanges();
 
-            //}
+                    if ((!mappedToCostCategory) && (!mappedToSavingsCategory))
+                        listOfUnReconciledCosts.Add(d);
+                }
+            }
+            context.SaveChanges();
 
             return listOfUnReconciledCosts;
         }
@@ -119,40 +113,42 @@ namespace DatabaseManager
             bool mappedToSavings = false;
             List<DailyTransaction> listUnReconciledSavings = new List<DailyTransaction>();
 
-            //using (var context = new AppDbContext())
-            //{
-                IQueryable<DailyTransaction> dailyTransitionsWithoutCategory = context.DailyTransactions.Where(dailyTransaction => dailyTransaction.Amount > 0 && dailyTransaction.SavingsCategory == "");
+            IQueryable<DailyTransaction> dailyTransitionsWithoutCategory = context.DailyTransactions.Where(dailyTransaction => dailyTransaction.Amount > 0 && dailyTransaction.SavingsCategory == "");
 
-                if (dailyTransitionsWithoutCategory.Any())
+            if (dailyTransitionsWithoutCategory.Any())
+            {
+                List<KeywordToSavingsCategory> keywordToCategoryList = context.KeywordToSavingsCategory.ToList();
+
+                foreach (DailyTransaction d in dailyTransitionsWithoutCategory)
                 {
-                    List<KeywordToSavingsCategory> keywordToCategoryList = context.KeywordToSavingsCategory.ToList();
+                    mappedToSavings = false;
 
-                    foreach (DailyTransaction d in dailyTransitionsWithoutCategory)
+                    foreach (KeywordToSavingsCategory keywordToCategory in keywordToCategoryList)
                     {
-                        mappedToSavings = false;
+                        string cleanedDescription = Regex.Replace(d.Description, @"\s+", " ");
 
-                        foreach (KeywordToSavingsCategory keywordToCategory in keywordToCategoryList)
+                        if (cleanedDescription.Contains(keywordToCategory.keyword, StringComparison.CurrentCultureIgnoreCase))
                         {
-                            string cleanedDescription = Regex.Replace(d.Description, @"\s+", " ");
-
-                            if (cleanedDescription.Contains(keywordToCategory.keyword, StringComparison.CurrentCultureIgnoreCase))
-                            {
-                                d.SavingsCategory = keywordToCategory.savingscategory;
-                                context.DailyTransactions.Update(d);
-                                mappedToSavings = true;
-                                break;
-                            }
+                            d.SavingsCategory = keywordToCategory.savingscategory;
+                            context.DailyTransactions.Update(d);
+                            mappedToSavings = true;
+                            break;
                         }
-
-                        if (!mappedToSavings)
-                            listUnReconciledSavings.Add(d);
                     }
-                }
 
-                context.SaveChanges();
-            //}
+                    if (!mappedToSavings)
+                        listUnReconciledSavings.Add(d);
+                }
+            }
+
+            context.SaveChanges();
 
             return listUnReconciledSavings;
+        }
+
+        public int UnReconciledTransactionCount()
+        {
+            return listOfUnReconciledCosts.Count;
         }
     }
 }

@@ -13,6 +13,11 @@ namespace BudgetAPI.Services
             this.transactionCategoryMapper = transactionCategoryMapper;
         }
 
+        public int UnReconciledTransactionCount()
+        {
+            return transactionCategoryMapper.UnReconciledTransactionCount();            
+        }
+
         IEnumerable<Transactions> ITransactionCategoryMappingService.GetUnReconciledTransactions()
         {
             return transactionCategoryMapper.GetUnReconciledTransactions();            
