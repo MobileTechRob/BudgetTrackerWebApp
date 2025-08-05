@@ -80,23 +80,7 @@ namespace MyPersonalBudgetAPI.Controllers
 
         public ActionResult TransactionsWithoutCategories()
         {            
-            List<BudgetAPI.Models.DailyTransaction> transactionsWithoutCategories = new List<BudgetAPI.Models.DailyTransaction>();
-
-            transactionsWithoutCategories.Add(new BudgetAPI.Models.DailyTransaction() {
-                Posted_Date = DateTime.Now,
-                Description = "Sample Transaction",
-                Amount = 100.00M,
-                Currency = "USD",
-                Transaction_Reference_Number = "TRX123456",
-                Fi_Transaction_Reference = "FI123456",
-                Transaction_Type = "Debit",
-                Credit_Debit = "Debit",
-                Original_Amount = 100.00M,
-                CostCategory = "",
-                SavingsCategory = ""
-            });
-
-            return View(transactionsWithoutCategories);          
+            return View(transactionService.GetTransactionsWithoutCategories());          
         }
 
 
