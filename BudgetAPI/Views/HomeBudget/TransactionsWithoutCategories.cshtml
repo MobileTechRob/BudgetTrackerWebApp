@@ -15,15 +15,15 @@
                 <th>Description</th>
                 <th>&nbsp;&nbsp;&nbsp;</th>                
                 <th>Amount</th>
-                
-        </tr>
+
+            </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
                 <tr>
                     <td>@item.Posted_Date</td>
-                    <th>&nbsp;&nbsp;&nbsp;</th>                    
+                    <th>&nbsp;&nbsp;&nbsp;</th>
                     <td>@item.Description</td>
                     <th>&nbsp;&nbsp;&nbsp;</th>
                     <td>@item.Amount</td>
@@ -68,76 +68,6 @@
     window.onload = function () {
         console.log("window.onload called");
 
-           // const queryStrImportHistory = `/HomeBudget/ImportedTransactions`;
-
-           //    console.log("queryStr is " , queryStrImportHistory);
-
-           //    fetch(queryStrImportHistory)
-           //     .then(response => {
-           //         if (!response.ok) {
-           //             throw new Error('Network response was not ok');
-           //         }
-           //         return response.json();
-           //     })
-           //     .then(importTransactionHistory => {
-           //            //console.log("importTransactionHistory is ",  JSON.stringify(importTransactionHistory));
-           //         // Process the data as needed
-           //         // For example, you can call a function to update the UI with the fetched data
-           //         renderImportTransactionHistory(importTransactionHistory);
-           //     })
-           //     .catch(error => {
-           //         console.error('There was a problem with the fetch operation:', error);
-           //     });
-
     };
-
-
-    function renderImportTransactionHistory(importTransactionHistory)
-    {
-           console.log("importTransactionHistory line is ", importTransactionHistory);
-
-           const tbody = document.getElementById('importHistory');
-
-           if (tbody) 
-           {
-                  tbody.innerHTML = ''; // Clear any old rows
-
-                  importTransactionHistory.forEach(importHistory => 
-                  {                      
-                      console.log("importHistory.dateTimeOfImport is ", importHistory.dateTimeOfImport);                      
-
-                      var [datePart, timePart] = importHistory.dateTimeOfImport.split('T');
-                      var dateOfImport = datePart + " " + timePart.slice(0,8); // Combine date and time"
-
-                      var [datePart, timePart] = importHistory.transaction_StartDate.split('T');
-                      var startDate = datePart;
-
-                      var [datePart, timePart] = importHistory.transaction_EndDate.split('T');
-                      var endDate = datePart;
-
-                            const row = document.createElement('tr');
-                            row.innerHTML = `<td>${dateOfImport}</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>${startDate}</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>${endDate}</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>${importHistory.numberOfTransactions}</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>${importHistory.numberOfInsertions}</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>${importHistory.numberOfExistingTransactions}</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>&nbsp;&nbsp;</td>
-                                              <td>${importHistory.numberOfFailedInsertions}</td>`;
-
-                            tbody.appendChild(row);
-                  });
-           }
-    }
 
 </script>
