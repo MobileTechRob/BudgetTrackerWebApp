@@ -337,6 +337,15 @@ namespace MyPersonalBudgetAPI.Controllers
         }
 
         [HttpPost]
+        [Route("HomeBudget/MapCostRevenueCategory")]
+        public ObjectResult MapCostRevenueCategory()
+        {
+            transactionCategoryMappingService.PlaceCategoryOnTransactions();
+
+            return Ok(transactionCategoryMappingService.UnReconciledTransactionCount());
+        }
+
+        [HttpPost]
         [Route("HomeBudget/Keyword/{keyword}/CostCategory/{costcategory}")]
         public IActionResult CreateKeywordToCostCategoryMapping(string keyword, string costcategory)
         {
