@@ -310,6 +310,9 @@ namespace MyPersonalBudgetAPI.Controllers
 
             if (authenticationService.VerifyUser(username, password))
             {
+
+                
+
                 logger.LogInformation($"Verifying user: verification passed ");
                 return Ok("User verified successfully");
             }
