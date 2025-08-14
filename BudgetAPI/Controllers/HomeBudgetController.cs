@@ -11,6 +11,8 @@ using System.Text;
 using BudgetAPI.Interfaces;
 using BudgetAPI.Services;
 using SharedDataModels;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MyPersonalBudgetAPI.Controllers
 {
@@ -20,18 +22,10 @@ namespace MyPersonalBudgetAPI.Controllers
 
         private ITransactionService transactionService;
         private IConfigurationService configurationService;
-        private IAuthenticationService authenticationService;
+        private BudgetAPI.Interfaces.IAuthenticationService authenticationService;
         private ITransactionCategoryMappingService transactionCategoryMappingService;
 
-        //public HomeBudgetController(ILogger logger,  ICrudOperations crudOperations, IQueryOperations queryOperations, IAuthenticationOperations authenticationOperations)         
-        //{            
-        //    this.crudOperations = crudOperations;
-        //    this.queryOperations = queryOperations;
-        //    this.authenticationOperations = authenticationOperations;
-        //    this.logger = logger;
-        //}
-
-        public HomeBudgetController(ILogger logger, ITransactionService transactionService, ITransactionCategoryMappingService transactionCategoryMappingService, IConfigurationService configurationService, IAuthenticationService authenticationService)
+        public HomeBudgetController(ILogger logger, ITransactionService transactionService, ITransactionCategoryMappingService transactionCategoryMappingService, IConfigurationService configurationService, BudgetAPI.Interfaces.IAuthenticationService authenticationService)
         {
             this.transactionService = transactionService;
             this.configurationService = configurationService;
@@ -309,12 +303,9 @@ namespace MyPersonalBudgetAPI.Controllers
             logger.LogInformation($"Verifying user: {username} "); 
 
             if (authenticationService.VerifyUser(username, password))
-            {
-
-                
-
+            {                
                 logger.LogInformation($"Verifying user: verification passed ");
-                return Ok("User verified successfully");
+                return Ok(new { token = authenticationService.GenerateJwtToken(username) });
             }
             else
             {
