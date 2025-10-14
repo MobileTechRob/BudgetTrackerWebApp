@@ -22,15 +22,13 @@ namespace MyPersonalBudgetAPI.Controllers
         ILogger logger;
 
         private ITransactionService transactionService;
-        private IConfigurationService configurationService;
-        private BudgetAPI.Interfaces.IAuthenticationService authenticationService;
+        private IConfigurationService configurationService;        
         private ITransactionCategoryMappingService transactionCategoryMappingService;
 
-        public HomeBudgetController(ILogger logger, ITransactionService transactionService, ITransactionCategoryMappingService transactionCategoryMappingService, IConfigurationService configurationService, BudgetAPI.Interfaces.IAuthenticationService authenticationService)
+        public HomeBudgetController(ILogger logger, ITransactionService transactionService, ITransactionCategoryMappingService transactionCategoryMappingService, IConfigurationService configurationService)
         {
             this.transactionService = transactionService;
-            this.configurationService = configurationService;
-            this.authenticationService = authenticationService; 
+            this.configurationService = configurationService;            
             this.transactionCategoryMappingService = transactionCategoryMappingService;
             this.logger = logger;
         }
@@ -296,31 +294,6 @@ namespace MyPersonalBudgetAPI.Controllers
             }
 
             return Ok(fileProcessingCounts);
-        }
-
-        [HttpPost]
-        public ActionResult VerifyUser([FromQuery] string username, [FromQuery] string password)
-        {
-
-            logger.LogInformation($"Verifying user: {username} "); 
-
-            if (authenticationService.VerifyUser(username, password))
-            {                
-                logger.LogInformation("Verifying user: verification passed ");
-
-                //return View("MainDashboard");//, new Token() { token = authenticationService.GenerateJwtToken(username) });
-
-                //return Ok(new { token = authenticationService.GenerateJwtToken(username) });
-                //return Ok(new { });
-                //return View("MainDashboard");   
-                //
-                return Ok();
-            }
-            else
-            {
-                logger.LogInformation($"Verifying user: verification failed ");
-                return Unauthorized("User verification failed");
-            }
         }
 
         [HttpPost]
