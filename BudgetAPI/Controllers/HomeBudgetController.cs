@@ -13,6 +13,7 @@ using BudgetAPI.Services;
 using SharedDataModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MyPersonalBudgetAPI.Controllers
 {
@@ -34,6 +35,7 @@ namespace MyPersonalBudgetAPI.Controllers
             this.logger = logger;
         }
 
+        //[Authorize] .. hold off on this.
         // GET: BudgetCostsController
         public ActionResult Index()
         {
@@ -297,15 +299,22 @@ namespace MyPersonalBudgetAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult VerifyUser([FromQuery] string username, [FromQuery] string password)
+        public ActionResult VerifyUser([FromQuery] string username, [FromQuery] string password)
         {
 
             logger.LogInformation($"Verifying user: {username} "); 
 
             if (authenticationService.VerifyUser(username, password))
             {                
-                logger.LogInformation($"Verifying user: verification passed ");
-                return Ok(new { token = authenticationService.GenerateJwtToken(username) });
+                logger.LogInformation("Verifying user: verification passed ");
+
+                //return View("MainDashboard");//, new Token() { token = authenticationService.GenerateJwtToken(username) });
+
+                //return Ok(new { token = authenticationService.GenerateJwtToken(username) });
+                //return Ok(new { });
+                //return View("MainDashboard");   
+                //
+                return Ok();
             }
             else
             {
