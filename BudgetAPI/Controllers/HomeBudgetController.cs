@@ -264,7 +264,7 @@ namespace MyPersonalBudgetAPI.Controllers
             int existing = 0; 
             int newInsertions = 0;
             int failedInsertions = 0;
-            FileProcessingCounts? fileProcessingCounts = null;
+            FileProcessingCounts? fileProcessingCounts = new();
 
             if (dailyTransactions != null)
             {
@@ -277,12 +277,12 @@ namespace MyPersonalBudgetAPI.Controllers
                     if (insertTransactionStatus == SharedDataModels.InsertTransactionStatus.INSERTED)
                     {
                         logger.LogInformation($"Transaction imported successfully: {dailyTransaction.Posted_Date} {dailyTransaction.Description} {dailyTransaction.Amount}");
-                        newInsertions++;
+                        fileProcessingCounts.Inserted++;
                     }
                     else if (insertTransactionStatus == SharedDataModels.InsertTransactionStatus.ALREADY_EXIST_NO_INSERTION)
-                        existing++;
+                        fileProcessingCounts.AlreadyExisted++;
                     else if (insertTransactionStatus == SharedDataModels.InsertTransactionStatus.INSERT_FAILED)
-                        failedInsertions++;
+                        fileProcessingCounts.InsertFailed++;
                 }
 
                 transactionCategoryMappingService.PlaceCategoryOnTransactions();

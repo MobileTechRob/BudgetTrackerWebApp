@@ -1,4 +1,5 @@
-﻿using DatabaseManager;
+﻿using BudgetAPI.Interfaces;
+using DatabaseManager;
 using DatabaseManager.DataModels;
 using DatabaseManager.Interfaces;
 using FluentAssertions;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using MyPersonalBudgetAPI.Controllers;
+using SharedDataModels;
 
 namespace TestProject
 {
@@ -123,6 +125,9 @@ namespace TestProject
             // setup
             var mockIlogger = new Mock<ILogger<CrudOperations>>();
             var mockCrudOperations = new Mock<ICrudOperations>();
+            var mockTransactionService = new Mock<ITransactionService>();
+            var mockTransactionCategoryMappingService = new Mock<ITransactionCategoryMappingService>();
+            var mockConfigurationService = new Mock<IConfigurationService>();
 
             var logs = new List<string>();
 
@@ -143,13 +148,21 @@ namespace TestProject
             };
 
             // Act  
-            HomeBudgetController homeBudgetController = new HomeBudgetController(mockIlogger.Object, mockCrudOperations.Object,null!,null!);
+            HomeBudgetController homeBudgetController = new HomeBudgetController(mockIlogger.Object,
+                mockTransactionService.Object,
+                mockTransactionCategoryMappingService.Object, 
+                mockConfigurationService.Object);
             
             Microsoft.AspNetCore.Mvc.ObjectResult result= homeBudgetController.ImportBatchTransactions(new List<DailyTransaction> { dailyTransaction });
 
             // Assert
-            result.StatusCode.Should().Be(200); 
-            result.Value.Should().Be("Insertions:1 Existing:0 FailedInsertions:0");
+            result.StatusCode.Should().Be(200);
+
+            FileProcessingCounts fileProcessingCounts = (FileProcessingCounts)result.Value;
+
+            fileProcessingCounts.Inserted.Should().Be(1);
+            fileProcessingCounts.AlreadyExisted.Should().Be(0);
+            fileProcessingCounts.InsertFailed.Should().Be(0);            
         }
     }
 }
