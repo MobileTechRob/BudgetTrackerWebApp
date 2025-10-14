@@ -24,8 +24,7 @@ namespace MyPersonalBudgetAPI.Controllers
                 var principal = new ClaimsPrincipal(identity);
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
-                //return RedirectToAction("Index", "Secure");
+                
                 return RedirectToAction("Index", "HomeBudget");
             }
 
