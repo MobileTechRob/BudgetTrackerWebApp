@@ -261,9 +261,6 @@ namespace MyPersonalBudgetAPI.Controllers
         {
             logger.LogInformation($"ImportBatchTransactions ");
 
-            int existing = 0; 
-            int newInsertions = 0;
-            int failedInsertions = 0;
             FileProcessingCounts? fileProcessingCounts = new();
 
             if (dailyTransactions != null)
@@ -290,7 +287,7 @@ namespace MyPersonalBudgetAPI.Controllers
                 IOrderedEnumerable<DatabaseManager.DataModels.DailyTransaction> ascendingDates = from dailyTransaction in dailyTransactions orderby dailyTransaction.Fi_Transaction_Reference ascending select dailyTransaction;                
                 DateTime from =  ascendingDates.First<DatabaseManager.DataModels.DailyTransaction>().Posted_Date;
                 DateTime to = ascendingDates.Last<DatabaseManager.DataModels.DailyTransaction>().Posted_Date;
-                transactionService.RecordImportInformation(from, to,dailyTransactions.Count,newInsertions,existing, failedInsertions);
+                transactionService.RecordImportInformation(from, to,dailyTransactions.Count, fileProcessingCounts.Inserted, fileProcessingCounts.AlreadyExisted, fileProcessingCounts.InsertFailed);
             }
 
             return Ok(fileProcessingCounts);
