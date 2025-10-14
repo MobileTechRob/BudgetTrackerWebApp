@@ -1,16 +1,17 @@
-using DatabaseManager;
-using DatabaseManager.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using MyPersonalBudgetAPI.Controllers;
-using System.Diagnostics;
-using Newtonsoft;
 using BudgetAPI.Interfaces;
 using BudgetAPI.Services;
+using DatabaseManager;
+using DatabaseManager.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using MyPersonalBudgetAPI.Controllers;
+using Newtonsoft;
+using System.Diagnostics;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,14 +42,13 @@ builder.Services.AddCors(options =>
                           .AllowAnyHeader());
 });
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => options.TokenValidationParameters = 
-new Microsoft.IdentityModel.Tokens.TokenValidationParameters() {
-    ValidateIssuer = false,
-    ValidateAudience = false,
-    ValidateLifetime = true,
-    ValidateIssuerSigningKey = true,
-    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
-});
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        // You can set other options here as needed
+    });
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString)); // Or your DB setup
 
@@ -69,9 +69,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
 builder.Services.AddMvc();
 
-
 var app = builder.Build();
-
 
 app.UseCors("AllowReactApp");
 
@@ -86,14 +84,14 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=HomeBudget}/{action=Index}/{id?}")
+    name: "login",
+    pattern: "{controller=Account}/{action=Login}")
     .WithStaticAssets();
-
 
 app.Run();

@@ -31,6 +31,13 @@ namespace DatabaseManager
                 logger.LogWarning("Username or password is null or empty.");
                 return false;
             }
+
+            if (userName != "budget" || password != "password")
+            {
+                logger.LogWarning("Invalid username or password.");
+                return false;
+            }
+
             // Implement user verification logic here
             // For now, we will return true to indicate that the user is verified
             return true;

@@ -13,6 +13,7 @@ using BudgetAPI.Services;
 using SharedDataModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MyPersonalBudgetAPI.Controllers
 {
@@ -21,19 +22,18 @@ namespace MyPersonalBudgetAPI.Controllers
         ILogger logger;
 
         private ITransactionService transactionService;
-        private IConfigurationService configurationService;
-        private BudgetAPI.Interfaces.IAuthenticationService authenticationService;
+        private IConfigurationService configurationService;        
         private ITransactionCategoryMappingService transactionCategoryMappingService;
 
-        public HomeBudgetController(ILogger logger, ITransactionService transactionService, ITransactionCategoryMappingService transactionCategoryMappingService, IConfigurationService configurationService, BudgetAPI.Interfaces.IAuthenticationService authenticationService)
+        public HomeBudgetController(ILogger logger, ITransactionService transactionService, ITransactionCategoryMappingService transactionCategoryMappingService, IConfigurationService configurationService)
         {
             this.transactionService = transactionService;
-            this.configurationService = configurationService;
-            this.authenticationService = authenticationService; 
+            this.configurationService = configurationService;            
             this.transactionCategoryMappingService = transactionCategoryMappingService;
             this.logger = logger;
         }
 
+        //[Authorize] .. hold off on this.
         // GET: BudgetCostsController
         public ActionResult Index()
         {
@@ -294,24 +294,6 @@ namespace MyPersonalBudgetAPI.Controllers
             }
 
             return Ok(fileProcessingCounts);
-        }
-
-        [HttpPost]
-        public IActionResult VerifyUser([FromQuery] string username, [FromQuery] string password)
-        {
-
-            logger.LogInformation($"Verifying user: {username} "); 
-
-            if (authenticationService.VerifyUser(username, password))
-            {                
-                logger.LogInformation($"Verifying user: verification passed ");
-                return Ok(new { token = authenticationService.GenerateJwtToken(username) });
-            }
-            else
-            {
-                logger.LogInformation($"Verifying user: verification failed ");
-                return Unauthorized("User verification failed");
-            }
         }
 
         [HttpPost]
