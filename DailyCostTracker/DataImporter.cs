@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SharedDataModels;
-using DailyCostTracker.DataModels;
 using System.Speech.Synthesis;
 using DatabaseManager.Interfaces;
 using Newtonsoft.Json;
