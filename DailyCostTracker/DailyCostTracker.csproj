@@ -9,17 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="AppDbContext.cs" />
     <Compile Remove="DailyTransaction.cs" />
-    <Compile Remove="KeywordToCostCategory.cs" />
-    <Compile Remove="KeywordToSavingsCategory.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="AppDbContext.cs" />
     <None Include="DataModel\DailyTransaction.cs" />
-    <None Include="KeywordToCostCategory.cs" />
-    <None Include="KeywordToSavingsCategory.cs" />
   </ItemGroup>
 
   <ItemGroup>
